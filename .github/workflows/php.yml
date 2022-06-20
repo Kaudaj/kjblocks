@@ -1,0 +1,101 @@
+name: PHP tests
+on: [push, pull_request]
+jobs:
+  php-linter:
+    name: PHP Syntax check 7.1|7.2|7.3|7.4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: PHP syntax checker 7.1
+        uses: prestashop/github-action-php-lint/7.1@master
+
+      - name: PHP syntax checker 7.2
+        uses: prestashop/github-action-php-lint/7.2@master
+
+      - name: PHP syntax checker 7.3
+        uses: prestashop/github-action-php-lint/7.3@master
+
+      - name: PHP syntax checker 7.4
+        uses: prestashop/github-action-php-lint/7.4@master
+
+  php-cs-fixer:
+    name: PHP-CS-Fixer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache composer folder
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-
+
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Install Composer
+        run: composer install
+
+      - name: Run PHP-CS-Fixer
+        run: |
+          cd ${{ github.workspace }}
+          ./vendor/bin/php-cs-fixer --version
+          ./vendor/bin/php-cs-fixer fix --dry-run --diff --config="tests/php/.php-cs-fixer.dist.php"
+
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        presta-versions: ["1.7.8.0", "latest"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Cache vendor folder
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: php-${{ hashFiles('composer.lock') }}
+
+      - name: Cache composer folder
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - name: Cache Prestashop source code
+        id: cache_prestashop_source
+        uses: actions/cache@v2
+        with:
+          path: ${{ runner.temp }}/prestashop/
+          key: ${{ runner.os }}-${{ matrix.presta-versions }}
+
+      - name: Install module dependencies
+        run: composer install
+
+      - name: Get latest version
+        run: |
+          echo "LATEST_VERSION=$(curl -sL https://api.github.com/repos/PrestaShop/PrestaShop/releases/latest | jq -r ".tag_name")" >> $GITHUB_ENV
+
+      - name: Set version
+        run: |
+          echo "VERSION=$( \
+            [[ ${{ matrix.presta-versions }} == "latest" ]] \
+            && echo "${{ env.LATEST_VERSION }}" \
+            || echo "${{ matrix.presta-versions }}" \
+          )" >> $GITHUB_ENV
+
+      - name: Extract PrestaShop
+        if: steps.cache_prestashop_source.outputs.cache-hit != 'true'
+        run: |
+          echo "no cache for Prestashop ${{ env.VERSION }} source. Fectching and extracting source code..."
+          wget https://github.com/PrestaShop/PrestaShop/releases/download/${{ env.VERSION }}/prestashop_${{ env.VERSION }}.zip \
+            --quiet --output-document ${{ runner.temp }}/prestashop.zip
+          unzip -q ${{ runner.temp }}/prestashop.zip -d ${{ runner.temp }}/prestashop_zip
+          unzip -q ${{ runner.temp }}/prestashop_zip/prestashop.zip -d ${{ runner.temp }}/prestashop
+
+      - name: Run phpstan
+        run: _PS_ROOT_DIR_=${{ runner.temp }}/prestashop/ php ./vendor/bin/phpstan analyse --configuration=tests/php/phpstan.dist.neon
