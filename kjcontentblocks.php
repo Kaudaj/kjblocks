@@ -24,6 +24,8 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 }
 
 use Kaudaj\Module\ContentBlocks\Form\Settings\GeneralConfiguration;
+use Kaudaj\Module\ContentBlocks\Repository\ContentBlockLangRepository;
+use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -101,6 +103,7 @@ EOF
         return parent::install()
             && $this->installConfiguration()
             && $this->registerHook(self::HOOKS)
+            && $this->installTables()
         ;
     }
 
@@ -121,12 +124,54 @@ EOF
     }
 
     /**
+     * Install database tables
+     *
+     * @return bool
+     */
+    private function installTables()
+    {
+        $sql = [];
+        $dbPrefix = pSQL(_DB_PREFIX_);
+        $dbEngine = pSQL(_MYSQL_ENGINE_);
+
+        $sql[] = "
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . ContentBlockRepository::TABLE_NAME . "` (
+                `id_content_block` INT UNSIGNED NOT NULL,
+                `id_hook` INT,
+                `position` INT,
+                PRIMARY KEY (id_content_block)
+            ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
+        ";
+
+        $sql[] = "
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . ContentBlockLangRepository::TABLE_NAME . "` (
+                `id_content_block` INT UNSIGNED NOT NULL,
+                `id_lang` INT NOT NULL,
+                `name` VARCHAR(255) NOT NULL,
+                `content` TEXT NOT NULL,
+                PRIMARY KEY (id_content_block, id_lang),
+                FOREIGN KEY (`id_lang`)
+                REFERENCES `{$dbPrefix}lang` (`id_lang`)
+                ON DELETE CASCADE
+            ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
+        ";
+
+        $result = true;
+        foreach ($sql as $query) {
+            $result = $result && Db::getInstance()->execute($query);
+        }
+
+        return $result;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function uninstall(): bool
     {
         return parent::uninstall()
             && $this->uninstallConfiguration()
+            && $this->uninstallTables()
         ;
     }
 
@@ -144,6 +189,32 @@ EOF
         }
 
         return true;
+    }
+
+    /**
+     * Uninstall database tables
+     *
+     * @return bool
+     */
+    private function uninstallTables()
+    {
+        $sql = [];
+        $dbPrefix = pSQL(_DB_PREFIX_);
+
+        $sql[] = "
+            DROP TABLE IF EXISTS `$dbPrefix" . ContentBlockRepository::TABLE_NAME . '`
+        ';
+
+        $sql[] = "
+            DROP TABLE IF EXISTS `$dbPrefix" . ContentBlockLangRepository::TABLE_NAME . '`
+        ';
+
+        $result = true;
+        foreach ($sql as $query) {
+            $result = $result && Db::getInstance()->execute($query);
+        }
+
+        return $result;
     }
 
     /**
