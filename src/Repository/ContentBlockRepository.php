@@ -34,4 +34,21 @@ class ContentBlockRepository extends EntityRepository
 {
     public const TABLE_NAME = 'kj_content_blocks_content_block';
     public const TABLE_NAME_WITH_PREFIX = _DB_PREFIX_ . self::TABLE_NAME;
+
+    /**
+     * Find highest position of content blocks for a given hook id.
+     * Returns -1 if there is no step.
+     */
+    public function findMaxPosition(int $hookId): int
+    {
+        $qb = $this->createQueryBuilder('cb')
+            ->select('MAX(cb.position)')
+            ->where('cb.id_hook = :hookId')
+            ->setParameter('hookId', $hookId)
+        ;
+
+        $result = $qb->getQuery()->getSingleScalarResult();
+
+        return $result !== null ? intval($result) : -1;
+    }
 }
