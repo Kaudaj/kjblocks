@@ -1,0 +1,10 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.content_blocks.form.type.content_block:
+    public: true
+    parent: "form.type.translatable.aware"
+    class: Kaudaj\Module\ContentBlocks\Form\Type\ContentBlockType
+    tags:
+      - { name: form.type }

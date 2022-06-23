@@ -1,14 +1,3 @@
-kj_content_blocks_settings:
-  path: /kjcontentblocks/settings
-  methods: [GET]
-  defaults:
-    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\SettingsController::indexAction'
-    _legacy_controller: KJContentBlocksSettings
-
-kj_content_blocks_settings_general_save:
-  path: /kjcontentblocks/settings/general
-  methods: [POST, PATCH]
-  defaults:
-    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\SettingsController::processGeneralFormAction'
-    _legacy_controller: KJContentBlocksSettings
-    _legacy_link: KJContentBlocksSettings:update
+kj_content_blocks_routing:
+  resource: "routing/_main.yml"
+  prefix: /kjcontentblocks

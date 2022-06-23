@@ -20,7 +20,13 @@
 {% form_theme form 'PrestaShopBundle:Admin/TwigTemplateForm:prestashop_ui_kit.html.twig' %}
 
 {% block form_id %}
-  {{ form_start(form, {attr : {class: 'form', id: form_id}, action: form_action }) }}
+  {% set formVars = { attr : {class: 'form', id: form_id} } %}
+
+  {% if form_action is defined %}
+      {% set formVars = formVars|merge({ action: form_action }) %}
+  {% endif %}
+
+  {{ form_start(form, formVars) }}
     <div class="card">
       {% include '@Modules/kjcontentblocks/views/templates/back/components/atoms/card-header.html.twig'
         with {'header': card_header} %}
@@ -30,9 +36,11 @@
         </div>
       </div>
       <div class="card-footer">
-        <a href="{{ path(cancel_path) }}" class="btn btn-outline-secondary">
-          {{ 'Cancel'|trans({}, 'Admin.Actions') }}
-        </a>
+        {% if cancel_action is defined %}
+          <a href="{{ cancel_action }}" class="btn btn-outline-secondary">
+            {{ 'Cancel'|trans({}, 'Admin.Actions') }}
+          </a>
+        {% endif %}
         <div class="d-flex justify-content-end">
           <button class="btn btn-primary float-right" id="save-button">
             {{ 'Save'|trans({}, 'Admin.Actions') }}

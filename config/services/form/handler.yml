@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.content_blocks.form.handler.content_block:
+    class: PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Handler\FormHandler
+    factory: "prestashop.core.form.identifiable_object.handler.form_handler_factory:create"
+    arguments:
+      - "@kaudaj.module.content_blocks.form.data_handler.content_block"

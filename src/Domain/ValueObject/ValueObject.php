@@ -21,7 +21,9 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\ContentBlocks\Domain\ValueObject;
 
+use Kaudaj\Module\ContentBlocks\ConstraintValidator\Factory\ConstraintValidatorFactory;
 use PrestaShop\PrestaShop\Core\Domain\Exception\DomainConstraintException;
+use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -38,7 +40,12 @@ abstract class ValueObject
 
     public function __construct()
     {
-        $this->validator = Validation::createValidator();
+        $validatorBuilder = Validation::createValidatorBuilder();
+        $validatorBuilder->setConstraintValidatorFactory(
+            new ConstraintValidatorFactory(new CharacterCleaner())
+        );
+
+        $this->validator = $validatorBuilder->getValidator();
     }
 
     /**

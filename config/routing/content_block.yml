@@ -1,0 +1,26 @@
+kj_content_blocks_content_blocks_index:
+  path: /
+  methods: GET
+  defaults:
+    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\ContentBlockController::indexAction'
+    _legacy_controller: KJContentBlocksContentBlock
+
+kj_content_blocks_content_blocks_create:
+  path: /new
+  methods: [GET, POST]
+  defaults:
+    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\ContentBlockController::createAction'
+    _legacy_controller: KJContentBlocksContentBlock
+    _legacy_link: KJContentBlocksContentBlock:add
+
+kj_content_blocks_content_blocks_edit:
+  path: /{contentBlockId}/edit
+  methods: [GET, POST]
+  defaults:
+    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\ContentBlockController::editAction'
+    _legacy_controller: KJContentBlocksContentBlock
+    _legacy_link: KJContentBlocksContentBlock:update
+    _legacy_parameters:
+      id_content_block: contentBlockId
+  requirements:
+    contentBlockId: \d+

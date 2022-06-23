@@ -1,0 +1,99 @@
+<?php
+/**
+ * Copyright since 2019 Kaudaj
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@kaudaj.com so we can send you a copy immediately.
+ *
+ * @author    Kaudaj <info@kaudaj.com>
+ * @copyright Since 2019 Kaudaj
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ */
+
+declare(strict_types=1);
+
+namespace Kaudaj\Module\ContentBlocks\Form\DataHandler;
+
+use Hook;
+use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Command\AddContentBlockCommand;
+use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Command\EditContentBlockCommand;
+use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\CannotUpdateContentBlockException;
+use Kaudaj\Module\ContentBlocks\Form\Type\ContentBlockType;
+use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
+use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
+
+final class ContentBlockFormDataHandler implements FormDataHandlerInterface
+{
+    /**
+     * @var CommandBusInterface
+     */
+    private $commandBus;
+
+    public function __construct(CommandBusInterface $commandBus)
+    {
+        $this->commandBus = $commandBus;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param array<string, mixed> $data
+     */
+    public function create(array $data): int
+    {
+        $addContentBlockCommand = (new AddContentBlockCommand())
+            ->setHookId($this->getHookId(strval($data[ContentBlockType::FIELD_HOOK])))
+            ->setLocalizedNames(array_filter($data[ContentBlockType::FIELD_NAME])) /* @phpstan-ignore-line */
+            ->setLocalizedContents(array_filter($data[ContentBlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
+        ;
+
+        $contentBlockId = $this->commandBus->handle($addContentBlockCommand);
+
+        return $contentBlockId->getValue();
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param array<string, mixed> $data
+     */
+    public function update($id, array $data): void
+    {
+        $editContentBlockCommand = (new EditContentBlockCommand((int) $id))
+            ->setHookId($this->getHookId(strval($data[ContentBlockType::FIELD_HOOK])))
+            ->setLocalizedNames(array_filter($data[ContentBlockType::FIELD_NAME])) /* @phpstan-ignore-line */
+            ->setLocalizedContents(array_filter($data[ContentBlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
+        ;
+
+        $this->commandBus->handle($editContentBlockCommand);
+    }
+
+    /**
+     * @throws CannotUpdateContentBlockException
+     */
+    private function getHookId(string $hookName): int
+    {
+        $hookId = Hook::getIdByName($hookName);
+
+        if (!$hookId) {
+            $hook = new Hook();
+            $hook->name = $hookName;
+
+            $hook->add();
+            $hookId = $hook->id;
+
+            if (!$hookId) {
+                throw new CannotUpdateContentBlockException();
+            }
+        }
+
+        return intval($hookId);
+    }
+}

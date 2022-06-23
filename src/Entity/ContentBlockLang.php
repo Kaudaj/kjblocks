@@ -24,6 +24,7 @@ use Kaudaj\Module\ContentBlocks\Repository\ContentBlockLangRepository;
 use PrestaShopBundle\Entity\Lang;
 
 /**
+ * @ORM\Table(name=ContentBlockLangRepository::TABLE_NAME_WITH_PREFIX)
  * @ORM\Entity(repositoryClass=ContentBlockLangRepository::class)
  */
 class ContentBlockLang
@@ -31,16 +32,18 @@ class ContentBlockLang
     /**
      * @var ContentBlock
      *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity=ContentBlock::class, inversedBy="contentBlockLangs")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(name="id_content_block", referencedColumnName="id_content_block", nullable=false, onDelete="CASCADE")
      */
     private $contentBlock;
 
     /**
      * @var Lang
      *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Lang::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(name="id_lang", referencedColumnName="id_lang", nullable=false, onDelete="CASCADE")
      */
     private $lang;
 

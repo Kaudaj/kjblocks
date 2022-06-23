@@ -43,7 +43,7 @@ class ContentBlockRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('cb')
             ->select('MAX(cb.position)')
-            ->where('cb.id_hook = :hookId')
+            ->where('cb.hookId = :hookId')
             ->setParameter('hookId', $hookId)
         ;
 

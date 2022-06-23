@@ -74,12 +74,19 @@ EOF
 
         $this->tabs = [
             [
-                'name' => 'Content Blocks Settings',
-                'class_name' => 'KJContentBlocksSettings',
-                'route_name' => 'kj_content_blocks_settings',
-                'parent_class_name' => 'CONFIGURE',
+                'name' => 'KJContentBlocks',
+                'class_name' => 'KJContentBlocks',
+                'parent_class_name' => 'AdminParentModulesSf',
                 'visible' => false,
-                'wording' => 'Content Blocks Settings',
+                'wording' => 'KJContentBlocks',
+                'wording_domain' => 'Modules.Kjcontentblocks.Admin',
+            ],
+            [
+                'name' => 'Content Blocks',
+                'class_name' => 'KJContentBlocksContentBlock',
+                'route_name' => 'kj_content_blocks_content_blocks_index',
+                'parent_class_name' => 'KJContentBlocks',
+                'wording' => 'Content Blocks',
                 'wording_domain' => 'Modules.Kjcontentblocks.Admin',
             ],
         ];
@@ -136,10 +143,9 @@ EOF
 
         $sql[] = "
             CREATE TABLE IF NOT EXISTS `$dbPrefix" . ContentBlockRepository::TABLE_NAME . "` (
-                `id_content_block` INT UNSIGNED NOT NULL,
+                `id_content_block` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `id_hook` INT,
-                `position` INT,
-                PRIMARY KEY (id_content_block)
+                `position` INT
             ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
         ";
 
@@ -228,7 +234,7 @@ EOF
             /** @var UrlGeneratorInterface */
             $router = $container->get('router');
 
-            Tools::redirectAdmin($router->generate('kj_content_blocks_settings'));
+            Tools::redirectAdmin($router->generate('kj_content_blocks_content_blocks_index'));
         }
     }
 

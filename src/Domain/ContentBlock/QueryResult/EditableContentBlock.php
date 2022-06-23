@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Command;
+namespace Kaudaj\Module\ContentBlocks\Domain\ContentBlock\QueryResult;
 
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockException;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Content;
@@ -27,9 +27,9 @@ use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\ContentBlockId;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Name;
 
 /**
- * Class EditContentBlockCommand is responsible for editing content block data.
+ * Transfers content block data for editing.
  */
-class EditContentBlockCommand extends AbstractContentBlockCommand
+class EditableContentBlock
 {
     /**
      * @var ContentBlockId
@@ -37,28 +37,42 @@ class EditContentBlockCommand extends AbstractContentBlockCommand
     private $contentBlockId;
 
     /**
-     * @var int|null
+     * @var string
      */
-    private $hookId;
+    private $hookName;
 
     /**
-     * @var array<int, Name>|null
+     * @var array<int, Name>
      */
     private $localizedNames;
 
     /**
-     * @var array<int, Content>|null
+     * @var array<int, Content>
      */
     private $localizedContents;
 
     /**
+     * @param array<int, string> $localizedNames
+     * @param array<int, string> $localizedContents
+     *
      * @throws ContentBlockException
      */
-    public function __construct(int $contentBlockId)
-    {
-        parent::__construct();
-
+    public function __construct(
+        int $contentBlockId,
+        string $hookName,
+        array $localizedNames,
+        array $localizedContents
+    ) {
         $this->contentBlockId = new ContentBlockId($contentBlockId);
+        $this->hookName = $hookName;
+
+        foreach ($localizedNames as $langId => $name) {
+            $this->localizedNames[$langId] = new Name($name);
+        }
+
+        foreach ($localizedContents as $langId => $name) {
+            $this->localizedContents[$langId] = new Content($name);
+        }
     }
 
     public function getContentBlockId(): ContentBlockId
@@ -66,59 +80,24 @@ class EditContentBlockCommand extends AbstractContentBlockCommand
         return $this->contentBlockId;
     }
 
-    public function getHookId(): ?int
+    public function getHookName(): string
     {
-        return $this->hookId;
-    }
-
-    public function setHookId(?int $hookId): self
-    {
-        $this->hookId = $hookId;
-
-        return $this;
+        return $this->hookName;
     }
 
     /**
-     * @return array<int, Name>|null
+     * @return array<int, Name>
      */
-    public function getLocalizedNames(): ?array
+    public function getLocalizedNames(): array
     {
         return $this->localizedNames;
     }
 
     /**
-     * @param array<int, string>|null $localizedNames
+     * @return array<int, Content>
      */
-    public function setLocalizedNames(?array $localizedNames): self
-    {
-        if ($localizedNames !== null) {
-            $localizedNames = $this->mapLocalizedNames($localizedNames);
-        }
-
-        $this->localizedNames = $localizedNames;
-
-        return $this;
-    }
-
-    /**
-     * @return array<int, Content>|null
-     */
-    public function getLocalizedContents(): ?array
+    public function getLocalizedContents(): array
     {
         return $this->localizedContents;
-    }
-
-    /**
-     * @param array<int, string>|null $localizedContents
-     */
-    public function setLocalizedContents(?array $localizedContents): self
-    {
-        if ($localizedContents !== null) {
-            $localizedContents = $this->mapLocalizedContents($localizedContents);
-        }
-
-        $this->localizedContents = $localizedContents;
-
-        return $this;
     }
 }

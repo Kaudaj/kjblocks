@@ -19,11 +19,13 @@
 
 namespace Kaudaj\Module\ContentBlocks\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 
 /**
+ * @ORM\Table(name=ContentBlockRepository::TABLE_NAME_WITH_PREFIX)
  * @ORM\Entity(repositoryClass=ContentBlockRepository::class)
  */
 class ContentBlock
@@ -33,7 +35,7 @@ class ContentBlock
      *
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_content_block", type="integer")
      */
     private $id;
 
@@ -47,18 +49,23 @@ class ContentBlock
     /**
      * @var int
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_hook", type="integer")
      */
     private $hookId;
 
     /**
      * @var Collection<int, ContentBlockLang>
      *
-     * @ORM\OneToMany(targetEntity=ContentBlockLang::class, mappedBy="contentBlock")
+     * @ORM\OneToMany(targetEntity=ContentBlockLang::class, cascade={"persist", "remove"}, mappedBy="contentBlock")
      */
     private $contentBlockLangs;
 
-    public function getId(): ?int
+    public function __construct()
+    {
+        $this->contentBlockLangs = new ArrayCollection();
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
@@ -75,7 +82,7 @@ class ContentBlock
         return $this;
     }
 
-    public function getHookId(): ?int
+    public function getHookId(): int
     {
         return $this->hookId;
     }

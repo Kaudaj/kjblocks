@@ -1,0 +1,10 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.content_blocks.form.builder.content_block:
+    class: PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Builder\FormBuilder
+    factory: "prestashop.core.form.builder.form_builder_factory:create"
+    arguments:
+      - Kaudaj\Module\ContentBlocks\Form\Type\ContentBlockType
+      - "@kaudaj.module.content_blocks.form.data_provider.content_block"

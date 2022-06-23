@@ -1,0 +1,14 @@
+kj_content_blocks_settings_index:
+  path: /
+  methods: [GET]
+  defaults:
+    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\SettingsController::indexAction'
+    _legacy_controller: KJContentBlocksSettings
+
+kj_content_blocks_settings_general_save:
+  path: /general
+  methods: [POST, PATCH]
+  defaults:
+    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\SettingsController::processGeneralFormAction'
+    _legacy_controller: KJContentBlocksSettings
+    _legacy_link: KJContentBlocksSettings:update
