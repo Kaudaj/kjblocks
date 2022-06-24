@@ -1,0 +1,21 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.content_blocks.grid.definition.factory.content_block:
+    public: true
+    class: Kaudaj\Module\ContentBlocks\Grid\Definition\Factory\ContentBlockGridDefinitionFactory
+    parent: prestashop.core.grid.definition.factory.abstract_grid_definition
+    arguments:
+      - "@kaudaj.module.content_blocks.form.choice_provider.hook"
+      - "@prestashop.core.admin.admin_filter.repository"
+      - "@prestashop.adapter.data_provider.employee"
+      - "@prestashop.adapter.shop.context"
+
+  kaudaj.module.content_blocks.grid.position_definition.content_block:
+    class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
+    arguments:
+      $table: !php/const Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository::TABLE_NAME
+      $idField: "id_content_block"
+      $positionField: "position"
+      $parentIdField: "id_hook"

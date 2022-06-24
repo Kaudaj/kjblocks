@@ -16,6 +16,14 @@ services:
       - name: tactician.handler
         command: Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlock
 
+  kaudaj.module.content_blocks.content_block.query_handler.get_all:
+    public: true
+    parent: kaudaj.module.content_blocks.content_block.query_handler.abstract
+    class: Kaudaj\Module\ContentBlocks\Domain\ContentBlock\QueryHandler\GetContentBlocksHandler
+    tags:
+      - name: tactician.handler
+        command: Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlocks
+
   kaudaj.module.content_blocks.content_block.query_handler.get_content_block_for_editing:
     public: true
     parent: kaudaj.module.content_blocks.content_block.query_handler.abstract

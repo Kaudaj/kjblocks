@@ -5,6 +5,16 @@ kj_content_blocks_content_blocks_index:
     _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\ContentBlockController::indexAction'
     _legacy_controller: KJContentBlocksContentBlock
 
+kj_content_blocks_content_blocks_search:
+  path: /
+  methods: POST
+  defaults:
+    _controller: 'PrestaShopBundle:Admin\Common:searchGrid'
+    _legacy_controller: KJContentBlocksContentBlock
+    _legacy_link: KJContentBlocksContentBlock:submitContentBlockFilters
+    gridDefinitionFactoryServiceId: kaudaj.module.content_blocks.grid.definition.factory.content_block
+    redirectRoute: kj_content_blocks_content_blocks_index
+
 kj_content_blocks_content_blocks_create:
   path: /new
   methods: [GET, POST]
@@ -24,3 +34,23 @@ kj_content_blocks_content_blocks_edit:
       id_content_block: contentBlockId
   requirements:
     contentBlockId: \d+
+
+kj_content_blocks_content_blocks_delete:
+  path: /{contentBlockId}/delete
+  methods: DELETE
+  defaults:
+    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\ContentBlockController::deleteAction'
+    _legacy_controller: KJContentBlocksContentBlock
+    _legacy_link: KJContentBlocksContentBlock:deleteContentBlock
+    _legacy_parameters:
+      id_content_block: contentBlockId
+  requirements:
+    contentBlockId: \d+
+
+kj_content_blocks_content_blocks_update_position:
+  path: /update-position
+  methods: POST
+  defaults:
+    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\ContentBlockController::updatePositionAction'
+    _legacy_controller: KJContentBlocksContentBlock
+    _legacy_link: KJContentBlocksContentBlock:updateContentBlockPosition

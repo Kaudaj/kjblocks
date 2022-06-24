@@ -20,4 +20,18 @@ const {$} = window;
 
 $(() => {
   window.prestashop.component.initComponents(['TranslatableInput']);
+
+  const contentBlocksGrid = new window.prestashop.component.Grid('content_blocks');
+
+  const gridExtensions = [
+    new window.prestashop.component.GridExtensions.SortingExtension(),
+    new window.prestashop.component.GridExtensions.SubmitRowActionExtension(),
+    new window.prestashop.component.GridExtensions.LinkRowActionExtension(),
+    new window.prestashop.component.GridExtensions.PositionExtension(),
+    new window.prestashop.component.GridExtensions.FiltersResetExtension(),
+  ];
+
+  gridExtensions.forEach((extension) => {
+    contentBlocksGrid.addExtension(extension);
+  });
 });

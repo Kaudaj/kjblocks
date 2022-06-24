@@ -1,0 +1,12 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.content_blocks.grid.query.content_block:
+    public: true
+    class: Kaudaj\Module\ContentBlocks\Grid\Query\ContentBlockQueryBuilder
+    parent: prestashop.core.grid.abstract_query_builder
+    arguments:
+      - "@prestashop.core.query.doctrine_search_criteria_applicator"
+      - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+      - '@=service("prestashop.adapter.legacy.context").getContext().shop.id'
