@@ -6,5 +6,7 @@ services:
     public: true
     parent: "form.type.translatable.aware"
     class: Kaudaj\Module\ContentBlocks\Form\Type\ContentBlockType
+    arguments:
+      - '@=service("kaudaj.module.content_blocks.form.choice_provider.hook").getChoices()'
     tags:
       - { name: form.type }

@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace Kaudaj\Module\ContentBlocks\Domain\ContentBlock\QueryHandler;
 
 use Exception;
-use Hook;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockException;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlockForEditing;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\QueryResult\EditableContentBlock;
@@ -53,7 +52,7 @@ final class GetContentBlockForEditingHandler extends AbstractContentBlockQueryHa
 
             $editableContentBlock = new EditableContentBlock(
                 $contentBlock->getId(),
-                Hook::getNameById($contentBlock->getHookId()),
+                $contentBlock->getHookId(),
                 $localizedNames,
                 $localizedContents
             );

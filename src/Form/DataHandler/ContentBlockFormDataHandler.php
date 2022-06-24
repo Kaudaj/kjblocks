@@ -21,10 +21,8 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\ContentBlocks\Form\DataHandler;
 
-use Hook;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Command\AddContentBlockCommand;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Command\EditContentBlockCommand;
-use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\CannotUpdateContentBlockException;
 use Kaudaj\Module\ContentBlocks\Form\Type\ContentBlockType;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
@@ -49,7 +47,7 @@ final class ContentBlockFormDataHandler implements FormDataHandlerInterface
     public function create(array $data): int
     {
         $addContentBlockCommand = (new AddContentBlockCommand())
-            ->setHookId($this->getHookId(strval($data[ContentBlockType::FIELD_HOOK])))
+            ->setHookId(intval($data[ContentBlockType::FIELD_HOOK]))
             ->setLocalizedNames(array_filter($data[ContentBlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setLocalizedContents(array_filter($data[ContentBlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
         ;
@@ -67,33 +65,11 @@ final class ContentBlockFormDataHandler implements FormDataHandlerInterface
     public function update($id, array $data): void
     {
         $editContentBlockCommand = (new EditContentBlockCommand((int) $id))
-            ->setHookId($this->getHookId(strval($data[ContentBlockType::FIELD_HOOK])))
+        ->setHookId(intval($data[ContentBlockType::FIELD_HOOK]))
             ->setLocalizedNames(array_filter($data[ContentBlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setLocalizedContents(array_filter($data[ContentBlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
         ;
 
         $this->commandBus->handle($editContentBlockCommand);
-    }
-
-    /**
-     * @throws CannotUpdateContentBlockException
-     */
-    private function getHookId(string $hookName): int
-    {
-        $hookId = Hook::getIdByName($hookName);
-
-        if (!$hookId) {
-            $hook = new Hook();
-            $hook->name = $hookName;
-
-            $hook->add();
-            $hookId = $hook->id;
-
-            if (!$hookId) {
-                throw new CannotUpdateContentBlockException();
-            }
-        }
-
-        return intval($hookId);
     }
 }

@@ -58,7 +58,7 @@ final class ContentBlockFormDataProvider implements FormDataProviderInterface
         }
 
         return [
-            ContentBlockType::FIELD_HOOK => $editableContentBlock->getHookName(),
+            ContentBlockType::FIELD_HOOK => $editableContentBlock->getHookId(),
             ContentBlockType::FIELD_NAME => $localizedNames,
             ContentBlockType::FIELD_CONTENT => $localizedContents,
         ];

@@ -24,9 +24,9 @@ use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\DefaultLanguage;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\TypedRegex;
 use PrestaShopBundle\Form\Admin\Type\TranslatableType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ContentBlockType extends TranslatorAwareType
 {
@@ -35,15 +35,35 @@ class ContentBlockType extends TranslatorAwareType
     public const FIELD_CONTENT = 'content';
 
     /**
+     * @var array<string, int>
+     */
+    private $hookChoices;
+
+    /**
+     * @param array<string, mixed> $locales
+     * @param array<string, int> $hookChoices
+     */
+    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices)
+    {
+        parent::__construct($translator, $locales);
+
+        $this->hookChoices = $hookChoices;
+    }
+
+    /**
      * @param FormBuilderInterface<string, mixed> $builder
      * @param array<string, mixed> $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(self::FIELD_HOOK, TextType::class, [
-                'label' => $this->trans('Hook name', 'Modules.Mvconfigurator.Admin'),
-                'help' => $this->trans('The hook where the content block will be displayed.', 'Modules.Mvconfigurator.Admin'),
+            ->add(self::FIELD_HOOK, ChoiceType::class, [
+                'choices' => $this->hookChoices,
+                'attr' => [
+                    'data-toggle' => 'select2',
+                    'data-minimumResultsForSearch' => '7',
+                ],
+                'label' => $this->trans('Hook', 'Admin.Global'),
             ])
             ->add(self::FIELD_NAME, TranslatableType::class, [
                 'label' => $this->trans('Block name', 'Admin.Global'),
@@ -53,7 +73,6 @@ class ContentBlockType extends TranslatorAwareType
                 ],
                 'options' => [
                     'constraints' => [
-                        new NotBlank(),
                         new TypedRegex(TypedRegex::TYPE_GENERIC_NAME),
                     ],
                 ],
@@ -66,7 +85,6 @@ class ContentBlockType extends TranslatorAwareType
                 ],
                 'options' => [
                     'constraints' => [
-                        new NotBlank(),
                         new CleanHtml(),
                     ],
                 ],

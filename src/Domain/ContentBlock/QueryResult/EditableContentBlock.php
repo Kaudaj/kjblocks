@@ -37,9 +37,9 @@ class EditableContentBlock
     private $contentBlockId;
 
     /**
-     * @var string
+     * @var int
      */
-    private $hookName;
+    private $hookId;
 
     /**
      * @var array<int, Name>
@@ -59,12 +59,12 @@ class EditableContentBlock
      */
     public function __construct(
         int $contentBlockId,
-        string $hookName,
+        int $hookId,
         array $localizedNames,
         array $localizedContents
     ) {
         $this->contentBlockId = new ContentBlockId($contentBlockId);
-        $this->hookName = $hookName;
+        $this->hookId = $hookId;
 
         foreach ($localizedNames as $langId => $name) {
             $this->localizedNames[$langId] = new Name($name);
@@ -80,9 +80,9 @@ class EditableContentBlock
         return $this->contentBlockId;
     }
 
-    public function getHookName(): string
+    public function getHookId(): int
     {
-        return $this->hookName;
+        return $this->hookId;
     }
 
     /**
