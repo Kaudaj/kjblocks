@@ -22,6 +22,7 @@ namespace Kaudaj\Module\ContentBlocks\Form\Type;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CleanHtml;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\DefaultLanguage;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\TypedRegex;
+use PrestaShopBundle\Form\Admin\Type\FormattedTextareaType;
 use PrestaShopBundle\Form\Admin\Type\TranslatableType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -80,6 +81,7 @@ class ContentBlockType extends TranslatorAwareType
             ->add(self::FIELD_CONTENT, TranslatableType::class, [
                 'label' => $this->trans('Block content', 'Admin.Global'),
                 'help' => $this->trans('Content of the block.', 'Modules.Mvconfigurator.Admin'),
+                'type' => FormattedTextareaType::class,
                 'constraints' => [
                     new DefaultLanguage(),
                 ],
