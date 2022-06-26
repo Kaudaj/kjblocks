@@ -23,14 +23,20 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
+use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlocks;
+use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlocksByHook;
+use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
 use Kaudaj\Module\ContentBlocks\Form\Settings\GeneralConfiguration;
 use Kaudaj\Module\ContentBlocks\Repository\ContentBlockLangRepository;
 use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
+use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class KJContentBlocks extends Module
+class KJContentBlocks extends Module implements WidgetInterface
 {
     /**
      * @var array<string, string> Configuration values
@@ -43,7 +49,7 @@ class KJContentBlocks extends Module
      * @var string[] Hooks to register
      */
     public const HOOKS = [
-        'exampleHook',
+        'actionAfterUpdateContentBlockFormHandler',
     ];
 
     /**
@@ -238,13 +244,95 @@ EOF
         }
     }
 
-    /**
-     * Example hook
-     *
-     * @param array<string, mixed> $params Hook parameters
-     */
-    public function hookExampleHook(array $params): void
+    public function hookActionAfterUpdateContentBlockFormHandler(): void
     {
-        /* Do anything */
+        $getHookName = function (int $hookId): string {
+            return Hook::getNameById($hookId);
+        };
+
+        /** @var ContentBlock[] */
+        $contentBlocks = $this->getCommandBus()->handle(new GetContentBlocks());
+
+        $contentBlocksHooks = array_unique(
+            array_map(function (ContentBlock $contentBlock) use ($getHookName): string {
+                return $getHookName($contentBlock->getHookId());
+            }, $contentBlocks)
+        );
+
+        // TODO: Write it with a QueryHandler
+        $sql = 'SELECT DISTINCT(`id_hook`) FROM `' . _DB_PREFIX_ . 'hook_module` WHERE `id_module` = ' . (int) $this->id;
+        $result = Db::getInstance()->executeS($sql);
+
+        if (!is_array($result)) {
+            throw new RuntimeException("Can't update module hooks");
+        }
+
+        $moduleHooks = array_map(function (array $row) use ($getHookName): string {
+            return $getHookName(intval($row['id_hook']));
+        }, $result);
+
+        foreach (array_diff($moduleHooks, $contentBlocksHooks, self::HOOKS) as $hook) {
+            $this->unregisterHook($hook);
+        }
+
+        foreach (array_diff($contentBlocksHooks, $moduleHooks) as $hook) {
+            $this->registerHook($hook);
+        }
+    }
+
+    /**
+     * @param string $hookName
+     * @param array<string, mixed> $configuration
+     */
+    public function renderWidget($hookName, array $configuration): string
+    {
+        try {
+            /** @var ContentBlock[] */
+            $contentBlocks = $this->getCommandBus()->handle(new GetContentBlocksByHook($hookName));
+
+            $content = '';
+            foreach ($contentBlocks as $contentBlock) {
+                $contentBlockLang = $contentBlock->getContentBlockLang($this->context->language->id);
+
+                $content .= ($contentBlockLang !== null ? $contentBlockLang->getContent() : '');
+            }
+        } catch (Exception $e) {
+            return '';
+        }
+
+        return $content;
+    }
+
+    /**
+     * @param string $hookName
+     * @param array<string, mixed> $configuration
+     *
+     * @return array<string, mixed>
+     */
+    public function getWidgetVariables($hookName, array $configuration): array
+    {
+        return [];
+    }
+
+    private function getCommandBus(): CommandBusInterface
+    {
+        $commandBus = false;
+
+        try {
+            /** @var CommandBusInterface|false */
+            $commandBus = $this->get('prestashop.core.command_bus');
+        } catch (ServiceNotFoundException $e) {
+        }
+
+        if (!$commandBus) {
+            /** @var CommandBusInterface|false */
+            $commandBus = $this->get('kaudaj.module.content_blocks.command_bus');
+        }
+
+        if (!$commandBus) {
+            throw new RuntimeException('Container not available.');
+        }
+
+        return $commandBus;
     }
 }

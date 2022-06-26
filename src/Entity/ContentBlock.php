@@ -102,6 +102,17 @@ class ContentBlock
         return $this->contentBlockLangs;
     }
 
+    public function getContentBlockLang(int $langId): ?ContentBlockLang
+    {
+        foreach ($this->contentBlockLangs as $contentBlockLang) {
+            if ($langId == $contentBlockLang->getLang()->getId()) {
+                return $contentBlockLang;
+            }
+        }
+
+        return null;
+    }
+
     public function addContentBlockLang(ContentBlockLang $contentBlockLang): self
     {
         if (!$this->contentBlockLangs->contains($contentBlockLang)) {
