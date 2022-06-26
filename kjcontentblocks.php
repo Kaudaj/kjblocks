@@ -52,6 +52,9 @@ class KJContentBlocks extends Module implements WidgetInterface
         'actionAfterUpdateContentBlockFormHandler',
     ];
 
+    public const HOOK_FILTER_CONTENT = 'filterContentBlockContent';
+    public const HOOK_KEY_CONTENT = 'content';
+
     /**
      * @var Configuration<string, mixed> Configuration
      */
@@ -300,7 +303,10 @@ EOF
             return '';
         }
 
-        return $content;
+        // TODO: Use core hook dispatcher
+        return strval(Hook::exec(self::HOOK_FILTER_CONTENT, [
+            self::HOOK_KEY_CONTENT => $content,
+        ]));
     }
 
     /**
@@ -316,23 +322,38 @@ EOF
 
     private function getCommandBus(): CommandBusInterface
     {
-        $commandBus = false;
+        $commandBus = $this->getService(
+            'prestashop.core.command_bus',
+            'kaudaj.module.content_blocks.command_bus'
+        );
 
-        try {
-            /** @var CommandBusInterface|false */
-            $commandBus = $this->get('prestashop.core.command_bus');
-        } catch (ServiceNotFoundException $e) {
-        }
-
-        if (!$commandBus) {
-            /** @var CommandBusInterface|false */
-            $commandBus = $this->get('kaudaj.module.content_blocks.command_bus');
-        }
-
-        if (!$commandBus) {
-            throw new RuntimeException('Container not available.');
+        if (!($commandBus instanceof CommandBusInterface)) {
+            throw new RuntimeException("Can't retrieve command bus");
         }
 
         return $commandBus;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getService(string $backService, string $frontService)
+    {
+        $object = false;
+
+        try {
+            $object = $this->get($backService);
+        } catch (ServiceNotFoundException $e) {
+        }
+
+        if (!$object) {
+            $object = $this->get($frontService);
+        }
+
+        if (!$object) {
+            throw new RuntimeException('Container not available.');
+        }
+
+        return $object;
     }
 }
