@@ -263,7 +263,9 @@ EOF
         );
 
         // TODO: Write it with a QueryHandler
-        $sql = 'SELECT DISTINCT(`id_hook`) FROM `' . _DB_PREFIX_ . 'hook_module` WHERE `id_module` = ' . (int) $this->id;
+        $sql = 'SELECT DISTINCT(`id_hook`) 
+            FROM `' . _DB_PREFIX_ . 'hook_module` 
+            WHERE `id_module` = ' . (int) $this->id . ' AND `id_shop` = ' . $this->context->shop->id;
         $result = Db::getInstance()->executeS($sql);
 
         if (!is_array($result)) {
