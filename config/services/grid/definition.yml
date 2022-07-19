@@ -7,7 +7,7 @@ services:
     class: Kaudaj\Module\ContentBlocks\Grid\Definition\Factory\ContentBlockGridDefinitionFactory
     parent: prestashop.core.grid.definition.factory.abstract_grid_definition
     arguments:
-      - "@kaudaj.module.content_blocks.form.choice_provider.hook"
+      - "@kaudaj.module.content_blocks.form.choice_provider.content_block_hook"
       - "@prestashop.core.admin.admin_filter.repository"
       - "@prestashop.adapter.data_provider.employee"
       - "@prestashop.adapter.shop.context"

@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\ContentBlocks\Grid\Definition\Factory;
 
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\Employee\ContextEmployeeProvider;
 use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
 use PrestaShop\PrestaShop\Core\Form\FormChoiceProviderInterface;
@@ -239,6 +240,14 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
             $shopId,
             self::GRID_ID
         );
+
+        if ($adminFilter === null) {
+            $adminFilter = $adminFilterRepository->findByEmployeeAndFilterId(
+                $employeeId,
+                (new Configuration())->getInt('PS_SHOP_DEFAULT'),
+                self::GRID_ID
+            );
+        }
 
         if ($adminFilter === null) {
             return null;
