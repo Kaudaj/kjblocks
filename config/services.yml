@@ -32,3 +32,22 @@ services:
       - "@kaudaj.module.contentblocks.form.settings.general_form_data_provider"
       - 'Kaudaj\Module\ContentBlocks\Form\Settings\GeneralType'
       - "General"
+
+  kaudaj.module.content_blocks.event_listener.content_block_hooks_updater:
+    class: 'Kaudaj\Module\ContentBlocks\EventListener\ContentBlockHooksUpdater'
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@=service("prestashop.adapter.shop.context").getContextShopID()'
+    tags:
+      -
+        name: 'doctrine.orm.entity_listener'
+        event: 'postUpdate'
+        entity: 'Kaudaj\Module\ContentBlocks\Entity\ContentBlock'
+      -
+        name: 'doctrine.orm.entity_listener'
+        event: 'postPersist'
+        entity: 'Kaudaj\Module\ContentBlocks\Entity\ContentBlock'
+      -
+        name: 'doctrine.orm.entity_listener'
+        event: 'postRemove'
+        entity: 'Kaudaj\Module\ContentBlocks\Entity\ContentBlock'

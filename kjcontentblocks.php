@@ -23,7 +23,6 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
-use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlocks;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlocksByHook;
 use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
 use Kaudaj\Module\ContentBlocks\Form\Settings\GeneralConfiguration;
@@ -48,9 +47,7 @@ class KJContentBlocks extends Module implements WidgetInterface
     /**
      * @var string[] Hooks to register
      */
-    public const HOOKS = [
-        'actionAfterUpdateContentBlockFormHandler',
-    ];
+    public const HOOKS = [];
 
     public const HOOK_FILTER_CONTENT = 'filterContentBlockContent';
     public const HOOK_KEY_CONTENT = 'content';
@@ -244,44 +241,6 @@ EOF
             $router = $container->get('router');
 
             Tools::redirectAdmin($router->generate('kj_content_blocks_content_blocks_index'));
-        }
-    }
-
-    public function hookActionAfterUpdateContentBlockFormHandler(): void
-    {
-        $getHookName = function (int $hookId): string {
-            return Hook::getNameById($hookId);
-        };
-
-        /** @var ContentBlock[] */
-        $contentBlocks = $this->getCommandBus()->handle(new GetContentBlocks());
-
-        $contentBlocksHooks = array_unique(
-            array_map(function (ContentBlock $contentBlock) use ($getHookName): string {
-                return $getHookName($contentBlock->getHookId());
-            }, $contentBlocks)
-        );
-
-        // TODO: Write it with a QueryHandler
-        $sql = 'SELECT DISTINCT(`id_hook`) 
-            FROM `' . _DB_PREFIX_ . 'hook_module` 
-            WHERE `id_module` = ' . (int) $this->id . ' AND `id_shop` = ' . $this->context->shop->id;
-        $result = Db::getInstance()->executeS($sql);
-
-        if (!is_array($result)) {
-            throw new RuntimeException("Can't update module hooks");
-        }
-
-        $moduleHooks = array_map(function (array $row) use ($getHookName): string {
-            return $getHookName(intval($row['id_hook']));
-        }, $result);
-
-        foreach (array_diff($moduleHooks, $contentBlocksHooks, self::HOOKS) as $hook) {
-            $this->unregisterHook($hook);
-        }
-
-        foreach (array_diff($contentBlocksHooks, $moduleHooks) as $hook) {
-            $this->registerHook($hook);
         }
     }
 
