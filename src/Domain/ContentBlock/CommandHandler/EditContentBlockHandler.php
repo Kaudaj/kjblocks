@@ -43,8 +43,15 @@ final class EditContentBlockHandler extends AbstractContentBlockCommandHandler
                 $command->getContentBlockId()->getValue()
             );
 
-            if (null !== $command->getHookId()) {
-                $contentBlock->setHookId($command->getHookId());
+            $oldHookId = $contentBlock->getHookId();
+            $newHookId = $command->getHookId();
+
+            if (null !== $newHookId) {
+                $contentBlock->setHookId($newHookId);
+
+                if ($oldHookId !== $newHookId) {
+                    $contentBlock->setPosition($this->entityRepository->findMaxPosition($newHookId) + 1);
+                }
             }
 
             $localizedNames = $command->getLocalizedNames();
