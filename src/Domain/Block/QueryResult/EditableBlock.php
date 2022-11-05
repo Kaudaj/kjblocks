@@ -22,8 +22,8 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Domain\Block\QueryResult;
 
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
-use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Content;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
+use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Content;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
 use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 

@@ -23,8 +23,8 @@ namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 
 use Exception;
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
-use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotDeleteBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
+use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotDeleteBlockException;
 
 /**
  * Class DeleteBlockHandler is responsible for deleting block data.

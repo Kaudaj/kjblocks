@@ -22,8 +22,8 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 
 use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
-use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotAddBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
+use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotAddBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockHook;

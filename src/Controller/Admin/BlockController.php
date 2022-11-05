@@ -22,11 +22,11 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Controller\Admin;
 
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
+use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
+use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotAddBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotDeleteBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotUpdateBlockException;
-use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
-use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGridDefinitionFactory;
 use Kaudaj\Module\Blocks\Search\Filters\BlockFilters;
 use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
