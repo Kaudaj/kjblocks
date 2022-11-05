@@ -47,7 +47,7 @@ final class ContentBlockFormDataHandler implements FormDataHandlerInterface
     public function create(array $data): int
     {
         $addContentBlockCommand = (new AddContentBlockCommand())
-            ->setHookId(intval($data[ContentBlockType::FIELD_HOOK]))
+            ->setHooksIds(is_array($data[ContentBlockType::FIELD_HOOKS]) ? $data[ContentBlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[ContentBlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setLocalizedContents(array_filter($data[ContentBlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
         ;
@@ -65,7 +65,7 @@ final class ContentBlockFormDataHandler implements FormDataHandlerInterface
     public function update($id, array $data): void
     {
         $editContentBlockCommand = (new EditContentBlockCommand((int) $id))
-        ->setHookId(intval($data[ContentBlockType::FIELD_HOOK]))
+            ->setHooksIds(is_array($data[ContentBlockType::FIELD_HOOKS]) ? $data[ContentBlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[ContentBlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setLocalizedContents(array_filter($data[ContentBlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
         ;

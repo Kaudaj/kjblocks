@@ -25,6 +25,7 @@ use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockExcept
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Content;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\ContentBlockId;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Name;
+use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
  * Transfers content block data for editing.
@@ -37,9 +38,9 @@ class EditableContentBlock
     private $contentBlockId;
 
     /**
-     * @var int
+     * @var HookId[]
      */
-    private $hookId;
+    private $hooksIds = [];
 
     /**
      * @var array<int, Name>
@@ -54,17 +55,21 @@ class EditableContentBlock
     /**
      * @param array<int, string> $localizedNames
      * @param array<int, string> $localizedContents
+     * @param int[] $hooksIds
      *
      * @throws ContentBlockException
      */
     public function __construct(
         int $contentBlockId,
-        int $hookId,
+        array $hooksIds,
         array $localizedNames,
         array $localizedContents
     ) {
         $this->contentBlockId = new ContentBlockId($contentBlockId);
-        $this->hookId = $hookId;
+
+        foreach ($hooksIds as $hookId) {
+            $this->hooksIds[] = new HookId($hookId);
+        }
 
         foreach ($localizedNames as $langId => $name) {
             $this->localizedNames[$langId] = new Name($name);
@@ -80,9 +85,12 @@ class EditableContentBlock
         return $this->contentBlockId;
     }
 
-    public function getHookId(): int
+    /**
+     * @return HookId[]
+     */
+    public function getHooksIds(): array
     {
-        return $this->hookId;
+        return $this->hooksIds;
     }
 
     /**

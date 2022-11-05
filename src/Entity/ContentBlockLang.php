@@ -20,12 +20,12 @@
 namespace Kaudaj\Module\ContentBlocks\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kaudaj\Module\ContentBlocks\Repository\ContentBlockLangRepository;
+use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 use PrestaShopBundle\Entity\Lang;
 
 /**
- * @ORM\Table(name=ContentBlockLangRepository::TABLE_NAME_WITH_PREFIX)
- * @ORM\Entity(repositoryClass=ContentBlockLangRepository::class)
+ * @ORM\Table(name=ContentBlockRepository::LANG_TABLE_NAME_WITH_PREFIX)
+ * @ORM\Entity()
  */
 class ContentBlockLang
 {

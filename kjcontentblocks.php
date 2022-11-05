@@ -26,7 +26,7 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlocksByHook;
 use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
 use Kaudaj\Module\ContentBlocks\Form\Settings\GeneralConfiguration;
-use Kaudaj\Module\ContentBlocks\Repository\ContentBlockLangRepository;
+use Kaudaj\Module\ContentBlocks\Repository\ContentBlockHookRepository;
 use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
@@ -149,21 +149,37 @@ EOF
 
         $sql[] = "
             CREATE TABLE IF NOT EXISTS `$dbPrefix" . ContentBlockRepository::TABLE_NAME . "` (
-                `id_content_block` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `id_hook` INT,
-                `position` INT
+                `id_content_block` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY
             ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
         ";
 
         $sql[] = "
-            CREATE TABLE IF NOT EXISTS `$dbPrefix" . ContentBlockLangRepository::TABLE_NAME . "` (
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . ContentBlockRepository::LANG_TABLE_NAME . "` (
                 `id_content_block` INT UNSIGNED NOT NULL,
                 `id_lang` INT NOT NULL,
                 `name` VARCHAR(255) NOT NULL,
                 `content` TEXT NOT NULL,
                 PRIMARY KEY (id_content_block, id_lang),
+                FOREIGN KEY (`id_content_block`)
+                REFERENCES `{$dbPrefix}" . ContentBlockRepository::TABLE_NAME . "` (`id_content_block`)
+                ON DELETE CASCADE,
                 FOREIGN KEY (`id_lang`)
                 REFERENCES `{$dbPrefix}lang` (`id_lang`)
+                ON DELETE CASCADE
+            ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
+        ";
+
+        $sql[] = "
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . ContentBlockHookRepository::TABLE_NAME . "` (
+                `id_content_block` INT UNSIGNED NOT NULL,
+                `id_hook` INT UNSIGNED NOT NULL,
+                `position` INT UNSIGNED NOT NULL,
+                PRIMARY KEY (id_content_block, id_hook),
+                FOREIGN KEY (`id_content_block`)
+                REFERENCES `{$dbPrefix}" . ContentBlockRepository::TABLE_NAME . "` (`id_content_block`)
+                ON DELETE CASCADE,
+                FOREIGN KEY (`id_hook`)
+                REFERENCES `{$dbPrefix}hook` (`id_hook`)
                 ON DELETE CASCADE
             ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
         ";
@@ -214,11 +230,15 @@ EOF
         $dbPrefix = pSQL(_DB_PREFIX_);
 
         $sql[] = "
-            DROP TABLE IF EXISTS `$dbPrefix" . ContentBlockRepository::TABLE_NAME . '`
+            DROP TABLE IF EXISTS `$dbPrefix" . ContentBlockHookRepository::TABLE_NAME . '`
         ';
 
         $sql[] = "
-            DROP TABLE IF EXISTS `$dbPrefix" . ContentBlockLangRepository::TABLE_NAME . '`
+            DROP TABLE IF EXISTS `$dbPrefix" . ContentBlockRepository::LANG_TABLE_NAME . '`
+        ';
+
+        $sql[] = "
+            DROP TABLE IF EXISTS `$dbPrefix" . ContentBlockRepository::TABLE_NAME . '`
         ';
 
         $result = true;

@@ -15,8 +15,16 @@
  * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *#}
-{% extends '@Modules/kjcontentblocks/views/templates/back/layouts/content-block/base.html.twig' %}
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
 
-{% block content %}
-    {% include '@PrestaShop/Admin/Common/Grid/grid_panel.html.twig' with {'grid': contentBlocksGrid} %}
+{% block stylesheets %}
+  {{ parent() }}
+
+  <link rel="stylesheet" href="{{ asset('../modules/kjcontentblocks/views/dist/back.css') }}" type="text/css" media="all">
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  
+  <script src="{{ asset('../modules/kjcontentblocks/views/dist/content-blocks.js') }}"></script>
 {% endblock %}

@@ -23,6 +23,7 @@ namespace Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Command;
 
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Content;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Name;
+use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
  * Class AddContentBlockCommand is responsible for adding content block data.
@@ -30,9 +31,9 @@ use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Name;
 class AddContentBlockCommand extends AbstractContentBlockCommand
 {
     /**
-     * @var int
+     * @var HookId[]
      */
-    private $hookId;
+    private $hooksIds = [];
 
     /**
      * @var array<int, Name>
@@ -44,14 +45,22 @@ class AddContentBlockCommand extends AbstractContentBlockCommand
      */
     private $localizedContents;
 
-    public function getHookId(): int
+    /**
+     * @return HookId[]
+     */
+    public function getHooksIds(): array
     {
-        return $this->hookId;
+        return $this->hooksIds;
     }
 
-    public function setHookId(int $hookId): self
+    /**
+     * @param int[] $hooksIds
+     */
+    public function setHooksIds(array $hooksIds): self
     {
-        $this->hookId = $hookId;
+        foreach ($hooksIds as $hookId) {
+            $this->hooksIds[] = new HookId($hookId);
+        }
 
         return $this;
     }

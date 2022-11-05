@@ -25,6 +25,7 @@ use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockExcept
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Content;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\ContentBlockId;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Name;
+use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
  * Class EditContentBlockCommand is responsible for editing content block data.
@@ -37,9 +38,9 @@ class EditContentBlockCommand extends AbstractContentBlockCommand
     private $contentBlockId;
 
     /**
-     * @var int|null
+     * @var HookId[]|null
      */
-    private $hookId;
+    private $hooksIds;
 
     /**
      * @var array<int, Name>|null
@@ -66,14 +67,26 @@ class EditContentBlockCommand extends AbstractContentBlockCommand
         return $this->contentBlockId;
     }
 
-    public function getHookId(): ?int
+    /**
+     * @return HookId[]|null
+     */
+    public function getHooksIds(): ?array
     {
-        return $this->hookId;
+        return $this->hooksIds;
     }
 
-    public function setHookId(?int $hookId): self
+    /**
+     * @param int[]|null $hooksIds
+     */
+    public function setHooksIds(?array $hooksIds): self
     {
-        $this->hookId = $hookId;
+        if ($hooksIds) {
+            $hooksIds = array_map(function (int $hookId): HookId {
+                return new HookId($hookId);
+            }, $hooksIds);
+        }
+
+        $this->hooksIds = $hooksIds;
 
         return $this;
     }

@@ -50,9 +50,14 @@ final class GetContentBlockForEditingHandler extends AbstractContentBlockQueryHa
                 $localizedContents[$contentBlockLang->getLang()->getId()] = $contentBlockLang->getContent();
             }
 
+            $hooksIds = [];
+            foreach ($contentBlock->getContentBlockHooks() as $contentBlockHook) {
+                $hooksIds[] = $contentBlockHook->getHookId();
+            }
+
             $editableContentBlock = new EditableContentBlock(
                 $contentBlock->getId(),
-                $contentBlock->getHookId(),
+                $hooksIds,
                 $localizedNames,
                 $localizedContents
             );

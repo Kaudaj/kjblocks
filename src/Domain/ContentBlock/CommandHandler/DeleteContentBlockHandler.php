@@ -43,8 +43,14 @@ final class DeleteContentBlockHandler extends AbstractContentBlockCommandHandler
         );
 
         try {
+            $contentBlockHooks = $contentBlock->getContentBlockHooks();
+
             $this->entityManager->remove($contentBlock);
             $this->entityManager->flush();
+
+            foreach ($contentBlockHooks as $contentBlockHook) {
+                $this->contentBlockHookRepository->cleanPositions($contentBlockHook->getHookId());
+            }
         } catch (Exception $exception) {
             throw new CannotDeleteContentBlockException('An unexpected error occurred when deleting content block', 0, $exception);
         }

@@ -45,8 +45,11 @@ final class GetContentBlocksByHookHandler extends AbstractContentBlockQueryHandl
     {
         try {
             $hookId = Hook::getIdByName($query->getHookName());
+            if (!$hookId) {
+                return [];
+            }
 
-            $contentBlocks = $this->entityRepository->findBy(['hookId' => $hookId], ['position' => 'ASC']);
+            $contentBlocks = $this->entityRepository->findByHook($hookId);
         } catch (PrestaShopException $e) {
             $message = 'An unexpected error occurred when retrieving content blocks';
 

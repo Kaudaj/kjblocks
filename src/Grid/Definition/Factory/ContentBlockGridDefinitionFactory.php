@@ -55,9 +55,9 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
     private $hookChoiceProvider;
 
     /**
-     * @var int|null
+     * @var string|null
      */
-    private $hookId;
+    private $hookFilter;
 
     public function __construct(
         HookDispatcherInterface $hookDispatcher,
@@ -70,7 +70,7 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
 
         $this->hookChoiceProvider = $hookChoiceProvider;
 
-        $this->hookId = $this->getHookId(
+        $this->hookFilter = $this->getHookFilter(
             $adminFilterRepository,
             $contextEmployeeProvider->getId(),
             $shopContext->getContextShopID()
@@ -102,10 +102,14 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
                     'field' => 'name',
                 ])
             )
-            ->add((new DataColumn('hook'))
-                ->setName($this->trans('Hook', [], 'Admin.Global'))
+            ->add((new DataColumn('hooks'))
+                ->setName(
+                    $this->hookFilter !== null
+                        ? $this->trans('Hooks', [], 'Admin.Global')
+                        : $this->trans('Hook', [], 'Admin.Global')
+                    )
                 ->setOptions([
-                    'field' => 'hook',
+                    'field' => 'hooks',
                 ])
             )
             ->add((new ActionColumn('actions'))
@@ -116,7 +120,7 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
             )
         ;
 
-        if ($this->hookId !== null) {
+        if ($this->hookFilter !== null) {
             $positionColumn = (new PositionColumn('position'))
                 ->setName($this->trans('Position', [], 'Modules.Kjcontentblocks.Admin'))
                 ->setOptions([
@@ -127,7 +131,7 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
                 ])
             ;
 
-            $columns->addAfter('hook', $positionColumn);
+            $columns->addAfter('hooks', $positionColumn);
         }
 
         return $columns;
@@ -187,7 +191,7 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
                         'placeholder' => $this->trans('Hook', [], 'Admin.Global'),
                     ],
                 ])
-                ->setAssociatedColumn('hook')
+                ->setAssociatedColumn('hooks')
             )
             ->add((new Filter('actions', SearchAndResetType::class))
                 ->setTypeOptions([
@@ -201,7 +205,7 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
             )
         ;
 
-        if ($this->hookId !== null) {
+        if ($this->hookFilter !== null) {
             $positionFilter = (new Filter('position', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
@@ -230,11 +234,11 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
         ];
     }
 
-    private function getHookId(
+    private function getHookFilter(
         AdminFilterRepository $adminFilterRepository,
         int $employeeId,
         int $shopId
-    ): ?int {
+    ): ?string {
         $adminFilter = $adminFilterRepository->findByEmployeeAndFilterId(
             $employeeId,
             $shopId,
@@ -265,6 +269,6 @@ final class ContentBlockGridDefinitionFactory extends AbstractGridDefinitionFact
             return null;
         }
 
-        return intval($filters['hook']);
+        return strval($filters['hook']);
     }
 }

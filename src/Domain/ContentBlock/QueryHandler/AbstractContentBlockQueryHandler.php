@@ -22,9 +22,9 @@ declare(strict_types=1);
 namespace Kaudaj\Module\ContentBlocks\Domain\ContentBlock\QueryHandler;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ObjectRepository;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockNotFoundException;
 use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
+use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -39,7 +39,7 @@ abstract class AbstractContentBlockQueryHandler
     protected $entityManager;
 
     /**
-     * @var ObjectRepository<ContentBlock>
+     * @var ContentBlockRepository
      */
     protected $entityRepository;
 
@@ -47,9 +47,8 @@ abstract class AbstractContentBlockQueryHandler
     {
         $this->entityManager = $entityManager;
 
-        /** @var ObjectRepository<ContentBlock> */
+        /** @var ContentBlockRepository */
         $entityRepository = $this->entityManager->getRepository(ContentBlock::class);
-
         $this->entityRepository = $entityRepository;
     }
 

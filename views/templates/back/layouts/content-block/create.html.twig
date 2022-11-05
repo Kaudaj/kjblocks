@@ -15,7 +15,7 @@
  * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *#}
-{% extends 'PrestaShopBundle:Admin:layout.html.twig' %}
+{% extends '@Modules/kjcontentblocks/views/templates/back/layouts/content-block/base.html.twig' %}
 
 {% block content %}
   <div class="row justify-content-center">
@@ -28,10 +28,4 @@
       } %}
     </div>
   </div>
-{% endblock %}
-
-{% block javascripts %}
-  {{ parent() }}
-
-  <script src="{{ asset('../modules/kjcontentblocks/views/dist/content-blocks.js') }}"></script>
 {% endblock %}

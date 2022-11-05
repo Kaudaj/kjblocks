@@ -188,7 +188,7 @@ class ContentBlockController extends FrameworkBundleAdminController
         }
 
         /** @var GridPositionUpdaterInterface */
-        $updater = $this->get('prestashop.core.grid.position.doctrine_grid_position_updater');
+        $updater = $this->get('kaudaj.module.content_blocks.grid.position.content_block_grid_position_updater');
 
         try {
             $updater->update($positionUpdate);

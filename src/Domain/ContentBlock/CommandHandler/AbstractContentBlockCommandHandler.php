@@ -26,7 +26,9 @@ use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockNotFou
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Content;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\Name;
 use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
+use Kaudaj\Module\ContentBlocks\Entity\ContentBlockHook;
 use Kaudaj\Module\ContentBlocks\Entity\ContentBlockLang;
+use Kaudaj\Module\ContentBlocks\Repository\ContentBlockHookRepository;
 use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShopBundle\Entity\Lang;
@@ -54,6 +56,11 @@ abstract class AbstractContentBlockCommandHandler
      */
     protected $langRepository;
 
+    /**
+     * @var ContentBlockHookRepository
+     */
+    protected $contentBlockHookRepository;
+
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -64,6 +71,9 @@ abstract class AbstractContentBlockCommandHandler
 
         $langRepository = $this->entityManager->getRepository(Lang::class);
         $this->langRepository = $langRepository;
+
+        $contentBlockHookRepository = $this->entityManager->getRepository(ContentBlockHook::class);
+        $this->contentBlockHookRepository = $contentBlockHookRepository;
     }
 
     /**

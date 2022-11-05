@@ -26,6 +26,7 @@ use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\CannotAddContentBl
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockException;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\ValueObject\ContentBlockId;
 use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
+use Kaudaj\Module\ContentBlocks\Entity\ContentBlockHook;
 use PrestaShopException;
 
 /**
@@ -42,10 +43,16 @@ final class AddContentBlockHandler extends AbstractContentBlockCommandHandler
         try {
             $contentBlock = new ContentBlock();
 
-            $hookId = $command->getHookId();
-            $contentBlock->setHookId($hookId);
+            foreach ($command->getHooksIds() as $hookId) {
+                $contentBlockHook = new ContentBlockHook();
 
-            $contentBlock->setPosition($this->entityRepository->findMaxPosition($hookId) + 1);
+                $hookId = $hookId->getValue();
+
+                $contentBlockHook->setHookId($hookId);
+                $contentBlockHook->setPosition($this->contentBlockHookRepository->findMaxPosition($hookId) + 1);
+
+                $contentBlock->addContentBlockHook($contentBlockHook);
+            }
 
             $localizedNames = $command->getLocalizedNames();
             $localizedContents = $command->getLocalizedContents();

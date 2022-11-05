@@ -20,6 +20,7 @@
 namespace Kaudaj\Module\ContentBlocks\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
 
 /**
@@ -35,20 +36,30 @@ class ContentBlockRepository extends EntityRepository
     public const TABLE_NAME = 'kj_content_blocks_content_block';
     public const TABLE_NAME_WITH_PREFIX = _DB_PREFIX_ . self::TABLE_NAME;
 
+    public const LANG_TABLE_NAME = 'kj_content_blocks_content_block_lang';
+    public const LANG_TABLE_NAME_WITH_PREFIX = _DB_PREFIX_ . self::LANG_TABLE_NAME;
+
     /**
-     * Find highest position of content blocks for a given hook id.
-     * Returns -1 if there is no step.
+     * @return ContentBlock[]
      */
-    public function findMaxPosition(int $hookId): int
+    public function findByHook(int $hookId): array
     {
-        $qb = $this->createQueryBuilder('cb')
-            ->select('MAX(cb.position)')
-            ->where('cb.hookId = :hookId')
+        $qb = $this->createQueryBuilder('cb');
+
+        $qb
+            ->innerJoin(
+                'cb.contentBlockHooks',
+                'cbh',
+                Join::WITH,
+                $qb->expr()->eq('cbh.hookId', ':hookId')
+            )
             ->setParameter('hookId', $hookId)
+            ->orderBy('cbh.position', 'ASC')
         ;
 
-        $result = $qb->getQuery()->getSingleScalarResult();
+        /** @var ContentBlock[] */
+        $result = $qb->getQuery()->execute();
 
-        return $result !== null ? intval($result) : -1;
+        return $result;
     }
 }

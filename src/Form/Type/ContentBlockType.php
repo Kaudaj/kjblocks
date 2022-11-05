@@ -31,7 +31,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class ContentBlockType extends TranslatorAwareType
 {
-    public const FIELD_HOOK = 'hook';
+    public const FIELD_HOOKS = 'hooks';
     public const FIELD_NAME = 'name';
     public const FIELD_CONTENT = 'content';
 
@@ -58,13 +58,15 @@ class ContentBlockType extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(self::FIELD_HOOK, ChoiceType::class, [
+            ->add(self::FIELD_HOOKS, ChoiceType::class, [
                 'choices' => $this->hookChoices,
                 'attr' => [
                     'data-toggle' => 'select2',
                     'data-minimumResultsForSearch' => '7',
                 ],
-                'label' => $this->trans('Hook', 'Admin.Global'),
+                'multiple' => true,
+                'required' => false,
+                'label' => $this->trans('Hooks', 'Admin.Global'),
             ])
             ->add(self::FIELD_NAME, TranslatableType::class, [
                 'label' => $this->trans('Block name', 'Admin.Global'),

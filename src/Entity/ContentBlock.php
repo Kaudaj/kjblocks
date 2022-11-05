@@ -40,18 +40,11 @@ class ContentBlock
     private $id;
 
     /**
-     * @var int
+     * @var Collection<int, ContentBlockHook>
      *
-     * @ORM\Column(type="integer")
+     * @ORM\OneToMany(targetEntity=ContentBlockHook::class, cascade={"persist", "remove"}, mappedBy="contentBlock")
      */
-    private $position;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id_hook", type="integer")
-     */
-    private $hookId;
+    private $contentBlockHooks;
 
     /**
      * @var Collection<int, ContentBlockLang>
@@ -63,6 +56,7 @@ class ContentBlock
     public function __construct()
     {
         $this->contentBlockLangs = new ArrayCollection();
+        $this->contentBlockHooks = new ArrayCollection();
     }
 
     public function getId(): int
@@ -70,26 +64,38 @@ class ContentBlock
         return $this->id;
     }
 
-    public function getPosition(): int
+    /**
+     * @return Collection<int, ContentBlockHook>
+     */
+    public function getContentBlockHooks(): Collection
     {
-        return $this->position;
+        return $this->contentBlockHooks;
     }
 
-    public function setPosition(int $position): self
+    public function getContentBlockHook(int $hookId): ?ContentBlockHook
     {
-        $this->position = $position;
+        foreach ($this->contentBlockHooks as $contentBlockHook) {
+            if ($hookId == $contentBlockHook->getHookId()) {
+                return $contentBlockHook;
+            }
+        }
+
+        return null;
+    }
+
+    public function addContentBlockHook(ContentBlockHook $contentBlockHook): self
+    {
+        if (!$this->contentBlockHooks->contains($contentBlockHook)) {
+            $this->contentBlockHooks[] = $contentBlockHook;
+            $contentBlockHook->setContentBlock($this);
+        }
 
         return $this;
     }
 
-    public function getHookId(): int
+    public function removeContentBlockHook(ContentBlockHook $contentBlockLang): self
     {
-        return $this->hookId;
-    }
-
-    public function setHookId(int $hookId): self
-    {
-        $this->hookId = $hookId;
+        $this->contentBlockHooks->removeElement($contentBlockLang);
 
         return $this;
     }

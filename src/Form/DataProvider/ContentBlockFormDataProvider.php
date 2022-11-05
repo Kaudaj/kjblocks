@@ -57,8 +57,13 @@ final class ContentBlockFormDataProvider implements FormDataProviderInterface
             $localizedContents[$langId] = $name->getValue();
         }
 
+        $hooksIds = [];
+        foreach ($editableContentBlock->getHooksIds() as $hookId) {
+            $hooksIds[] = $hookId->getValue();
+        }
+
         return [
-            ContentBlockType::FIELD_HOOK => $editableContentBlock->getHookId(),
+            ContentBlockType::FIELD_HOOKS => $hooksIds,
             ContentBlockType::FIELD_NAME => $localizedNames,
             ContentBlockType::FIELD_CONTENT => $localizedContents,
         ];

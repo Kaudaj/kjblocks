@@ -52,10 +52,12 @@ final class ContentBlockHookChoiceProvider implements FormChoiceProviderInterfac
 
         $choices = [];
         foreach ($contentBlocks as $contentBlock) {
-            $hookId = $contentBlock->getHookId();
-            $hookName = strval(Hook::getNameById($hookId));
+            foreach ($contentBlock->getContentBlockHooks() as $contentBlockHook) {
+                $hookId = $contentBlockHook->getHookId();
+                $hookName = strval(Hook::getNameById($hookId));
 
-            $choices[$hookName] = $hookId;
+                $choices[$hookName] = $hookId;
+            }
         }
 
         return $choices;

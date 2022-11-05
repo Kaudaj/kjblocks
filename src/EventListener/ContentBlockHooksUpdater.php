@@ -82,11 +82,18 @@ class ContentBlockHooksUpdater
 
         $contentBlocks = $this->entityRepository->findAll();
 
-        $contentBlocksHooks = array_unique(
-            array_map(function (ContentBlock $contentBlock) use ($getHookName): string {
-                return $getHookName($contentBlock->getHookId());
-            }, $contentBlocks)
-        );
+        $contentBlocksHooks = [];
+        foreach ($contentBlocks as $contentBlock) {
+            foreach ($contentBlock->getContentBlockHooks() as $contentBlockHook) {
+                $hookId = $contentBlockHook->getHookId();
+
+                if (key_exists($hookId, $contentBlocksHooks)) {
+                    continue;
+                }
+
+                $contentBlocksHooks[$hookId] = $getHookName($hookId);
+            }
+        }
 
         $sql = 'SELECT DISTINCT(`id_hook`) 
             FROM `' . _DB_PREFIX_ . 'hook_module` 

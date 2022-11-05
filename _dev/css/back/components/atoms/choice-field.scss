@@ -1,4 +1,4 @@
-{#**
+/**
  * Copyright since 2019 Kaudaj
  *
  * NOTICE OF LICENSE
@@ -14,9 +14,25 @@
  * @author    Kaudaj <info@kaudaj.com>
  * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *#}
-{% extends '@Modules/kjcontentblocks/views/templates/back/layouts/content-block/base.html.twig' %}
+ */
+.form-group .select2-container--bootstrap .select2-selection--multiple .select2-selection__rendered {
+    display: flex;
+    flex-wrap: wrap;
 
-{% block content %}
-    {% include '@PrestaShop/Admin/Common/Grid/grid_panel.html.twig' with {'grid': contentBlocksGrid} %}
-{% endblock %}
+    > * {
+        margin: 0.25rem;
+    }
+
+    .select2-selection__choice {
+        float: none;
+    }
+
+    .select2-search--inline {
+        float: none;
+        margin: 0.25rem 0;
+
+        .select2-search__field {
+            height: auto;
+        }
+    }
+}

@@ -23,7 +23,7 @@ namespace Kaudaj\Module\ContentBlocks\Grid\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Kaudaj\Module\ContentBlocks\Repository\ContentBlockLangRepository;
+use Kaudaj\Module\ContentBlocks\Repository\ContentBlockHookRepository;
 use Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository;
 use PrestaShop\PrestaShop\Core\Grid\Query\AbstractDoctrineQueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Query\DoctrineSearchCriteriaApplicatorInterface;
@@ -55,10 +55,12 @@ final class ContentBlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
     public function getSearchQueryBuilder(SearchCriteriaInterface $searchCriteria)
     {
-        $qb = $this->getQueryBuilder($searchCriteria->getFilters());
+        $filters = $searchCriteria->getFilters();
+
+        $qb = $this->getQueryBuilder($filters);
         $qb
-            ->select('cb.id_content_block, h.name AS hook, cbl.name, cb.position')
-            ->addSelect('cb.id_hook')
+            ->select('cb.id_content_block, cbl.name, cbh.position')
+            ->addSelect((!key_exists('hook', $filters) ? "GROUP_CONCAT(h.name SEPARATOR ', ')" : 'h.name') . ' AS hooks')
         ;
 
         $this->searchCriteriaApplicator
@@ -94,19 +96,24 @@ final class ContentBlockQueryBuilder extends AbstractDoctrineQueryBuilder
             ->from($this->dbPrefix . ContentBlockRepository::TABLE_NAME, 'cb')
             ->leftJoin(
                 'cb',
-                $this->dbPrefix . 'hook',
-                'h',
-                'cb.id_hook = h.id_hook'
-            )
-            ->leftJoin(
-                'cb',
-                $this->dbPrefix . ContentBlockLangRepository::TABLE_NAME,
+                $this->dbPrefix . ContentBlockRepository::LANG_TABLE_NAME,
                 'cbl',
-                'cb.id_content_block = cbl.id_content_block'
+                'cb.id_content_block = cbl.id_content_block AND cbl.id_lang = :langId'
             )
-            ->andWhere('cbl.id_lang = :langId')
             ->setParameter('langId', $this->contextLangId)
         ;
+
+        if (!key_exists('hook', $filters)) {
+            $qb
+                ->leftJoin(
+                    'cb',
+                    $this->dbPrefix . ContentBlockHookRepository::TABLE_NAME,
+                    'cbh',
+                    'cb.id_content_block = cbh.id_content_block'
+                )
+                ->groupBy('cb.id_content_block')
+            ;
+        }
 
         foreach ($filters as $filterName => $value) {
             if (!in_array($filterName, $availableFilters, true)) {
@@ -114,7 +121,7 @@ final class ContentBlockQueryBuilder extends AbstractDoctrineQueryBuilder
             }
 
             switch ($filterName) {
-                case 'id_configurator_step':
+                case 'id_content_block':
                     $qb->andWhere('cb.`' . $filterName . '` = :' . $filterName);
                     $qb->setParameter($filterName, $value);
 
@@ -131,8 +138,16 @@ final class ContentBlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
                     break;
                 case 'hook':
-                    $qb->andWhere('cb.`id_hook` = :' . $filterName);
-                    $qb->setParameter($filterName, $value);
+                    $qb
+                        ->innerJoin(
+                            'cb',
+                            $this->dbPrefix . ContentBlockHookRepository::TABLE_NAME,
+                            'cbh',
+                            'cb.id_content_block = cbh.id_content_block AND cbh.id_hook = :hookId'
+                        )
+                    ;
+
+                    $qb->setParameter('hookId', $value);
 
                     break;
                 default:
@@ -140,6 +155,15 @@ final class ContentBlockQueryBuilder extends AbstractDoctrineQueryBuilder
                     $qb->setParameter($filterName, '%' . $value . '%');
             }
         }
+
+        $qb
+            ->leftJoin(
+                'cbh',
+                $this->dbPrefix . 'hook',
+                'h',
+                'cbh.id_hook = h.id_hook'
+            )
+        ;
 
         return $qb;
     }

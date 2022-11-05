@@ -24,6 +24,9 @@ namespace Kaudaj\Module\ContentBlocks\Domain\ContentBlock\CommandHandler;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Command\EditContentBlockCommand;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\CannotUpdateContentBlockException;
 use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Exception\ContentBlockException;
+use Kaudaj\Module\ContentBlocks\Entity\ContentBlock;
+use Kaudaj\Module\ContentBlocks\Entity\ContentBlockHook;
+use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 use PrestaShopException;
 
 /**
@@ -43,15 +46,13 @@ final class EditContentBlockHandler extends AbstractContentBlockCommandHandler
                 $command->getContentBlockId()->getValue()
             );
 
-            $oldHookId = $contentBlock->getHookId();
-            $newHookId = $command->getHookId();
+            $hooksIds = $command->getHooksIds();
+            if ($hooksIds) {
+                $hooksIds = array_map(function (HookId $hookId): int {
+                    return $hookId->getValue();
+                }, $hooksIds);
 
-            if (null !== $newHookId) {
-                $contentBlock->setHookId($newHookId);
-
-                if ($oldHookId !== $newHookId) {
-                    $contentBlock->setPosition($this->entityRepository->findMaxPosition($newHookId) + 1);
-                }
+                $this->updateHooks($contentBlock, $hooksIds);
             }
 
             $localizedNames = $command->getLocalizedNames();
@@ -78,6 +79,37 @@ final class EditContentBlockHandler extends AbstractContentBlockCommandHandler
             $this->entityManager->flush();
         } catch (PrestaShopException $exception) {
             throw new CannotUpdateContentBlockException('An unexpected error occurred when editing content block', 0, $exception);
+        }
+    }
+
+    /**
+     * @param int[] $hooksIds
+     */
+    protected function updateHooks(ContentBlock $contentBlock, array $hooksIds): void
+    {
+        foreach ($hooksIds as $hookId) {
+            if ($contentBlock->getContentBlockHook($hookId)) {
+                continue;
+            }
+
+            $contentBlockHook = new ContentBlockHook();
+
+            $contentBlockHook->setHookId($hookId);
+            $contentBlockHook->setPosition($this->contentBlockHookRepository->findMaxPosition($hookId) + 1);
+
+            $contentBlock->addContentBlockHook($contentBlockHook);
+        }
+
+        foreach ($contentBlock->getContentBlockHooks() as $contentBlockHook) {
+            $hookId = $contentBlockHook->getHookId();
+            if (in_array($hookId, $hooksIds)) {
+                continue;
+            }
+
+            $contentBlock->removeContentBlockHook($contentBlockHook);
+            $this->entityManager->remove($contentBlockHook);
+
+            $this->contentBlockHookRepository->cleanPositions($hookId);
         }
     }
 }

@@ -19,8 +19,20 @@
 const {$} = window;
 
 $(() => {
+  initForm();
+  initGrid();
+});
+
+function initForm() {
   window.prestashop.component.initComponents(['TranslatableInput']);
 
+  // Fix select2 field taking value by default
+  if ($('#content_block_hooks').length) {
+    $('#content_block_hooks option')[0].remove();
+  }
+}
+
+function initGrid() {
   const contentBlocksGrid = new window.prestashop.component.Grid('content_blocks');
 
   const gridExtensions = [
@@ -34,4 +46,4 @@ $(() => {
   gridExtensions.forEach((extension) => {
     contentBlocksGrid.addExtension(extension);
   });
-});
+}

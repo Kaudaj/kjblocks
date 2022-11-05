@@ -12,10 +12,21 @@ services:
       - "@prestashop.adapter.data_provider.employee"
       - "@prestashop.adapter.shop.context"
 
+  kaudaj.module.content_blocks.grid.position.content_block_grid_position_updater:
+    class: 'Kaudaj\Module\ContentBlocks\Grid\Position\ContentBlockGridPositionUpdater'
+    arguments:
+      - '@kaudaj.module.content_blocks.grid.position.update_handler.content_block_position_update_handler'
+
+  kaudaj.module.content_blocks.grid.position.update_handler.content_block_position_update_handler:
+    class: 'Kaudaj\Module\ContentBlocks\Grid\Position\UpdateHandler\ContentBlockPositionUpdateHandler'
+    arguments:
+      - '@doctrine.dbal.default_connection'
+      - '%database_prefix%'
+
   kaudaj.module.content_blocks.grid.position_definition.content_block:
     class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
     arguments:
-      $table: !php/const Kaudaj\Module\ContentBlocks\Repository\ContentBlockRepository::TABLE_NAME
+      $table: !php/const Kaudaj\Module\ContentBlocks\Repository\ContentBlockHookRepository::TABLE_NAME
       $idField: "id_content_block"
       $positionField: "position"
       $parentIdField: "id_hook"
