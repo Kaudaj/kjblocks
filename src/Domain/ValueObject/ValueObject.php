@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\ContentBlocks\Domain\ValueObject;
+namespace Kaudaj\Module\Blocks\Domain\ValueObject;
 
-use Kaudaj\Module\ContentBlocks\ConstraintValidator\Factory\ConstraintValidatorFactory;
+use Kaudaj\Module\Blocks\ConstraintValidator\Factory\ConstraintValidatorFactory;
 use PrestaShop\PrestaShop\Core\Domain\Exception\DomainConstraintException;
 use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
 use Symfony\Component\Validator\Constraint;

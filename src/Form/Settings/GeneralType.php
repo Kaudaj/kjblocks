@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\ContentBlocks\Form\Settings;
+namespace Kaudaj\Module\Blocks\Form\Settings;
 
 use PrestaShopBundle\Form\Admin\Type\MultistoreConfigurationType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
@@ -38,8 +38,8 @@ class GeneralType extends TranslatorAwareType
     {
         $builder
             ->add('example_setting', TextType::class, [
-                'label' => $this->trans('Example setting', 'Modules.Kjcontentblocks.Admin'),
-                'help' => $this->trans('Help user to fill this field.', 'Modules.Kjcontentblocks.Admin'),
+                'label' => $this->trans('Example setting', 'Modules.Kjblocks.Admin'),
+                'help' => $this->trans('Help user to fill this field.', 'Modules.Kjblocks.Admin'),
                 'required' => false,
                 'multistore_configuration_key' => GeneralConfiguration::EXAMPLE_SETTING_KEY,
             ]);

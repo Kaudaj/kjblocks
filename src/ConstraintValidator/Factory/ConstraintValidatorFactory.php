@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\ContentBlocks\ConstraintValidator\Factory;
+namespace Kaudaj\Module\Blocks\ConstraintValidator\Factory;
 
 use PrestaShop\PrestaShop\Core\ConstraintValidator\CleanHtmlValidator;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CleanHtml;

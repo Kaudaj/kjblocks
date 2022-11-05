@@ -19,21 +19,21 @@
 {% extends '@PrestaShop/Admin/layout.html.twig' %}
 
 {% block content %}
-  {% include '@Modules/kjcontentblocks/views/templates/back/components/organisms/form.html.twig' with {
+  {% include '@Modules/kjblocks/views/templates/back/components/organisms/form.html.twig' with {
     'form': general_form,
     'form_id': 'settings_general_form',
-    'form_action': path('kj_content_blocks_settings_general_save'),
-    'card_header': 'General' | trans({}, 'Modules.Kjcontentblocks.Admin'),
-    'cancel_path': 'kj_content_blocks_settings'
+    'form_action': path('kj_blocks_settings_general_save'),
+    'card_header': 'General' | trans({}, 'Modules.Kjblocks.Admin'),
+    'cancel_path': 'kj_blocks_settings'
   } %}
 {% endblock %}
 
 {% block stylesheets %}
   {{ parent() }}
-  <link rel="stylesheet" href="{{ asset('../modules/kjcontentblocks/views/dist/back.css') }}" type="text/css" media="all">
+  <link rel="stylesheet" href="{{ asset('../modules/kjblocks/views/dist/back.css') }}" type="text/css" media="all">
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
-  <script src="{{ asset('../modules/kjcontentblocks/views/dist/settings.js') }}"></script>
+  <script src="{{ asset('../modules/kjblocks/views/dist/settings.js') }}"></script>
 {% endblock %}

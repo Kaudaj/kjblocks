@@ -1,6 +1,6 @@
 {
-  "name": "kaudaj/kjcontentblocks",
-  "description": "Content Blocks",
+  "name": "kaudaj/kjblocks",
+  "description": "Blocks",
   "type": "prestashop-module",
   "license": "AFL-3.0",
   "authors": [
@@ -23,7 +23,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Kaudaj\\Module\\ContentBlocks\\": "src/"
+      "Kaudaj\\Module\\Blocks\\": "src/"
     }
   },
   "config": {

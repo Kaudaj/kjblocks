@@ -1,14 +1,14 @@
-kj_content_blocks:
+kj_blocks:
   path: /
   methods: [GET]
   defaults:
-    _controller: 'Kaudaj\Module\ContentBlocks\Controller\Admin\ContentBlockController::indexAction'
-    _legacy_controller: KJContentBlocks
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockController::indexAction'
+    _legacy_controller: KJBlocks
 
-kj_content_blocks_content_blocks:
-  resource: "content_block.yml"
-  prefix: /content-blocks
+kj_blocks_blocks:
+  resource: "block.yml"
+  prefix: /blocks
 
-kj_content_blocks_settings:
+kj_blocks_settings:
   resource: "settings.yml"
   prefix: /settings

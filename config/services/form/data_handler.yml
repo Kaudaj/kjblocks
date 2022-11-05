@@ -2,7 +2,7 @@ services:
   _defaults:
     public: true
 
-  kaudaj.module.content_blocks.form.data_handler.content_block:
-    class: Kaudaj\Module\ContentBlocks\Form\DataHandler\ContentBlockFormDataHandler
+  kaudaj.module.blocks.form.data_handler.block:
+    class: Kaudaj\Module\Blocks\Form\DataHandler\BlockFormDataHandler
     arguments:
       - '@prestashop.core.command_bus'

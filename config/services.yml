@@ -5,36 +5,36 @@ services:
   _defaults:
     public: true
 
-  kaudaj.module.contentblocks.form.settings.general_configuration:
-    class: Kaudaj\Module\ContentBlocks\Form\Settings\GeneralConfiguration
+  kaudaj.module.blocks.form.settings.general_configuration:
+    class: Kaudaj\Module\Blocks\Form\Settings\GeneralConfiguration
     arguments:
       - "@prestashop.adapter.legacy.configuration"
       - "@prestashop.adapter.shop.context"
       - "@prestashop.adapter.multistore_feature"
 
-  kaudaj.module.contentblocks.form.settings.general_type:
-    class: 'Kaudaj\Module\ContentBlocks\Form\Settings\GeneralType'
+  kaudaj.module.blocks.form.settings.general_type:
+    class: 'Kaudaj\Module\Blocks\Form\Settings\GeneralType'
     parent: "form.type.translatable.aware"
     public: true
     tags:
       - { name: form.type }
 
-  kaudaj.module.contentblocks.form.settings.general_form_data_provider:
-    class: 'Kaudaj\Module\ContentBlocks\Form\Settings\GeneralFormDataProvider'
+  kaudaj.module.blocks.form.settings.general_form_data_provider:
+    class: 'Kaudaj\Module\Blocks\Form\Settings\GeneralFormDataProvider'
     arguments:
-      - "@kaudaj.module.contentblocks.form.settings.general_configuration"
+      - "@kaudaj.module.blocks.form.settings.general_configuration"
 
-  kaudaj.module.contentblocks.form.settings.general_form_data_handler:
+  kaudaj.module.blocks.form.settings.general_form_data_handler:
     class: 'PrestaShop\PrestaShop\Core\Form\Handler'
     arguments:
       - "@form.factory"
       - "@prestashop.core.hook.dispatcher"
-      - "@kaudaj.module.contentblocks.form.settings.general_form_data_provider"
-      - 'Kaudaj\Module\ContentBlocks\Form\Settings\GeneralType'
+      - "@kaudaj.module.blocks.form.settings.general_form_data_provider"
+      - 'Kaudaj\Module\Blocks\Form\Settings\GeneralType'
       - "General"
 
-  kaudaj.module.content_blocks.event_listener.content_block_hooks_updater:
-    class: 'Kaudaj\Module\ContentBlocks\EventListener\ContentBlockHooksUpdater'
+  kaudaj.module.blocks.event_listener.block_hooks_updater:
+    class: 'Kaudaj\Module\Blocks\EventListener\BlockHooksUpdater'
     arguments:
       - '@doctrine.orm.entity_manager'
       - '@=service("prestashop.adapter.shop.context").getContextShopID()'
@@ -42,12 +42,12 @@ services:
       -
         name: 'doctrine.orm.entity_listener'
         event: 'postUpdate'
-        entity: 'Kaudaj\Module\ContentBlocks\Entity\ContentBlock'
+        entity: 'Kaudaj\Module\Blocks\Entity\Block'
       -
         name: 'doctrine.orm.entity_listener'
         event: 'postPersist'
-        entity: 'Kaudaj\Module\ContentBlocks\Entity\ContentBlock'
+        entity: 'Kaudaj\Module\Blocks\Entity\Block'
       -
         name: 'doctrine.orm.entity_listener'
         event: 'postRemove'
-        entity: 'Kaudaj\Module\ContentBlocks\Entity\ContentBlock'
+        entity: 'Kaudaj\Module\Blocks\Entity\Block'

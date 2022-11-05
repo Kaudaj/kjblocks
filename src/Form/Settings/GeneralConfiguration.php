@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\ContentBlocks\Form\Settings;
+namespace Kaudaj\Module\Blocks\Form\Settings;
 
 use PrestaShop\PrestaShop\Core\Configuration\AbstractMultistoreConfiguration;
 use PrestaShopBundle\Service\Form\MultistoreCheckboxEnabler;
@@ -32,7 +32,7 @@ final class GeneralConfiguration extends AbstractMultistoreConfiguration
     /**
      * @var string
      */
-    public const EXAMPLE_SETTING_KEY = 'KJ_CONTENT_BLOCKS_EXAMPLE_SETTING';
+    public const EXAMPLE_SETTING_KEY = 'KJ_BLOCKS_EXAMPLE_SETTING';
 
     /**
      * @var array<string, string>

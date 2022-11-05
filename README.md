@@ -1,10 +1,10 @@
-<!-- <h1 align="center"><img src="/views/img/logo.png" alt="Content blocks" width="500"></h1> -->
+<!-- <h1 align="center"><img src="/views/img/logo.png" alt="Blocks" width="500"></h1> -->
 
-# Content blocks
+# Blocks
 
-[![PHP tests](https://github.com/Kaudaj/kjcontentblocks/actions/workflows/php.yml/badge.svg)](https://github.com/Kaudaj/kjcontentblocks/actions/workflows/php.yml)
-[![GitHub release](https://img.shields.io/github/release/Kaudaj/kjcontentblocks.svg)](https://GitHub.com/Kaudaj/kjcontentblocks/releases/)
-[![GitHub license](https://img.shields.io/github/license/Kaudaj/kjcontentblocks)](https://github.com/Kaudaj/kjcontentblocks/LICENSE.md)
+[![PHP tests](https://github.com/Kaudaj/kjblocks/actions/workflows/php.yml/badge.svg)](https://github.com/Kaudaj/kjblocks/actions/workflows/php.yml)
+[![GitHub release](https://img.shields.io/github/release/Kaudaj/kjblocks.svg)](https://GitHub.com/Kaudaj/kjblocks/releases/)
+[![GitHub license](https://img.shields.io/github/license/Kaudaj/kjblocks)](https://github.com/Kaudaj/kjblocks/LICENSE.md)
 
 ## About
 
@@ -36,7 +36,7 @@ Feel free to contact me by email at info@kaudaj.com.
 
 This module is released under the [Academic Free License 3.0][afl-3.0].
 
-[report-issue]: https://github.com/Kaudaj/kjcontentblocks/issues/new/choose
+[report-issue]: https://github.com/Kaudaj/kjblocks/issues/new/choose
 [prestashop]: https://www.prestashop.com/
 [contribution-guidelines]: https://devdocs.prestashop.com/1.7/contribute/contribution-guidelines/project-modules/
 [afl-3.0]: https://opensource.org/licenses/AFL-3.0

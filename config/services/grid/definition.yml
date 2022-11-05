@@ -2,31 +2,31 @@ services:
   _defaults:
     public: true
 
-  kaudaj.module.content_blocks.grid.definition.factory.content_block:
+  kaudaj.module.blocks.grid.definition.factory.block:
     public: true
-    class: Kaudaj\Module\ContentBlocks\Grid\Definition\Factory\ContentBlockGridDefinitionFactory
+    class: Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGridDefinitionFactory
     parent: prestashop.core.grid.definition.factory.abstract_grid_definition
     arguments:
-      - "@kaudaj.module.content_blocks.form.choice_provider.content_block_hook"
+      - "@kaudaj.module.blocks.form.choice_provider.block_hook"
       - "@prestashop.core.admin.admin_filter.repository"
       - "@prestashop.adapter.data_provider.employee"
       - "@prestashop.adapter.shop.context"
 
-  kaudaj.module.content_blocks.grid.position.content_block_grid_position_updater:
-    class: 'Kaudaj\Module\ContentBlocks\Grid\Position\ContentBlockGridPositionUpdater'
+  kaudaj.module.blocks.grid.position.block_grid_position_updater:
+    class: 'Kaudaj\Module\Blocks\Grid\Position\BlockGridPositionUpdater'
     arguments:
-      - '@kaudaj.module.content_blocks.grid.position.update_handler.content_block_position_update_handler'
+      - '@kaudaj.module.blocks.grid.position.update_handler.block_position_update_handler'
 
-  kaudaj.module.content_blocks.grid.position.update_handler.content_block_position_update_handler:
-    class: 'Kaudaj\Module\ContentBlocks\Grid\Position\UpdateHandler\ContentBlockPositionUpdateHandler'
+  kaudaj.module.blocks.grid.position.update_handler.block_position_update_handler:
+    class: 'Kaudaj\Module\Blocks\Grid\Position\UpdateHandler\BlockPositionUpdateHandler'
     arguments:
       - '@doctrine.dbal.default_connection'
       - '%database_prefix%'
 
-  kaudaj.module.content_blocks.grid.position_definition.content_block:
+  kaudaj.module.blocks.grid.position_definition.block:
     class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
     arguments:
-      $table: !php/const Kaudaj\Module\ContentBlocks\Repository\ContentBlockHookRepository::TABLE_NAME
-      $idField: "id_content_block"
+      $table: !php/const Kaudaj\Module\Blocks\Repository\BlockHookRepository::TABLE_NAME
+      $idField: "id_block"
       $positionField: "position"
       $parentIdField: "id_hook"

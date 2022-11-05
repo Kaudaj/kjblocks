@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\ContentBlocks\Controller\Admin;
+namespace Kaudaj\Module\Blocks\Controller\Admin;
 
 use PrestaShop\PrestaShop\Core\Domain\Tab\Command\UpdateTabStatusByClassNameCommand;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class SettingsController
  *
- * @ModuleActivated(moduleName="kjcontentblocks", redirectRoute="admin_module_manage")
+ * @ModuleActivated(moduleName="kjblocks", redirectRoute="admin_module_manage")
  */
 class SettingsController extends FrameworkBundleAdminController
 {
@@ -56,7 +56,7 @@ class SettingsController extends FrameworkBundleAdminController
         /** @var FormInterface<string, mixed> $generalForm */
         $generalForm = $generalFormDataHandler->getForm();
 
-        return $this->render('@Modules/kjcontentblocks/views/templates/back/components/layouts/settings.html.twig', [
+        return $this->render('@Modules/kjblocks/views/templates/back/components/layouts/settings.html.twig', [
             'general_form' => $generalForm->createView(),
         ]);
     }
@@ -65,10 +65,10 @@ class SettingsController extends FrameworkBundleAdminController
      * @AdminSecurity(
      *      "is_granted('update', request.get('_legacy_controller')) && is_granted('create', request.get('_legacy_controller')) && is_granted('delete', request.get('_legacy_controller'))",
      *      message="You do not have permission to update this.",
-     *      redirectRoute="kj_content_blocks_settings"
+     *      redirectRoute="kj_blocks_settings"
      * )
      *
-     * @DemoRestricted(redirectRoute="kj_content_blocks_settings")
+     * @DemoRestricted(redirectRoute="kj_blocks_settings")
      *
      * @param Request $request
      *
@@ -97,12 +97,12 @@ class SettingsController extends FrameworkBundleAdminController
     private function processForm(Request $request, FormHandlerInterface $formHandler, string $hookName)
     {
         $this->dispatchHook(
-            'actionKJContentBlocks' . get_class($this) . 'PostProcess' . $hookName . 'Before',
+            'actionKJBlocks' . get_class($this) . 'PostProcess' . $hookName . 'Before',
             ['controller' => $this]
         );
 
         $this->dispatchHook(
-            'actionKJContentBlocks' . get_class($this) . 'PostProcessBefore',
+            'actionKJBlocks' . get_class($this) . 'PostProcessBefore',
             ['controller' => $this]
         );
 
@@ -129,7 +129,7 @@ class SettingsController extends FrameworkBundleAdminController
             }
         }
 
-        return $this->redirectToRoute('kj_content_blocks_settings');
+        return $this->redirectToRoute('kj_blocks_settings');
     }
 
     /**
@@ -138,7 +138,7 @@ class SettingsController extends FrameworkBundleAdminController
     private function getGeneralFormHandler()
     {
         /** @var FormHandlerInterface */
-        $formDataHandler = $this->get('kaudaj.module.contentblocks.form.settings.general_form_data_handler');
+        $formDataHandler = $this->get('kaudaj.module.blocks.form.settings.general_form_data_handler');
 
         return $formDataHandler;
     }

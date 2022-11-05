@@ -19,10 +19,10 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\ContentBlocks\Builder;
+namespace Kaudaj\Module\Blocks\Builder;
 
-use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\Query\GetContentBlocksByHook;
-use Kaudaj\Module\ContentBlocks\Domain\ContentBlock\QueryHandler\GetContentBlocksByHookHandler;
+use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
+use Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlocksByHookHandler;
 use League\Tactician\CommandBus;
 use League\Tactician\Setup\QuickStart;
 
@@ -40,10 +40,10 @@ class CommandBusBuilder
     private $commandHandlers = [];
 
     public function __construct(
-        GetContentBlocksByHookHandler $getContentBlocksByHookHandler
+        GetBlocksByHookHandler $getBlocksByHookHandler
     ) {
         $this->commandHandlers = [
-            GetContentBlocksByHook::class => $getContentBlocksByHookHandler,
+            GetBlocksByHook::class => $getBlocksByHookHandler,
         ];
     }
 

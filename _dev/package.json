@@ -1,5 +1,5 @@
 {
-    "name": "kjcontentblocks",
+    "name": "kjblocks",
     "version": "1.0.0",
     "description": "## About",
     "private": true,
@@ -11,20 +11,20 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Kaudaj/kjcontentblocks.git"
+        "url": "git+https://github.com/Kaudaj/kjblocks.git"
     },
     "keywords": [],
     "author": "PrestaShop",
     "license": "AFL-3.0",
     "bugs": {
-        "url": "https://github.com/Kaudaj/kjcontentblocks/issues"
+        "url": "https://github.com/Kaudaj/kjblocks/issues"
     },
     "babel": {
         "presets": [
             "@babel/preset-env"
         ]
     },
-    "homepage": "https://github.com/Kaudaj/kjcontentblocks#readme",
+    "homepage": "https://github.com/Kaudaj/kjblocks#readme",
     "devDependencies": {
         "@babel/core": "^7.15.8",
         "@babel/preset-env": "^7.15.8",

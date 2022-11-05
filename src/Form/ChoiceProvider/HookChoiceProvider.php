@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-namespace Kaudaj\Module\ContentBlocks\Form\ChoiceProvider;
+namespace Kaudaj\Module\Blocks\Form\ChoiceProvider;
 
 /**
  * Class HookChoiceProvider.
