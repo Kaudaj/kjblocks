@@ -25,7 +25,6 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
 use Kaudaj\Module\Blocks\Entity\Block;
-use Kaudaj\Module\Blocks\Form\Settings\GeneralConfiguration;
 use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
@@ -38,24 +37,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class KJBlocks extends Module implements WidgetInterface
 {
     /**
-     * @var array<string, string> Configuration values
-     */
-    public const CONFIGURATION_VALUES = [
-        GeneralConfiguration::EXAMPLE_SETTING_KEY => 'default_value',
-    ];
-
-    /**
      * @var string[] Hooks to register
      */
     public const HOOKS = [];
 
     public const HOOK_FILTER_CONTENT = 'filterBlockContent';
     public const HOOK_KEY_CONTENT = 'content';
-
-    /**
-     * @var Configuration<string, mixed> Configuration
-     */
-    private $configuration;
 
     public function __construct()
     {
@@ -96,8 +83,6 @@ EOF
                 'wording_domain' => 'Modules.Kjblocks.Admin',
             ],
         ];
-
-        $this->configuration = new Configuration();
     }
 
     /**
@@ -114,26 +99,9 @@ EOF
     public function install(): bool
     {
         return parent::install()
-            && $this->installConfiguration()
             && $this->registerHook(self::HOOKS)
             && $this->installTables()
         ;
-    }
-
-    /**
-     * Install configuration values
-     */
-    private function installConfiguration(): bool
-    {
-        try {
-            foreach (self::CONFIGURATION_VALUES as $key => $default_value) {
-                $this->configuration->set($key, $default_value);
-            }
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -198,25 +166,8 @@ EOF
     public function uninstall(): bool
     {
         return parent::uninstall()
-            && $this->uninstallConfiguration()
             && $this->uninstallTables()
         ;
-    }
-
-    /**
-     * Uninstall configuration values
-     */
-    private function uninstallConfiguration(): bool
-    {
-        try {
-            foreach (array_keys(self::CONFIGURATION_VALUES) as $key) {
-                $this->configuration->remove($key);
-            }
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
