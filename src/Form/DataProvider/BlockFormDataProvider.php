@@ -21,11 +21,17 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataProvider;
 
+use Kaudaj\Module\Blocks\BlockFormMapperInterface;
+use Kaudaj\Module\Blocks\BlockInterface;
+use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing;
 use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
+use PrestaShop\PrestaShop\Adapter\ContainerFinder;
+use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataProvider\FormDataProviderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class BlockFormDataProvider implements FormDataProviderInterface
 {
@@ -34,9 +40,26 @@ final class BlockFormDataProvider implements FormDataProviderInterface
      */
     private $queryBus;
 
-    public function __construct(CommandBusInterface $queryBus)
+    /**
+     * @var array<string, BlockInterface>
+     */
+    private $blocks;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function __construct(CommandBusInterface $queryBus, LegacyContext $legacyContext)
     {
         $this->queryBus = $queryBus;
+
+        /** @var array<string, BlockInterface> */
+        $blocks = $queryBus->handle(new GetAvailableBlocksTypes());
+        $this->blocks = $blocks;
+
+        $containerFinder = new ContainerFinder($legacyContext->getContext());
+        $this->container = $containerFinder->getContainer();
     }
 
     /**
@@ -52,20 +75,32 @@ final class BlockFormDataProvider implements FormDataProviderInterface
             $localizedNames[$langId] = $name->getValue();
         }
 
-        $localizedContents = [];
-        foreach ($editableBlock->getLocalizedContents() as $langId => $name) {
-            $localizedContents[$langId] = $name->getValue();
-        }
-
         $hooksIds = [];
         foreach ($editableBlock->getHooksIds() as $hookId) {
             $hooksIds[] = $hookId->getValue();
         }
 
+        $type = $editableBlock->getType();
+        $optionsJson = $editableBlock->getOptions();
+
+        $formOptions = null;
+        if ($optionsJson !== null) {
+            $block = $this->blocks[$type];
+
+            /** @var BlockFormMapperInterface */
+            $blockFormHandler = $this->container->get($block->getFormMapper());
+
+            $options = json_decode($optionsJson->getValue(), true) ?: [];
+            if (is_array($options)) {
+                $formOptions = $blockFormHandler->mapToFormData($options);
+            }
+        }
+
         return [
             BlockType::FIELD_HOOKS => $hooksIds,
             BlockType::FIELD_NAME => $localizedNames,
-            BlockType::FIELD_CONTENT => $localizedContents,
+            BlockType::FIELD_TYPE => $type,
+            BlockType::FIELD_OPTIONS => $formOptions,
         ];
     }
 

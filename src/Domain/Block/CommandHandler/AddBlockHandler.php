@@ -43,6 +43,9 @@ final class AddBlockHandler extends AbstractBlockCommandHandler
         try {
             $block = new Block();
 
+            $block->setType($command->getType());
+            $block->setOptions($command->getOptions() !== null ? $command->getOptions()->getValue() : null);
+
             foreach ($command->getHooksIds() as $hookId) {
                 $blockHook = new BlockHook();
 
@@ -55,9 +58,8 @@ final class AddBlockHandler extends AbstractBlockCommandHandler
             }
 
             $localizedNames = $command->getLocalizedNames();
-            $localizedContents = $command->getLocalizedContents();
 
-            $configuratorBlockLangs = $this->createBlockLangs($localizedNames, $localizedContents);
+            $configuratorBlockLangs = $this->createBlockLangs($localizedNames);
             foreach ($configuratorBlockLangs as $configuratorBlockLang) {
                 $block->addBlockLang($configuratorBlockLang);
             }

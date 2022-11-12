@@ -23,6 +23,8 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
+use Kaudaj\Module\Blocks\BlockInterface;
+use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
@@ -32,6 +34,7 @@ use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class KJBlocks extends Module implements WidgetInterface
@@ -41,8 +44,10 @@ class KJBlocks extends Module implements WidgetInterface
      */
     public const HOOKS = [];
 
-    public const HOOK_FILTER_CONTENT = 'filterBlockContent';
-    public const HOOK_KEY_CONTENT = 'content';
+    /**
+     * @var array<string, BlockInterface>
+     */
+    private $availableBlocks;
 
     public function __construct()
     {
@@ -117,7 +122,9 @@ EOF
 
         $sql[] = "
             CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockRepository::TABLE_NAME . "` (
-                `id_block` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY
+                `id_block` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `type` VARCHAR(255) NOT NULL,
+                `options` JSON
             ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
         ";
 
@@ -126,7 +133,6 @@ EOF
                 `id_block` INT UNSIGNED NOT NULL,
                 `id_lang` INT NOT NULL,
                 `name` VARCHAR(255) NOT NULL,
-                `content` TEXT NOT NULL,
                 PRIMARY KEY (id_block, id_lang),
                 FOREIGN KEY (`id_block`)
                 REFERENCES `{$dbPrefix}" . BlockRepository::TABLE_NAME . "` (`id_block`)
@@ -221,24 +227,62 @@ EOF
      */
     public function renderWidget($hookName, array $configuration): string
     {
-        try {
-            /** @var Block[] */
-            $blocks = $this->getCommandBus()->handle(new GetBlocksByHook($hookName));
+        $render = '';
 
-            $content = '';
-            foreach ($blocks as $block) {
-                $blockLang = $block->getBlockLang($this->context->language->id);
+        // try {
+        /** @var Block[] */
+        $blocks = $this->getCommandBus()->handle(new GetBlocksByHook($hookName));
 
-                $content .= ($blockLang !== null ? $blockLang->getContent() : '');
-            }
-        } catch (Exception $e) {
-            return '';
+        foreach ($blocks as $block) {
+            $render .= $this->renderBlock($block);
+        }
+        // } catch (Exception $e) {
+        //     return '';
+        // }
+
+        return $render;
+    }
+
+    private function renderBlock(Block $blockEntity): string
+    {
+        $availableBlocks = $this->getAvailableBlocks();
+        $block = clone $availableBlocks[$blockEntity->getType()];
+
+        if (!$blockEntity->getOptions()) {
+            return $block->render();
         }
 
-        // TODO: Use core hook dispatcher
-        return strval(Hook::exec(self::HOOK_FILTER_CONTENT, [
-            self::HOOK_KEY_CONTENT => $content,
-        ]));
+        $options = json_decode($blockEntity->getOptions(), true) ?: [];
+        if (!is_array($options)) {
+            return $block->render();
+        }
+
+        $multiLangOptions = $block->getMultiLangOptions();
+
+        $defaultLangId = (new Configuration())->getInt('PS_LANG_DEFAULT');
+        $contextLangId = intval($this->context->language->id);
+
+        foreach ($options as $option => $value) {
+            $option = strval($option);
+
+            if (!(in_array($option, $multiLangOptions) && is_array($value))) {
+                continue;
+            }
+
+            if (key_exists($contextLangId, $value)) {
+                $options[$option] = $value[$contextLangId];
+            } elseif (key_exists($defaultLangId, $value)) {
+                $options[$option] = $value[$defaultLangId];
+            } else {
+                unset($options[$option]);
+            }
+        }
+
+        $resolver = new OptionsResolver();
+        $block->configureOptions($resolver);
+        $resolver->resolve($options);
+
+        return $block->render($options);
     }
 
     /**
@@ -287,5 +331,21 @@ EOF
         }
 
         return $object;
+    }
+
+    /**
+     * @return array<string, BlockInterface>
+     */
+    private function getAvailableBlocks(): array
+    {
+        if ($this->availableBlocks !== null) {
+            return $this->availableBlocks;
+        }
+
+        /** @var array<string, BlockInterface> */
+        $availableBlocks = $this->getCommandBus()->handle(new GetAvailableBlocksTypes());
+        $this->availableBlocks = $availableBlocks;
+
+        return $this->availableBlocks;
     }
 }

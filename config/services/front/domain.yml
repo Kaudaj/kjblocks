@@ -1,0 +1,18 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.blocks.command_bus_builder:
+    class: 'Kaudaj\Module\Blocks\Builder\CommandBusBuilder'
+    arguments:
+      - "@kaudaj.module.blocks.block.query_handler.get_by_hook"
+      - "@kaudaj.module.blocks.block.query_handler.get_available_types"
+
+  kaudaj.module.blocks.tactician_command_bus:
+    class: 'League\Tactician\CommandBus'
+    factory: ["@kaudaj.module.blocks.command_bus_builder", "build"]
+
+  kaudaj.module.blocks.command_bus:
+    class: 'PrestaShop\PrestaShop\Core\CommandBus\TacticianCommandBusAdapter'
+    arguments:
+      - "@kaudaj.module.blocks.tactician_command_bus"

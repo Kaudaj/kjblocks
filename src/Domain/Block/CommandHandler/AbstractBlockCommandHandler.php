@@ -23,7 +23,6 @@ namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 
 use Doctrine\ORM\EntityManager;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
-use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Content;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockHook;
@@ -97,30 +96,26 @@ abstract class AbstractBlockCommandHandler
 
     /**
      * @param array<int, Name> $localizedNames
-     * @param array<int, Content> $localizedContents
      *
      * @return BlockLang[]
      */
-    protected function createBlockLangs(array $localizedNames, array $localizedContents): array
+    protected function createBlockLangs(array $localizedNames): array
     {
         /** @var Lang[] */
         $langs = $this->langRepository->findAll();
 
         $defaultLangId = (new Configuration())->getInt('PS_LANG_DEFAULT');
         $defaultName = $localizedNames[$defaultLangId]->getValue();
-        $defaultContent = $localizedContents[$defaultLangId]->getValue();
 
         $blockLangs = [];
         foreach ($langs as $lang) {
             $langId = $lang->getId();
             $name = key_exists($langId, $localizedNames) ? $localizedNames[$langId]->getValue() : $defaultName;
-            $content = key_exists($langId, $localizedContents) ? $localizedContents[$langId]->getValue() : $defaultContent;
 
             $blockLang = new BlockLang();
 
             $blockLang->setLang($lang);
             $blockLang->setName($name);
-            $blockLang->setContent($content);
 
             $blockLangs[] = $blockLang;
         }

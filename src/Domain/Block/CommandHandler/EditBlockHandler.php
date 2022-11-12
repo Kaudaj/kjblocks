@@ -46,6 +46,14 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
                 $command->getBlockId()->getValue()
             );
 
+            if ($command->getType() !== null) {
+                $block->setType($command->getType());
+            }
+
+            if ($command->getOptions() !== null) {
+                $block->setOptions($command->getOptions()->getValue());
+            }
+
             $hooksIds = $command->getHooksIds();
             if ($hooksIds) {
                 $hooksIds = array_map(function (HookId $hookId): int {
@@ -56,9 +64,8 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
             }
 
             $localizedNames = $command->getLocalizedNames();
-            $localizedContents = $command->getLocalizedContents();
 
-            if (null !== $localizedNames && null !== $localizedContents) {
+            if (null !== $localizedNames) {
                 foreach ($block->getBlockLangs() as $blockLangs) {
                     $block->removeBlockLang($blockLangs);
 
@@ -67,7 +74,7 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
 
                 $this->entityManager->flush();
 
-                $blockLangs = $this->createBlockLangs($localizedNames, $localizedContents);
+                $blockLangs = $this->createBlockLangs($localizedNames);
                 foreach ($blockLangs as $blockLang) {
                     $block->addBlockLang($blockLang);
 

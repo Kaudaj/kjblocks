@@ -49,7 +49,7 @@ final class GetBlocksByHookHandler extends AbstractBlockQueryHandler
                 return [];
             }
 
-            $blocks = $this->entityRepository->findByHook($hookId);
+            $blocks = $this->entityRepository->findByHook(intval($hookId));
         } catch (PrestaShopException $e) {
             $message = 'An unexpected error occurred when retrieving blocks';
 

@@ -1,9 +1,0 @@
-services:
-  _defaults:
-    public: true
-
-  kaudaj.module.blocks.block.query_handler.abstract:
-    abstract: true
-    class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\AbstractBlockQueryHandler
-    arguments:
-      - "@doctrine.orm.entity_manager"

@@ -19,21 +19,27 @@
 
 namespace Kaudaj\Module\Blocks\Form\Type;
 
-use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CleanHtml;
+use Kaudaj\Module\Blocks\BlockInterface;
+use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
+use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\DefaultLanguage;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\TypedRegex;
-use PrestaShopBundle\Form\Admin\Type\FormattedTextareaType;
 use PrestaShopBundle\Form\Admin\Type\TranslatableType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class BlockType extends TranslatorAwareType
 {
     public const FIELD_HOOKS = 'hooks';
     public const FIELD_NAME = 'name';
-    public const FIELD_CONTENT = 'content';
+    public const FIELD_TYPE = 'type';
+    public const FIELD_OPTIONS = 'options';
 
     /**
      * @var array<string, int>
@@ -41,14 +47,22 @@ class BlockType extends TranslatorAwareType
     private $hookChoices;
 
     /**
+     * @var array<string, BlockInterface>
+     */
+    private $blocks;
+
+    /**
      * @param array<string, mixed> $locales
      * @param array<string, int> $hookChoices
      */
-    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices)
+    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices, CommandBusInterface $commandBus)
     {
         parent::__construct($translator, $locales);
-
         $this->hookChoices = $hookChoices;
+
+        /** @var array<string, BlockInterface> */
+        $blocks = $commandBus->handle(new GetAvailableBlocksTypes());
+        $this->blocks = $blocks;
     }
 
     /**
@@ -57,6 +71,11 @@ class BlockType extends TranslatorAwareType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $blockTypeChoices = [];
+        foreach ($this->blocks as $block) {
+            $blockTypeChoices[$block->getLocalizedName()] = $block->getName();
+        }
+
         $builder
             ->add(self::FIELD_HOOKS, ChoiceType::class, [
                 'choices' => $this->hookChoices,
@@ -70,7 +89,7 @@ class BlockType extends TranslatorAwareType
             ])
             ->add(self::FIELD_NAME, TranslatableType::class, [
                 'label' => $this->trans('Block name', 'Admin.Global'),
-                'help' => $this->trans('Name of the block.', 'Modules.Mvconfigurator.Admin'),
+                'help' => $this->trans('Name of the block.', 'Modules.Kjblocks.Admin'),
                 'constraints' => [
                     new DefaultLanguage(),
                 ],
@@ -80,19 +99,59 @@ class BlockType extends TranslatorAwareType
                     ],
                 ],
             ])
-            ->add(self::FIELD_CONTENT, TranslatableType::class, [
-                'label' => $this->trans('Block content', 'Admin.Global'),
-                'help' => $this->trans('Content of the block.', 'Modules.Mvconfigurator.Admin'),
-                'type' => FormattedTextareaType::class,
-                'constraints' => [
-                    new DefaultLanguage(),
+            ->add(self::FIELD_TYPE, ChoiceType::class, [
+                'choices' => $blockTypeChoices,
+                'attr' => [
+                    'data-toggle' => 'select2',
+                    'data-minimumResultsForSearch' => '7',
                 ],
-                'options' => [
-                    'constraints' => [
-                        new CleanHtml(),
-                    ],
-                ],
+                'required' => true,
+                'label' => $this->trans('Block type', 'Modules.Kjblocks.Admin'),
+            ])
+            ->add(self::FIELD_OPTIONS, FormType::class, [
+                'label' => false,
             ])
         ;
+
+        $this->addListenersForTypeField($builder);
+    }
+
+    /**
+     * @param FormBuilderInterface<string, mixed> $builder
+     */
+    private function addListenersForTypeField(FormBuilderInterface &$builder): void
+    {
+        $formModifier = function (FormInterface $form, string $blockName): void {
+            $fieldOptions = $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions();
+
+            $form->add(self::FIELD_OPTIONS, $this->blocks[$blockName]->getFormType(), $fieldOptions);
+        };
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($formModifier) {
+                /** @var array<string, mixed> */
+                $data = $event->getData();
+
+                $formModifier(
+                    $event->getForm(),
+                    key_exists(self::FIELD_TYPE, $data) ? strval($data[self::FIELD_TYPE]) : 'container'
+                );
+            }
+        );
+
+        $builder->get(self::FIELD_TYPE)->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($formModifier) {
+                $type = $event->getData();
+                $form = $event->getForm()->getParent();
+
+                if (null === $form || !$type) {
+                    return;
+                }
+
+                $formModifier($form, strval($type));
+            }
+        );
     }
 }

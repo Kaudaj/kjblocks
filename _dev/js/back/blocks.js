@@ -30,6 +30,34 @@ function initForm() {
   if ($('#block_hooks').length) {
     $('#block_hooks option')[0].remove();
   }
+
+  addTypeFieldListener($('#block_type'));
+}
+
+function addTypeFieldListener($typeInput) {
+  $typeInput.on('change', (event) => {
+    const $target = $(event.target);
+    const $form = $target.closest('form');
+
+    const data = {};
+    data[$target.attr('name')] = $target.val();
+
+    console.log(data);
+
+    $.ajax({
+      url: $form.attr('action'),
+      type: $form.attr('method'),
+      data,
+      complete: (html) => {
+        const $oldField = $('#block_options');
+
+        const $response = $(html.responseText);
+        const $newField = $response.find('#block_options');
+
+        $oldField.replaceWith($newField);
+      },
+    });
+  });
 }
 
 function initGrid() {

@@ -21,11 +21,17 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
+use Kaudaj\Module\Blocks\BlockFormMapperInterface;
+use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
+use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
+use PrestaShop\PrestaShop\Adapter\ContainerFinder;
+use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class BlockFormDataHandler implements FormDataHandlerInterface
 {
@@ -34,9 +40,26 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     private $commandBus;
 
-    public function __construct(CommandBusInterface $commandBus)
+    /**
+     * @var array<string, BlockInterface>
+     */
+    private $blocks;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function __construct(CommandBusInterface $commandBus, LegacyContext $legacyContext)
     {
         $this->commandBus = $commandBus;
+
+        /** @var array<string, BlockInterface> */
+        $blocks = $commandBus->handle(new GetAvailableBlocksTypes());
+        $this->blocks = $blocks;
+
+        $containerFinder = new ContainerFinder($legacyContext->getContext());
+        $this->container = $containerFinder->getContainer();
     }
 
     /**
@@ -46,11 +69,18 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     public function create(array $data): int
     {
+        $type = strval($data[BlockType::FIELD_TYPE]);
+
+        $options = null;
+        if (is_array($data[BlockType::FIELD_OPTIONS])) {
+            $options = $this->buildBlockOptions($type, $data[BlockType::FIELD_OPTIONS]);
+        }
+
         $addBlockCommand = (new AddBlockCommand())
             ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
-            ->setLocalizedContents(array_filter($data[BlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
-        ;
+            ->setType($type)
+            ->setOptions($options);
 
         $blockId = $this->commandBus->handle($addBlockCommand);
 
@@ -64,12 +94,33 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     public function update($id, array $data): void
     {
+        $type = strval($data[BlockType::FIELD_TYPE]);
+
+        $options = null;
+        if (is_array($data[BlockType::FIELD_OPTIONS])) {
+            $options = $this->buildBlockOptions($type, $data[BlockType::FIELD_OPTIONS]);
+        }
+
         $editBlockCommand = (new EditBlockCommand((int) $id))
             ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
-            ->setLocalizedContents(array_filter($data[BlockType::FIELD_CONTENT])) /* @phpstan-ignore-line */
+            ->setType(strval($data[BlockType::FIELD_TYPE]))
+            ->setOptions($options)
         ;
 
         $this->commandBus->handle($editBlockCommand);
+    }
+
+    /**
+     * @param array<string, mixed> $formOptions
+     */
+    private function buildBlockOptions(string $type, array $formOptions): ?string
+    {
+        $block = $this->blocks[$type];
+
+        /** @var BlockFormMapperInterface */
+        $blockFormHandler = $this->container->get($block->getFormMapper());
+
+        return json_encode($blockFormHandler->mapToBlockOptions(array_filter($formOptions))) ?: null;
     }
 }

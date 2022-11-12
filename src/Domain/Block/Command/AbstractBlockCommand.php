@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Domain\Block\Command;
 
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockConstraintException;
-use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Content;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 
@@ -59,25 +58,5 @@ class AbstractBlockCommand
         }
 
         return $localizedNamesMap;
-    }
-
-    /**
-     * @param array<int, string> $localizedContents
-     *
-     * @return array<int, Content>
-     */
-    protected function mapLocalizedContents(array $localizedContents): array
-    {
-        if (!key_exists($this->defaultLangId, $localizedContents)) {
-            throw new BlockConstraintException('Block content is required at least in your default language.', BlockConstraintException::EMPTY_CONTENT);
-        }
-
-        $localizedContentsMap = [];
-
-        foreach ($localizedContents as $langId => $name) {
-            $localizedContentsMap[$langId] = new Content($name);
-        }
-
-        return $localizedContentsMap;
     }
 }

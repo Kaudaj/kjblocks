@@ -23,8 +23,8 @@ namespace Kaudaj\Module\Blocks\Domain\Block\QueryResult;
 
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
-use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Content;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
+use Kaudaj\Module\Blocks\Domain\ValueObject\Json;
 use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
@@ -38,6 +38,16 @@ class EditableBlock
     private $blockId;
 
     /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var Json|null
+     */
+    private $options;
+
+    /**
      * @var HookId[]
      */
     private $hooksIds = [];
@@ -48,24 +58,21 @@ class EditableBlock
     private $localizedNames;
 
     /**
-     * @var array<int, Content>
-     */
-    private $localizedContents;
-
-    /**
      * @param array<int, string> $localizedNames
-     * @param array<int, string> $localizedContents
      * @param int[] $hooksIds
      *
      * @throws BlockException
      */
     public function __construct(
         int $blockId,
+        string $type,
+        ?string $options,
         array $hooksIds,
-        array $localizedNames,
-        array $localizedContents
+        array $localizedNames
     ) {
         $this->blockId = new BlockId($blockId);
+        $this->type = $type;
+        $this->options = $options !== null ? new Json($options) : null;
 
         foreach ($hooksIds as $hookId) {
             $this->hooksIds[] = new HookId($hookId);
@@ -73,10 +80,6 @@ class EditableBlock
 
         foreach ($localizedNames as $langId => $name) {
             $this->localizedNames[$langId] = new Name($name);
-        }
-
-        foreach ($localizedContents as $langId => $name) {
-            $this->localizedContents[$langId] = new Content($name);
         }
     }
 
@@ -101,11 +104,13 @@ class EditableBlock
         return $this->localizedNames;
     }
 
-    /**
-     * @return array<int, Content>
-     */
-    public function getLocalizedContents(): array
+    public function getType(): string
     {
-        return $this->localizedContents;
+        return $this->type;
+    }
+
+    public function getOptions(): ?Json
+    {
+        return $this->options;
     }
 }

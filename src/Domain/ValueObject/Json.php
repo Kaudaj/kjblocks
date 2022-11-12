@@ -19,36 +19,34 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\Blocks\Domain\Block\ValueObject;
+namespace Kaudaj\Module\Blocks\Domain\ValueObject;
 
-use Kaudaj\Module\Blocks\Domain\ValueObject\ValueObject;
-use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CleanHtml;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use PrestaShop\PrestaShop\Core\Domain\Exception\DomainConstraintException;
 
 /**
- * Class Content is responsible for providing valid block content.
+ * Class Json is responsible for providing valid json string.
  */
-class Content extends ValueObject
+class Json extends ValueObject
 {
     /**
      * @var string
      */
-    private $content;
+    private $json;
 
-    public function __construct(string $content)
+    public function __construct(string $json)
     {
         parent::__construct();
 
-        $this->validate($content, [
-            new NotBlank(),
-            new CleanHtml(),
-        ], "$content is not a valid block content");
+        json_decode($json);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new DomainConstraintException("$json is not a valid string");
+        }
 
-        $this->content = $content;
+        $this->json = $json;
     }
 
     public function getValue(): string
     {
-        return $this->content;
+        return $this->json;
     }
 }

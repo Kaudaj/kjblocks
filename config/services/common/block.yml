@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.blocks.block:
+    abstract: true
+    class: 'Kaudaj\Module\Blocks\Block'
+    arguments:
+      - "@prestashop.adapter.legacy.context"
+
+  kaudaj.module.blocks.block.container:
+    public: true
+    parent: kaudaj.module.blocks.block
+    class: 'Kaudaj\Module\Blocks\Block\ContainerBlock'
+
+  kaudaj.module.blocks.block.text:
+    public: true
+    parent: kaudaj.module.blocks.block.container
+    class: 'Kaudaj\Module\Blocks\Block\TextBlock'

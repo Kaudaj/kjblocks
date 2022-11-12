@@ -53,6 +53,20 @@ class Block
      */
     private $blockLangs;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255)
+     */
+    private $type;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $options;
+
     public function __construct()
     {
         $this->blockLangs = new ArrayCollection();
@@ -132,6 +146,30 @@ class Block
     public function removeBlockLang(BlockLang $blockLang): self
     {
         $this->blockLangs->removeElement($blockLang);
+
+        return $this;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getOptions(): ?string
+    {
+        return $this->options;
+    }
+
+    public function setOptions(?string $options): self
+    {
+        $this->options = $options;
 
         return $this;
     }

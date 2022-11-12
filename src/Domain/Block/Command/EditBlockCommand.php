@@ -23,8 +23,8 @@ namespace Kaudaj\Module\Blocks\Domain\Block\Command;
 
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
-use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Content;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
+use Kaudaj\Module\Blocks\Domain\ValueObject\Json;
 use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
@@ -48,9 +48,14 @@ class EditBlockCommand extends AbstractBlockCommand
     private $localizedNames;
 
     /**
-     * @var array<int, Content>|null
+     * @var string
      */
-    private $localizedContents;
+    private $type;
+
+    /**
+     * @var Json|null
+     */
+    private $options;
 
     /**
      * @throws BlockException
@@ -113,24 +118,35 @@ class EditBlockCommand extends AbstractBlockCommand
         return $this;
     }
 
-    /**
-     * @return array<int, Content>|null
-     */
-    public function getLocalizedContents(): ?array
+    public function getLocalizedOptions(): ?Json
     {
-        return $this->localizedContents;
+        return $this->options;
     }
 
-    /**
-     * @param array<int, string>|null $localizedContents
-     */
-    public function setLocalizedContents(?array $localizedContents): self
+    public function getType(): string
     {
-        if ($localizedContents !== null) {
-            $localizedContents = $this->mapLocalizedContents($localizedContents);
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getOptions(): ?Json
+    {
+        return $this->options;
+    }
+
+    public function setOptions(?string $options): self
+    {
+        if ($options !== null) {
+            $options = new Json($options);
         }
 
-        $this->localizedContents = $localizedContents;
+        $this->options = $options;
 
         return $this;
     }

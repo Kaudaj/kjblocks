@@ -50,40 +50,9 @@ class BlockLang
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
-     */
-    private $content;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(type="string", length=255)
      */
     private $name;
-
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function setContent(string $content): self
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 
     public function getBlock(): Block
     {
@@ -105,6 +74,18 @@ class BlockLang
     public function setLang(Lang $lang): self
     {
         $this->lang = $lang;
+
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

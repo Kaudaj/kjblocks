@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright since 2011 Prestarocket
+ * Copyright since 2019 Kaudaj
  *
  * NOTICE OF LICENSE
  *
@@ -10,17 +10,18 @@
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to contact@prestarocket.com so we can send you a copy immediately.
+ * to info@kaudaj.com so we can send you a copy immediately.
  *
- * @author    Prestarocket <contact@prestarocket.com>
- * @copyright Since 2011 Prestarocket
+ * @author    Kaudaj <info@kaudaj.com>
+ * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\Blocks\ConstraintValidator\Factory;
+namespace Kaudaj\Module\Blocks\Constraint;
 
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\CleanHtmlValidator;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CleanHtml;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\TypedRegex;
@@ -38,11 +39,6 @@ class ConstraintValidatorFactory extends BaseConstraintValidatorFactory implemen
      */
     private $characterCleaner;
 
-    /**
-     * CustomerNameValidatorFactory constructor.
-     *
-     * @param CharacterCleaner $characterCleaner
-     */
     public function __construct(CharacterCleaner $characterCleaner)
     {
         parent::__construct();
@@ -62,7 +58,10 @@ class ConstraintValidatorFactory extends BaseConstraintValidatorFactory implemen
         }
 
         if ($constraint instanceof CleanHtml) {
-            return new CleanHtmlValidator(false);
+            $configuration = new Configuration();
+            $allowEmbeddableHtml = $configuration->getBoolean('PS_ALLOW_HTML_IFRAME');
+
+            return new CleanHtmlValidator($allowEmbeddableHtml);
         }
 
         return parent::getInstance($constraint);

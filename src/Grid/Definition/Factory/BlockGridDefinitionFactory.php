@@ -73,7 +73,7 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
         $this->hookFilter = $this->getHookFilter(
             $adminFilterRepository,
             $contextEmployeeProvider->getId(),
-            $shopContext->getContextShopID()
+            $shopContext->getContextShopID() ?: 0
         );
     }
 
@@ -100,6 +100,12 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setName($this->trans('Name', [], 'Admin.Global'))
                 ->setOptions([
                     'field' => 'name',
+                ])
+            )
+            ->add((new DataColumn('type'))
+                ->setName($this->trans('Type', [], 'Admin.Global'))
+                ->setOptions([
+                    'field' => 'type',
                 ])
             )
             ->add((new DataColumn('hooks'))
@@ -181,6 +187,15 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                     ],
                 ])
                 ->setAssociatedColumn('name')
+            )
+            ->add((new Filter('type', TextType::class))
+                ->setTypeOptions([
+                    'required' => false,
+                    'attr' => [
+                        'placeholder' => $this->trans('Type', [], 'Admin.Global'),
+                    ],
+                ])
+                ->setAssociatedColumn('type')
             )
             ->add((new Filter('hook', ChoiceType::class))
                 ->setTypeOptions([

@@ -42,11 +42,11 @@ class BlockHooksUpdater
     private $module;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $contextShopId;
 
-    public function __construct(EntityManager $entityManager, int $contextShopId)
+    public function __construct(EntityManager $entityManager, ?int $contextShopId)
     {
         $this->entityRepository = $entityManager->getRepository(Block::class);
 
@@ -97,7 +97,8 @@ class BlockHooksUpdater
 
         $sql = 'SELECT DISTINCT(`id_hook`) 
             FROM `' . _DB_PREFIX_ . 'hook_module` 
-            WHERE `id_module` = ' . (int) $this->module->id . ' AND `id_shop` = ' . $this->contextShopId;
+            WHERE `id_module` = ' . (int) $this->module->id
+            . ($this->contextShopId !== null ? ' AND `id_shop` = ' . $this->contextShopId : '');
         $result = Db::getInstance()->executeS($sql);
 
         if (!is_array($result)) {

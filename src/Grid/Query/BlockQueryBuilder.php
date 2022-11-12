@@ -59,7 +59,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
         $qb = $this->getQueryBuilder($filters);
         $qb
-            ->select('cb.id_block, cbl.name, cbh.position')
+            ->select('cb.id_block, cbl.name, cb.type, cbh.position')
             ->addSelect((!key_exists('hook', $filters) ? "GROUP_CONCAT(h.name SEPARATOR ', ')" : 'h.name') . ' AS hooks')
         ;
 
@@ -89,6 +89,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
             'hook',
             'name',
             'position',
+            'type',
         ];
 
         $qb = $this->connection
