@@ -27,7 +27,6 @@ use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotAddBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockHook;
-use PrestaShopException;
 
 /**
  * Class AddBlockHandler is used for adding block data.
@@ -66,7 +65,7 @@ final class AddBlockHandler extends AbstractBlockCommandHandler
 
             $this->entityManager->persist($block);
             $this->entityManager->flush();
-        } catch (PrestaShopException $exception) {
+        } catch (\PrestaShopException $exception) {
             throw new BlockException('An unexpected error occurred when adding block', 0, $exception);
         }
 

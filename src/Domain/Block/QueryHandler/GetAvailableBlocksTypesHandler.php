@@ -22,8 +22,6 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Domain\Block\QueryHandler;
 
 use Doctrine\ORM\EntityManager;
-use Exception;
-use Hook;
 use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
@@ -31,8 +29,6 @@ use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\Debug\DebugMode;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\Exception\ContainerNotFoundException;
-use PrestaShopException;
-use RuntimeException;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Validation;
 
@@ -54,10 +50,10 @@ final class GetAvailableBlocksTypesHandler extends AbstractBlockQueryHandler
     }
 
     /**
-     * @throws PrestaShopException
-     * @throws BlockNotFoundException
-     *
      * @return array<string, BlockInterface>
+     *
+     * @throws \PrestaShopException
+     * @throws BlockNotFoundException
      */
     public function handle(GetAvailableBlocksTypes $query): array
     {
@@ -73,7 +69,7 @@ final class GetAvailableBlocksTypesHandler extends AbstractBlockQueryHandler
             'kaudaj.module.blocks.block.text',
         ];
 
-        Hook::exec(self::HOOK_EXTRA_BLOCKS, [
+        \Hook::exec(self::HOOK_EXTRA_BLOCKS, [
             self::HOOK_PARAM_BLOCKS_SERVICES => &$blocksServices,
         ]);
 
@@ -84,16 +80,16 @@ final class GetAvailableBlocksTypesHandler extends AbstractBlockQueryHandler
             try {
                 /** @var BlockInterface|false */
                 $block = $container->get($blockService);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 if ($isDebugModeEnabled) {
-                    throw new RuntimeException($e->getMessage());
+                    throw new \RuntimeException($e->getMessage());
                 }
 
                 continue;
             }
 
             if (!$block) {
-                throw new RuntimeException('Container not available.');
+                throw new \RuntimeException('Container not available.');
             }
 
             $validator = Validation::createValidator();
@@ -108,7 +104,7 @@ final class GetAvailableBlocksTypesHandler extends AbstractBlockQueryHandler
                         $message .= "- {$violation->getMessage()}\n";
                     }
 
-                    throw new RuntimeException($message);
+                    throw new \RuntimeException($message);
                 }
 
                 continue;

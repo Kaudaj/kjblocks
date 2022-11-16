@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Domain\Block\QueryHandler;
 
-use Exception;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing;
 use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
@@ -57,7 +56,7 @@ final class GetBlockForEditingHandler extends AbstractBlockQueryHandler
                 $hooksIds,
                 $localizedNames
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $message = sprintf(
                 'An unexpected error occurred when retrieving block with id %s',
                 var_export($query->getBlockId()->getValue(), true)
@@ -67,6 +66,6 @@ final class GetBlockForEditingHandler extends AbstractBlockQueryHandler
         }
 
         return $editableBlock
-;
+        ;
     }
 }

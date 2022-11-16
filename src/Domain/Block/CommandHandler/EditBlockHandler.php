@@ -27,7 +27,6 @@ use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotUpdateBlockException;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockHook;
 use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
-use PrestaShopException;
 
 /**
  * Class EditBlockHandler is responsible for editing block data.
@@ -84,7 +83,7 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
 
             $this->entityManager->persist($block);
             $this->entityManager->flush();
-        } catch (PrestaShopException $exception) {
+        } catch (\PrestaShopException $exception) {
             throw new CannotUpdateBlockException('An unexpected error occurred when editing block', 0, $exception);
         }
     }

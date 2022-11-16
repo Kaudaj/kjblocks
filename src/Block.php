@@ -24,7 +24,6 @@ namespace Kaudaj\Module\Blocks;
 use Kaudaj\Module\Blocks\Constraint\ConstraintValidatorFactory;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
-use Smarty;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -40,7 +39,7 @@ abstract class Block implements BlockInterface
     private $validator;
 
     /**
-     * @var Smarty
+     * @var \Smarty
      */
     protected $smarty;
 

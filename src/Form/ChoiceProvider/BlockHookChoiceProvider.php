@@ -54,7 +54,7 @@ final class BlockHookChoiceProvider implements FormChoiceProviderInterface
         foreach ($blocks as $block) {
             foreach ($block->getBlockHooks() as $blockHook) {
                 $hookId = $blockHook->getHookId();
-                $hookName = strval(Hook::getNameById($hookId));
+                $hookName = strval(\Hook::getNameById($hookId));
 
                 $choices[$hookName] = $hookId;
             }

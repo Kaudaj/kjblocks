@@ -25,8 +25,6 @@ use Doctrine\ORM\EntityManager;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
-use PrestaShopDatabaseException;
-use PrestaShopException;
 
 /**
  * Class AbstractBlockQueryHandler.
@@ -56,8 +54,8 @@ abstract class AbstractBlockQueryHandler
      * Gets block entity.
      *
      * @throws BlockNotFoundException
-     * @throws PrestaShopException
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws \PrestaShopDatabaseException
      */
     protected function getBlockEntity(int $id): Block
     {

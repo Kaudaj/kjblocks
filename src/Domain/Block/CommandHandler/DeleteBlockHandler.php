@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 
-use Exception;
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotDeleteBlockException;
@@ -51,7 +50,7 @@ final class DeleteBlockHandler extends AbstractBlockCommandHandler
             foreach ($blockHooks as $blockHook) {
                 $this->blockHookRepository->cleanPositions($blockHook->getHookId());
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new CannotDeleteBlockException('An unexpected error occurred when deleting block', 0, $exception);
         }
     }

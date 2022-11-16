@@ -21,11 +21,9 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Domain\Block\QueryHandler;
 
-use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocks;
 use Kaudaj\Module\Blocks\Entity\Block;
-use PrestaShopException;
 
 /**
  * Class GetBlocksHandler is responsible for getting block entities.
@@ -35,20 +33,14 @@ use PrestaShopException;
 final class GetBlocksHandler extends AbstractBlockQueryHandler
 {
     /**
-     * @throws PrestaShopException
-     * @throws BlockNotFoundException
-     *
      * @return Block[]
+     *
+     * @throws \PrestaShopException
+     * @throws BlockNotFoundException
      */
     public function handle(GetBlocks $query): array
     {
-        try {
-            $blocks = $this->entityRepository->findAll();
-        } catch (PrestaShopException $e) {
-            $message = 'An unexpected error occurred when retrieving blocks';
-
-            throw new BlockException($message, 0, $e);
-        }
+        $blocks = $this->entityRepository->findAll();
 
         return $blocks;
     }

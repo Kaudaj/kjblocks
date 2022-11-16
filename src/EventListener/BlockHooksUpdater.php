@@ -19,15 +19,10 @@
 
 namespace Kaudaj\Module\Blocks\EventListener;
 
-use Db;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Hook;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
-use KJBlocks;
-use Module;
-use RuntimeException;
 
 class BlockHooksUpdater
 {
@@ -37,7 +32,7 @@ class BlockHooksUpdater
     private $entityRepository;
 
     /**
-     * @var Module
+     * @var \Module
      */
     private $module;
 
@@ -50,9 +45,9 @@ class BlockHooksUpdater
     {
         $this->entityRepository = $entityManager->getRepository(Block::class);
 
-        $module = Module::getInstanceByName('kjblocks');
-        if (!($module instanceof KJBlocks)) {
-            throw new RuntimeException("Can't update module hooks");
+        $module = \Module::getInstanceByName('kjblocks');
+        if (!($module instanceof \KJBlocks)) {
+            throw new \RuntimeException("Can't update module hooks");
         }
 
         $this->module = $module;
@@ -77,7 +72,7 @@ class BlockHooksUpdater
     private function updateRegisteredHooks(): void
     {
         $getHookName = function (int $hookId): string {
-            return Hook::getNameById($hookId);
+            return \Hook::getNameById($hookId);
         };
 
         $blocks = $this->entityRepository->findAll();
@@ -99,17 +94,17 @@ class BlockHooksUpdater
             FROM `' . _DB_PREFIX_ . 'hook_module` 
             WHERE `id_module` = ' . (int) $this->module->id
             . ($this->contextShopId !== null ? ' AND `id_shop` = ' . $this->contextShopId : '');
-        $result = Db::getInstance()->executeS($sql);
+        $result = \Db::getInstance()->executeS($sql);
 
         if (!is_array($result)) {
-            throw new RuntimeException("Can't update module hooks");
+            throw new \RuntimeException("Can't update module hooks");
         }
 
         $moduleHooks = array_map(function (array $row) use ($getHookName): string {
             return $getHookName(intval($row['id_hook']));
         }, $result);
 
-        foreach (array_diff($moduleHooks, $blocksHooks, KJBlocks::HOOKS) as $hook) {
+        foreach (array_diff($moduleHooks, $blocksHooks, \KJBlocks::HOOKS) as $hook) {
             $this->module->unregisterHook($hook);
         }
 

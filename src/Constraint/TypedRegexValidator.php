@@ -19,7 +19,6 @@
 
 namespace Kaudaj\Module\Blocks\Constraint;
 
-use ReflectionClass;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
@@ -75,7 +74,7 @@ class TypedRegexValidator extends ConstraintValidator
             case TypedRegex::TYPE_SELECTORS:
                 return '/^((' . self::SELECTOR_PATTERN . '),?)*$/';
             default:
-                $definedTypes = implode(', ', array_values((new ReflectionClass(TypedRegex::class))->getConstants()));
+                $definedTypes = implode(', ', array_values((new \ReflectionClass(TypedRegex::class))->getConstants()));
                 throw new InvalidArgumentException(sprintf('Type "%s" is not defined. Defined types are: %s', $type, $definedTypes));
         }
     }

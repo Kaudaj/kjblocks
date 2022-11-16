@@ -25,7 +25,6 @@ use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock;
 use Kaudaj\Module\Blocks\Entity\Block;
-use PrestaShopException;
 
 /**
  * Class GetBlockHandler is responsible for getting block entity.
@@ -35,7 +34,7 @@ use PrestaShopException;
 final class GetBlockHandler extends AbstractBlockQueryHandler
 {
     /**
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      * @throws BlockNotFoundException
      */
     public function handle(GetBlock $query): Block
@@ -44,7 +43,7 @@ final class GetBlockHandler extends AbstractBlockQueryHandler
             $block = $this->getBlockEntity(
                 $query->getBlockId()->getValue()
             );
-        } catch (PrestaShopException $e) {
+        } catch (\PrestaShopException $e) {
             $message = sprintf(
                 'An unexpected error occurred when retrieving block with id %s',
                 var_export($query->getBlockId()->getValue(), true)

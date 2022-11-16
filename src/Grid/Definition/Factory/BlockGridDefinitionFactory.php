@@ -113,9 +113,9 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                     $this->hookFilter !== null
                         ? $this->trans('Hooks', [], 'Admin.Global')
                         : $this->trans('Hook', [], 'Admin.Global')
-                    )
+                )
                 ->setOptions([
-                    'field' => 'hooks',
+                'field' => 'hooks',
                 ])
             )
             ->add((new ActionColumn('actions'))

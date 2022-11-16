@@ -32,8 +32,6 @@ use Kaudaj\Module\Blocks\Repository\BlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShopBundle\Entity\Lang;
 use PrestaShopBundle\Entity\Repository\LangRepository;
-use PrestaShopDatabaseException;
-use PrestaShopException;
 
 /**
  * Class AbstractBlockCommandHandler.
@@ -79,8 +77,8 @@ abstract class AbstractBlockCommandHandler
      * Gets block entity.
      *
      * @throws BlockNotFoundException
-     * @throws PrestaShopException
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws \PrestaShopDatabaseException
      */
     protected function getBlockEntity(int $id): Block
     {
