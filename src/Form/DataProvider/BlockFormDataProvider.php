@@ -22,8 +22,7 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Form\DataProvider;
 
 use Kaudaj\Module\Blocks\BlockFormMapperInterface;
-use Kaudaj\Module\Blocks\BlockInterface;
-use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
+use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing;
 use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
@@ -41,11 +40,6 @@ final class BlockFormDataProvider implements FormDataProviderInterface
     private $queryBus;
 
     /**
-     * @var array<string, BlockInterface>
-     */
-    private $blocks;
-
-    /**
      * @var ContainerInterface
      */
     private $container;
@@ -53,10 +47,6 @@ final class BlockFormDataProvider implements FormDataProviderInterface
     public function __construct(CommandBusInterface $queryBus, LegacyContext $legacyContext)
     {
         $this->queryBus = $queryBus;
-
-        /** @var array<string, BlockInterface> */
-        $blocks = $queryBus->handle(new GetAvailableBlocksTypes());
-        $this->blocks = $blocks;
 
         $containerFinder = new ContainerFinder($legacyContext->getContext());
         $this->container = $containerFinder->getContainer();
@@ -85,14 +75,16 @@ final class BlockFormDataProvider implements FormDataProviderInterface
 
         $formOptions = null;
         if ($optionsJson !== null) {
-            $block = $this->blocks[$type];
+            $block = BlockTypeProvider::getBlockType($type);
 
-            /** @var BlockFormMapperInterface */
-            $blockFormHandler = $this->container->get($block->getFormMapper());
+            if ($block) {
+                /** @var BlockFormMapperInterface */
+                $blockFormHandler = $this->container->get($block->getFormMapper());
 
-            $options = json_decode($optionsJson->getValue(), true) ?: [];
-            if (is_array($options)) {
-                $formOptions = $blockFormHandler->mapToFormData($options);
+                $options = json_decode($optionsJson->getValue(), true) ?: [];
+                if (is_array($options)) {
+                    $formOptions = $blockFormHandler->mapToFormData($options);
+                }
             }
         }
 

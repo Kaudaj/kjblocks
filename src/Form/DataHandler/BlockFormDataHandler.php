@@ -22,10 +22,9 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
 use Kaudaj\Module\Blocks\BlockFormMapperInterface;
-use Kaudaj\Module\Blocks\BlockInterface;
+use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
-use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
@@ -41,11 +40,6 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
     private $commandBus;
 
     /**
-     * @var array<string, BlockInterface>
-     */
-    private $blocks;
-
-    /**
      * @var ContainerInterface
      */
     private $container;
@@ -53,10 +47,6 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
     public function __construct(CommandBusInterface $commandBus, LegacyContext $legacyContext)
     {
         $this->commandBus = $commandBus;
-
-        /** @var array<string, BlockInterface> */
-        $blocks = $commandBus->handle(new GetAvailableBlocksTypes());
-        $this->blocks = $blocks;
 
         $containerFinder = new ContainerFinder($legacyContext->getContext());
         $this->container = $containerFinder->getContainer();
@@ -116,7 +106,11 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     private function buildBlockOptions(string $type, array $formOptions): ?string
     {
-        $block = $this->blocks[$type];
+        $block = BlockTypeProvider::getBlockType($type);
+
+        if (!$block) {
+            return null;
+        }
 
         /** @var BlockFormMapperInterface */
         $blockFormHandler = $this->container->get($block->getFormMapper());

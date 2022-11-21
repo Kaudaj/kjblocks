@@ -19,9 +19,7 @@
 
 namespace Kaudaj\Module\Blocks\Form\Type;
 
-use Kaudaj\Module\Blocks\BlockInterface;
-use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
-use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
+use Kaudaj\Module\Blocks\BlockTypeProvider;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\DefaultLanguage;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\TypedRegex;
 use PrestaShopBundle\Form\Admin\Type\TranslatableType;
@@ -47,22 +45,13 @@ class BlockType extends TranslatorAwareType
     private $hookChoices;
 
     /**
-     * @var array<string, BlockInterface>
-     */
-    private $blocks;
-
-    /**
      * @param array<string, mixed> $locales
      * @param array<string, int> $hookChoices
      */
-    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices, CommandBusInterface $commandBus)
+    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices)
     {
         parent::__construct($translator, $locales);
         $this->hookChoices = $hookChoices;
-
-        /** @var array<string, BlockInterface> */
-        $blocks = $commandBus->handle(new GetAvailableBlocksTypes());
-        $this->blocks = $blocks;
     }
 
     /**
@@ -72,7 +61,7 @@ class BlockType extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $blockTypeChoices = [];
-        foreach ($this->blocks as $block) {
+        foreach (BlockTypeProvider::getBlockTypes() as $block) {
             $blockTypeChoices[$block->getLocalizedName()] = $block->getName();
         }
 
@@ -124,7 +113,12 @@ class BlockType extends TranslatorAwareType
         $formModifier = function (FormInterface $form, string $blockName): void {
             $fieldOptions = $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions();
 
-            $form->add(self::FIELD_OPTIONS, $this->blocks[$blockName]->getFormType(), $fieldOptions);
+            $block = BlockTypeProvider::getBlockType($blockName);
+            if (!$block) {
+                return;
+            }
+
+            $form->add(self::FIELD_OPTIONS, $block->getFormType(), $fieldOptions);
         };
 
         $builder->addEventListener(

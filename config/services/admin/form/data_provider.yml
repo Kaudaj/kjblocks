@@ -7,3 +7,4 @@ services:
     arguments:
       - "@prestashop.core.command_bus"
       - '@prestashop.adapter.legacy.context'
+      - '@kaudaj.module.blocks.block_type_provider'

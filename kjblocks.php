@@ -23,8 +23,7 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
-use Kaudaj\Module\Blocks\BlockInterface;
-use Kaudaj\Module\Blocks\Domain\Block\Query\GetAvailableBlocksTypes;
+use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
@@ -44,11 +43,6 @@ class KJBlocks extends Module implements WidgetInterface
      */
     public const HOOKS = [];
 
-    /**
-     * @var array<string, BlockInterface>
-     */
-    private $availableBlocks;
-
     public function __construct()
     {
         $this->name = 'kjblocks';
@@ -62,7 +56,8 @@ class KJBlocks extends Module implements WidgetInterface
         parent::__construct();
 
         $this->displayName = $this->trans('Blocks', [], 'Modules.Kjblocks.Admin');
-        $this->description = $this->trans(<<<EOF
+        $this->description = $this->trans(
+            <<<EOF
         Add your blocks where you want them.
 EOF
             ,
@@ -88,6 +83,8 @@ EOF
                 'wording_domain' => 'Modules.Kjblocks.Admin',
             ],
         ];
+
+        // $blcoks = $this->getAvailableBlocks();
     }
 
     /**
@@ -229,24 +226,30 @@ EOF
     {
         $render = '';
 
-        // try {
-        /** @var Block[] */
-        $blocks = $this->getCommandBus()->handle(new GetBlocksByHook($hookName));
+        try {
+            /** @var Block[] */
+            $blocks = $this->getCommandBus()->handle(new GetBlocksByHook($hookName));
 
-        foreach ($blocks as $block) {
-            $render .= $this->renderBlock($block);
+            foreach ($blocks as $block) {
+                $render .= $this->renderBlock($block);
+            }
+        } catch (Exception $e) {
+            return '';
         }
-        // } catch (Exception $e) {
-        //     return '';
-        // }
 
         return $render;
     }
 
     private function renderBlock(Block $blockEntity): string
     {
-        $availableBlocks = $this->getAvailableBlocks();
-        $block = clone $availableBlocks[$blockEntity->getType()];
+        $blockType = $blockEntity->getType();
+        $block = BlockTypeProvider::getBlockType($blockType);
+
+        if (!$block) {
+            throw new RuntimeException("Can't retrieve $blockType block");
+        }
+
+        $block = clone $block;
 
         if (!$blockEntity->getOptions()) {
             return $block->render();
@@ -331,21 +334,5 @@ EOF
         }
 
         return $object;
-    }
-
-    /**
-     * @return array<string, BlockInterface>
-     */
-    private function getAvailableBlocks(): array
-    {
-        if ($this->availableBlocks !== null) {
-            return $this->availableBlocks;
-        }
-
-        /** @var array<string, BlockInterface> */
-        $availableBlocks = $this->getCommandBus()->handle(new GetAvailableBlocksTypes());
-        $this->availableBlocks = $availableBlocks;
-
-        return $this->availableBlocks;
     }
 }
