@@ -42,8 +42,6 @@ function addTypeFieldListener($typeInput) {
     const data = {};
     data[$target.attr('name')] = $target.val();
 
-    console.log(data);
-
     $.ajax({
       url: $form.attr('action'),
       type: $form.attr('method'),
