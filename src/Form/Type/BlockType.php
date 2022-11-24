@@ -61,8 +61,10 @@ class BlockType extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $blockTypeChoices = [];
-        foreach (BlockTypeProvider::getBlockTypes() as $block) {
-            $blockTypeChoices[$block->getLocalizedName()] = $block->getName();
+        foreach (BlockTypeProvider::getBlockTypes() as $moduleBlocks) {
+            foreach ($moduleBlocks as $block) {
+                $blockTypeChoices[$block->getLocalizedName()] = $block->getName();
+            }
         }
 
         $builder

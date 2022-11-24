@@ -33,12 +33,12 @@ class BlockTypeProvider
     public const HOOK_PARAM_BLOCKS_SERVICES = 'blocks_services';
 
     /**
-     * @var array<string, BlockInterface>|null
+     * @var array<string, array<string, BlockInterface>> [module name => [block name => block instance]]
      */
     private static $blockTypes = null;
 
     /**
-     * @return array<string, BlockInterface>
+     * @return array<string, array<string, BlockInterface>> [module name => [block name => block instance]]
      */
     public static function getBlockTypes(): array
     {
@@ -58,53 +58,56 @@ class BlockTypeProvider
             return [];
         }
 
-        $blocksServices = [
+        $blocks = \Hook::exec(self::HOOK_EXTRA_BLOCKS, [], null, true);
+        $blocks = is_array($blocks) ? $blocks : [];
+
+        $blocks['kjblocks'] = [
             'kaudaj.module.blocks.block.container',
             'kaudaj.module.blocks.block.text',
         ];
 
-        \Hook::exec(self::HOOK_EXTRA_BLOCKS, [
-            self::HOOK_PARAM_BLOCKS_SERVICES => &$blocksServices,
-        ], null, true);
-
         $isDebugModeEnabled = (new DebugMode())->isDebugModeEnabled();
 
         self::$blockTypes = [];
-        foreach ($blocksServices as $blockService) {
-            try {
-                /** @var BlockInterface|false */
-                $block = $container->get($blockService);
-            } catch (\Exception $e) {
-                if ($isDebugModeEnabled) {
-                    throw new \RuntimeException($e->getMessage());
-                }
+        foreach ($blocks as $moduleName => $moduleBlocks) {
+            self::$blockTypes[$moduleName] = [];
 
-                continue;
-            }
-
-            if (!$block) {
-                throw new \RuntimeException('Container not available.');
-            }
-
-            $validator = Validation::createValidator();
-            $violations = $validator->validate($block, [
-                new Type(BlockInterface::class),
-            ]);
-
-            if (0 !== count($violations)) {
-                if ($isDebugModeEnabled) {
-                    $message = 'Block ' . get_class($block) . ' is not valid:';
-                    foreach ($violations as $violation) {
-                        $message .= "- {$violation->getMessage()}\n";
+            foreach ($moduleBlocks as $blockService) {
+                try {
+                    /** @var BlockInterface|false */
+                    $block = $container->get($blockService);
+                } catch (\Exception $e) {
+                    if ($isDebugModeEnabled) {
+                        throw new \RuntimeException($e->getMessage());
                     }
 
-                    throw new \RuntimeException($message);
+                    continue;
                 }
 
-                continue;
-            }
+                if (!$block) {
+                    throw new \RuntimeException('Container not available.');
+                }
 
-            self::$blockTypes[$block->getName()] = $block;
+                $validator = Validation::createValidator();
+                $violations = $validator->validate($block, [
+                    new Type(BlockInterface::class),
+                ]);
+
+                if (0 !== count($violations)) {
+                    if ($isDebugModeEnabled) {
+                        $message = 'Block ' . get_class($block) . ' is not valid:';
+                        foreach ($violations as $violation) {
+                            $message .= "- {$violation->getMessage()}\n";
+                        }
+
+                        throw new \RuntimeException($message);
+                    }
+
+                    continue;
+                }
+
+                self::$blockTypes[$moduleName][$block->getName()] = $block;
+            }
         }
 
         return self::$blockTypes;
@@ -114,6 +117,12 @@ class BlockTypeProvider
     {
         $blockTypes = self::getBlockTypes();
 
-        return key_exists($type, $blockTypes) ? $blockTypes[$type] : null;
+        foreach ($blockTypes as $moduleBlocks) {
+            if (key_exists($type, $moduleBlocks)) {
+                return $moduleBlocks[$type];
+            }
+        }
+
+        return null;
     }
 }
