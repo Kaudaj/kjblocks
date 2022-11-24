@@ -6,7 +6,6 @@ services:
     class: 'Kaudaj\Module\Blocks\Builder\CommandBusBuilder'
     arguments:
       - "@kaudaj.module.blocks.block.query_handler.get_by_hook"
-      - "@kaudaj.module.blocks.block.query_handler.get_available_types"
 
   kaudaj.module.blocks.tactician_command_bus:
     class: 'League\Tactician\CommandBus'
