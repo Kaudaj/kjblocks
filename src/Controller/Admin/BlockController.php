@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Controller\Admin;
 
+use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
@@ -96,6 +97,7 @@ class BlockController extends FrameworkBundleAdminController
 
         return $this->render('@Modules/kjblocks/views/templates/back/layouts/block/create.html.twig', [
             'blockForm' => $blockForm->createView(),
+            'expansionsFormThemes' => $this->getExpansionsFormThemes(),
         ]);
     }
 
@@ -122,9 +124,28 @@ class BlockController extends FrameworkBundleAdminController
             return $this->redirectToIndexRoute();
         }
 
-        return $this->render('@Modules/kjblocks/views/templates/back/layouts/block/create.html.twig', [
+        return $this->render('@Modules/kjblocks/views/templates/back/layouts/block/edit.html.twig', [
             'blockForm' => $blockForm->createView(),
+            'expansionsFormThemes' => $this->getExpansionsFormThemes(),
         ]);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getExpansionsFormThemes(): array
+    {
+        $formThemes = [];
+
+        foreach (array_keys(BlockTypeProvider::getBlockTypes()) as $moduleName) {
+            $filename = _PS_MODULE_DIR_ . "$moduleName/views/templates/form_theme.html.twig";
+
+            if (file_exists($filename)) {
+                $formThemes[] = str_replace(_PS_MODULE_DIR_, '@Modules/', $filename);
+            }
+        }
+
+        return $formThemes;
     }
 
     /**
