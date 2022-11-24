@@ -272,12 +272,12 @@ EOF
                 continue;
             }
 
-            if (key_exists($contextLangId, $value)) {
-                $options[$option] = $value[$contextLangId];
-            } elseif (key_exists($defaultLangId, $value)) {
-                $options[$option] = $value[$defaultLangId];
+            if (key_exists(0, $value)) {
+                foreach ($value as $key => $langValues) {
+                    $options[$option][$key] = $this->getContextLangValue($langValues, $defaultLangId, $contextLangId);
+                }
             } else {
-                unset($options[$option]);
+                $options[$option] = $this->getContextLangValue($value, $defaultLangId, $contextLangId);
             }
         }
 
@@ -286,6 +286,22 @@ EOF
         $resolver->resolve($options);
 
         return $block->render($options);
+    }
+
+    /**
+     * @param array<int, mixed> $langValues
+     *
+     * @return mixed
+     */
+    private function getContextLangValue(array $langValues, int $defaultLangId, int $contextLangId)
+    {
+        if (key_exists($contextLangId, $langValues)) {
+            return $langValues[$contextLangId];
+        } elseif (key_exists($defaultLangId, $langValues)) {
+            return $langValues[$defaultLangId];
+        }
+
+        return null;
     }
 
     /**
