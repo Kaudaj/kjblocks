@@ -53,6 +53,8 @@ function addTypeFieldListener($typeInput) {
         const $newField = $response.find('#block_options');
 
         $oldField.replaceWith($newField);
+
+        $form.trigger('KJBlockTypeChanged', {newType: $target.val()});
       },
     });
   });
