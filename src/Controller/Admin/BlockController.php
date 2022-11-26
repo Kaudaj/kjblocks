@@ -119,7 +119,7 @@ class BlockController extends FrameworkBundleAdminController
         $result = $blockFormHandler->handleFor($blockId, $blockForm);
 
         if (null !== $result->getIdentifiableObjectId()) {
-            $this->addFlash('success', $this->trans('Successful creation.', 'Admin.Notifications.Success'));
+            $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
 
             return $this->redirectToIndexRoute();
         }
