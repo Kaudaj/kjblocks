@@ -283,7 +283,7 @@ EOF
 
         $resolver = new OptionsResolver();
         $block->configureOptions($resolver);
-        $resolver->resolve($options);
+        $options = $resolver->resolve($options);
 
         return $block->render($options);
     }
