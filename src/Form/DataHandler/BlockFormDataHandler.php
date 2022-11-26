@@ -25,12 +25,14 @@ use Kaudaj\Module\Blocks\BlockFormMapperInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
+use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class BlockFormDataHandler implements FormDataHandlerInterface
 {
@@ -61,20 +63,27 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
     {
         $type = strval($data[BlockType::FIELD_TYPE]);
 
-        $options = null;
-        if (is_array($data[BlockType::FIELD_OPTIONS])) {
-            $options = $this->buildBlockOptions($type, $data[BlockType::FIELD_OPTIONS]);
-        }
-
         $addBlockCommand = (new AddBlockCommand())
             ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setType($type)
+        ;
+
+        /** @var BlockId */
+        $blockId = $this->commandBus->handle($addBlockCommand);
+        $blockId = $blockId->getValue();
+
+        $options = null;
+        if (is_array($data[BlockType::FIELD_OPTIONS])) {
+            $options = $this->buildBlockOptions($blockId, $type, $data[BlockType::FIELD_OPTIONS]);
+        }
+
+        $editBlockCommand = (new EditBlockCommand($blockId))
             ->setOptions($options);
 
-        $blockId = $this->commandBus->handle($addBlockCommand);
+        $this->commandBus->handle($editBlockCommand);
 
-        return $blockId->getValue();
+        return $blockId;
     }
 
     /**
@@ -88,15 +97,14 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
 
         $options = null;
         if (is_array($data[BlockType::FIELD_OPTIONS])) {
-            $options = $this->buildBlockOptions($type, $data[BlockType::FIELD_OPTIONS]);
+            $options = $this->buildBlockOptions($id, $type, $data[BlockType::FIELD_OPTIONS]);
         }
 
         $editBlockCommand = (new EditBlockCommand((int) $id))
             ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setType(strval($data[BlockType::FIELD_TYPE]))
-            ->setOptions($options)
-        ;
+            ->setOptions($options);
 
         $this->commandBus->handle($editBlockCommand);
     }
@@ -104,7 +112,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
     /**
      * @param array<string, mixed> $formOptions
      */
-    private function buildBlockOptions(string $type, array $formOptions): ?string
+    private function buildBlockOptions(int $blockId, string $type, array $formOptions): ?string
     {
         $block = BlockTypeProvider::getBlockType($type);
 
@@ -115,6 +123,47 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
         /** @var BlockFormMapperInterface */
         $blockFormHandler = $this->container->get($block->getFormMapper());
 
-        return json_encode($blockFormHandler->mapToBlockOptions(array_filter($formOptions))) ?: null;
+        // Filter old options from previous block type
+
+        /** @var RequestStack */
+        $requestStack = $this->container->get('request_stack');
+        $currentRequest = $requestStack->getCurrentRequest();
+
+        if ($currentRequest !== null) {
+            $requestBlockParam = $currentRequest->request->get('block') ?: [];
+            $filesBlockParam = $currentRequest->files->get('block') ?: [];
+
+            $requestOptions = [];
+
+            if (is_array($requestBlockParam) && key_exists(BlockType::FIELD_OPTIONS, $requestBlockParam)) {
+                $requestOptions = $requestBlockParam[BlockType::FIELD_OPTIONS];
+            }
+
+            if (is_array($filesBlockParam) && key_exists(BlockType::FIELD_OPTIONS, $filesBlockParam)) {
+                $requestOptions = array_merge($requestOptions, $filesBlockParam[BlockType::FIELD_OPTIONS]);
+            }
+
+            $formOptions = array_intersect_key($formOptions, $requestOptions);
+        }
+
+        $formOptions = $this->array_filter_recursive($formOptions);
+
+        return json_encode($blockFormHandler->mapToBlockOptions($blockId, $formOptions)) ?: null;
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     *
+     * @return array<string, mixed>
+     */
+    private function array_filter_recursive(array $input): array
+    {
+        foreach ($input as &$value) {
+            if (is_array($value)) {
+                $value = $this->array_filter_recursive($value);
+            }
+        }
+
+        return array_filter($input);
     }
 }

@@ -28,12 +28,12 @@ interface BlockFormMapperInterface
      *
      * @return array<string, mixed> Block options
      */
-    public function mapToBlockOptions(array $formData): array;
+    public function mapToBlockOptions(int $blockId, array $formData): array;
 
     /**
      * @param array<string, mixed> $blockOptions
      *
      * @return array<string, mixed> Form data
      */
-    public function mapToFormData(array $blockOptions): array;
+    public function mapToFormData(int $blockId, array $blockOptions): array;
 }

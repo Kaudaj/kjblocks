@@ -83,7 +83,7 @@ final class BlockFormDataProvider implements FormDataProviderInterface
 
                 $options = json_decode($optionsJson->getValue(), true) ?: [];
                 if (is_array($options)) {
-                    $formOptions = $blockFormHandler->mapToFormData($options);
+                    $formOptions = $blockFormHandler->mapToFormData($blockId, $options);
                 }
             }
         }

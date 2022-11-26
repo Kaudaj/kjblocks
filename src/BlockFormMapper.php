@@ -23,12 +23,12 @@ namespace Kaudaj\Module\Blocks;
 
 class BlockFormMapper implements BlockFormMapperInterface
 {
-    public function mapToBlockOptions(array $formData): array
+    public function mapToBlockOptions(int $blockId, array $formData): array
     {
         return $formData;
     }
 
-    public function mapToFormData(array $blockOptions): array
+    public function mapToFormData(int $blockId, array $blockOptions): array
     {
         return $blockOptions;
     }
