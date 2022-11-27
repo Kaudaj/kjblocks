@@ -23,7 +23,7 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
-use Kaudaj\Module\Blocks\BlockTypeProvider;
+use Kaudaj\Module\Blocks\BlockRenderer;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
@@ -33,7 +33,6 @@ use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class KJBlocks extends Module implements WidgetInterface
@@ -230,78 +229,18 @@ EOF
             /** @var Block[] */
             $blocks = $this->getCommandBus()->handle(new GetBlocksByHook($hookName));
 
+            /** @var BlockRenderer */
+            $blockRenderer = $this->get('kaudaj.module.blocks.block_renderer');
+
             foreach ($blocks as $block) {
-                $render .= $this->renderBlock($block);
+                $render .= $blockRenderer->renderBlock($block);
             }
         } catch (Exception $e) {
-            return '';
+            // return '';
+            throw $e;
         }
 
         return $render;
-    }
-
-    private function renderBlock(Block $blockEntity): string
-    {
-        $blockType = $blockEntity->getType();
-        $block = BlockTypeProvider::getBlockType($blockType);
-
-        if (!$block) {
-            throw new RuntimeException("Can't retrieve $blockType block");
-        }
-
-        $block = clone $block;
-
-        if (!$blockEntity->getOptions()) {
-            return $block->render();
-        }
-
-        $options = json_decode($blockEntity->getOptions(), true) ?: [];
-        if (!is_array($options)) {
-            return $block->render();
-        }
-
-        $multiLangOptions = $block->getMultiLangOptions();
-
-        $defaultLangId = (new Configuration())->getInt('PS_LANG_DEFAULT');
-        $contextLangId = intval($this->context->language->id);
-
-        foreach ($options as $option => $value) {
-            $option = strval($option);
-
-            if (!(in_array($option, $multiLangOptions) && is_array($value))) {
-                continue;
-            }
-
-            if (key_exists(0, $value)) {
-                foreach ($value as $key => $langValues) {
-                    $options[$option][$key] = $this->getContextLangValue($langValues, $defaultLangId, $contextLangId);
-                }
-            } else {
-                $options[$option] = $this->getContextLangValue($value, $defaultLangId, $contextLangId);
-            }
-        }
-
-        $resolver = new OptionsResolver();
-        $block->configureOptions($resolver);
-        $options = $resolver->resolve($options);
-
-        return $block->render($options);
-    }
-
-    /**
-     * @param array<int, mixed> $langValues
-     *
-     * @return mixed
-     */
-    private function getContextLangValue(array $langValues, int $defaultLangId, int $contextLangId)
-    {
-        if (key_exists($contextLangId, $langValues)) {
-            return $langValues[$contextLangId];
-        } elseif (key_exists($defaultLangId, $langValues)) {
-            return $langValues[$defaultLangId];
-        }
-
-        return null;
     }
 
     /**

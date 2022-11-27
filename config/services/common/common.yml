@@ -10,5 +10,9 @@ services:
 
   kaudaj.module.blocks.block_type_provider:
     class: Kaudaj\Module\Blocks\BlockTypeProvider
+
+  kaudaj.module.blocks.block_renderer:
+    class: Kaudaj\Module\Blocks\BlockRenderer
     arguments:
-      - "@prestashop.adapter.legacy.context"
+      - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+      - '@kaudaj.module.blocks.block_type_provider'
