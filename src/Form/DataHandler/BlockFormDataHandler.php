@@ -46,12 +46,19 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     private $container;
 
-    public function __construct(CommandBusInterface $commandBus, LegacyContext $legacyContext)
+    /**
+     * @var BlockTypeProvider
+     */
+    private $blockTypeProvider;
+
+    public function __construct(CommandBusInterface $commandBus, LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
     {
         $this->commandBus = $commandBus;
 
         $containerFinder = new ContainerFinder($legacyContext->getContext());
         $this->container = $containerFinder->getContainer();
+
+        $this->blockTypeProvider = $blockTypeProvider;
     }
 
     /**
@@ -114,7 +121,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     private function buildBlockOptions(int $blockId, string $type, array $formOptions): ?string
     {
-        $block = BlockTypeProvider::getBlockType($type);
+        $block = $this->blockTypeProvider->getBlockType($type);
 
         if (!$block) {
             return null;

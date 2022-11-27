@@ -40,7 +40,7 @@ class BlockTypeProvider
     /**
      * @return array<string, array<string, BlockInterface>> [module name => [block name => block instance]]
      */
-    public static function getBlockTypes(): array
+    public function getBlockTypes(): array
     {
         if (self::$blockTypes !== null) {
             return self::$blockTypes;
@@ -113,9 +113,9 @@ class BlockTypeProvider
         return self::$blockTypes;
     }
 
-    public static function getBlockType(string $type): ?BlockInterface
+    public function getBlockType(string $type): ?BlockInterface
     {
-        $blockTypes = self::getBlockTypes();
+        $blockTypes = $this->getBlockTypes();
 
         foreach ($blockTypes as $moduleBlocks) {
             if (key_exists($type, $moduleBlocks)) {

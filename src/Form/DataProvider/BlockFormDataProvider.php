@@ -44,12 +44,19 @@ final class BlockFormDataProvider implements FormDataProviderInterface
      */
     private $container;
 
-    public function __construct(CommandBusInterface $queryBus, LegacyContext $legacyContext)
+    /**
+     * @var BlockTypeProvider
+     */
+    private $blockTypeProvider;
+
+    public function __construct(CommandBusInterface $queryBus, LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
     {
         $this->queryBus = $queryBus;
 
         $containerFinder = new ContainerFinder($legacyContext->getContext());
         $this->container = $containerFinder->getContainer();
+
+        $this->blockTypeProvider = $blockTypeProvider;
     }
 
     /**
@@ -75,7 +82,7 @@ final class BlockFormDataProvider implements FormDataProviderInterface
 
         $formOptions = null;
         if ($optionsJson !== null) {
-            $block = BlockTypeProvider::getBlockType($type);
+            $block = $this->blockTypeProvider->getBlockType($type);
 
             if ($block) {
                 /** @var BlockFormMapperInterface */

@@ -45,13 +45,20 @@ class BlockType extends TranslatorAwareType
     private $hookChoices;
 
     /**
+     * @var BlockTypeProvider
+     */
+    private $blockTypeProvider;
+
+    /**
      * @param array<string, mixed> $locales
      * @param array<string, int> $hookChoices
      */
-    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices)
+    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices, BlockTypeProvider $blockTypeProvider)
     {
         parent::__construct($translator, $locales);
+
         $this->hookChoices = $hookChoices;
+        $this->blockTypeProvider = $blockTypeProvider;
     }
 
     /**
@@ -61,7 +68,7 @@ class BlockType extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $blockTypeChoices = [];
-        foreach (BlockTypeProvider::getBlockTypes() as $moduleBlocks) {
+        foreach ($this->blockTypeProvider->getBlockTypes() as $moduleBlocks) {
             foreach ($moduleBlocks as $block) {
                 $blockTypeChoices[$block->getLocalizedName()] = $block->getName();
             }
@@ -115,7 +122,7 @@ class BlockType extends TranslatorAwareType
         $formModifier = function (FormInterface $form, string $blockName): void {
             $fieldOptions = $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions();
 
-            $block = BlockTypeProvider::getBlockType($blockName);
+            $block = $this->blockTypeProvider->getBlockType($blockName);
             if (!$block) {
                 return;
             }

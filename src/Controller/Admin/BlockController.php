@@ -137,7 +137,10 @@ class BlockController extends FrameworkBundleAdminController
     {
         $formThemes = [];
 
-        foreach (array_keys(BlockTypeProvider::getBlockTypes()) as $moduleName) {
+        /** @var BlockTypeProvider */
+        $blockTypeProvider = $this->get('kaudaj.module.blocks.block_type_provider');
+
+        foreach (array_keys($blockTypeProvider->getBlockTypes()) as $moduleName) {
             $filename = _PS_MODULE_DIR_ . "$moduleName/views/templates/form_theme.html.twig";
 
             if (file_exists($filename)) {
