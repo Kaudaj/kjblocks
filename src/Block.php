@@ -54,7 +54,10 @@ abstract class Block implements BlockInterface
         $this->translator = $legacyContext->getContext()->getTranslator();
     }
 
-    abstract protected function getTemplate(): string;
+    protected function getTemplate(): string
+    {
+        return '';
+    }
 
     /**
      * @param array<string, mixed> $options
