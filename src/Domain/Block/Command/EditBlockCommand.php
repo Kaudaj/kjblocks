@@ -48,7 +48,7 @@ class EditBlockCommand extends AbstractBlockCommand
     private $localizedNames;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $type;
 
@@ -123,12 +123,12 @@ class EditBlockCommand extends AbstractBlockCommand
         return $this->options;
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
 
