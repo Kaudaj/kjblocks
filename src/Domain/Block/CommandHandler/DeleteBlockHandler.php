@@ -24,6 +24,7 @@ namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotDeleteBlockException;
+use Kaudaj\Module\Blocks\Image\BlockImageManager;
 
 /**
  * Class DeleteBlockHandler is responsible for deleting block data.
@@ -37,9 +38,9 @@ final class DeleteBlockHandler extends AbstractBlockCommandHandler
      */
     public function handle(DeleteBlockCommand $command): void
     {
-        $block = $this->getBlockEntity(
-            $command->getBlockId()->getValue()
-        );
+        $blockId = $command->getBlockId()->getValue();
+
+        $block = $this->getBlockEntity($blockId);
 
         try {
             $blockHooks = $block->getBlockHooks();
@@ -50,6 +51,9 @@ final class DeleteBlockHandler extends AbstractBlockCommandHandler
             foreach ($blockHooks as $blockHook) {
                 $this->blockHookRepository->cleanPositions($blockHook->getHookId());
             }
+
+            $imageManager = new BlockImageManager();
+            $imageManager->delete($blockId);
         } catch (\Exception $exception) {
             throw new CannotDeleteBlockException('An unexpected error occurred when deleting block', 0, $exception);
         }

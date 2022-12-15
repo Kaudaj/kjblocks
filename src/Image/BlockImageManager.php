@@ -48,7 +48,7 @@ final class BlockImageManager
         $imageUploader->upload($image, $destination);
     }
 
-    public function delete(int $blockId, string $name, ?int $langId = null): void
+    public function delete(int $blockId, ?string $name = null, ?int $langId = null): void
     {
         $filename = $this->getFilename($blockId, $name, $langId) . '.*';
 
@@ -64,14 +64,14 @@ final class BlockImageManager
 
     public function getUrl(int $blockId, string $name, ?int $langId = null): ?string
     {
-        $file = $this->find($blockId, $name, $langId);
+        $filePathname = $this->find($blockId, $name, $langId);
         $link = new \Link();
 
-        if ($file === null) {
+        if ($filePathname === null) {
             return null;
         }
 
-        return rtrim($link->getBaseLink(), '/') . str_replace(_PS_ROOT_DIR_, '', $this->blockImageDir) . basename($file);
+        return rtrim($link->getBaseLink(), '/') . str_replace(_PS_ROOT_DIR_, '', $filePathname);
     }
 
     public function find(int $blockId, string $name, ?int $langId = null): ?string
@@ -87,9 +87,9 @@ final class BlockImageManager
         return $files[0];
     }
 
-    private function getFilename(int $blockId, string $name, ?int $langId = null): string
+    private function getFilename(int $blockId, ?string $name = null, ?int $langId = null): string
     {
-        $filename = "$blockId/{$name}";
+        $filename = $name !== null ? "$blockId/{$name}" : "$blockId/*";
 
         if ($langId !== null) {
             $isoCode = \Language::getIsoById($langId);
