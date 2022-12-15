@@ -25,6 +25,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BlockRenderer
 {
+    public const HOOK_FILTER_RENDER = 'filterBlockRender';
+    public const HOOK_PARAM_RENDER = 'render';
+
     /**
      * @var int
      */
@@ -69,7 +72,9 @@ class BlockRenderer
         $block->configureOptions($resolver);
         $options = $resolver->resolve($options);
 
-        return $block->render($options);
+        return strval(\Hook::exec(self::HOOK_FILTER_RENDER, [
+            self::HOOK_PARAM_RENDER => $block->render($options),
+        ]));
     }
 
     /**
