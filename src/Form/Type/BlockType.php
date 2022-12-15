@@ -138,7 +138,7 @@ class BlockType extends TranslatorAwareType
 
                 $formModifier(
                     $event->getForm(),
-                    key_exists(self::FIELD_TYPE, $data) ? strval($data[self::FIELD_TYPE]) : 'container'
+                    key_exists(self::FIELD_TYPE, $data) ? strval($data[self::FIELD_TYPE]) : 'text'
                 );
             }
         );

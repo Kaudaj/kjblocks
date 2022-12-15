@@ -108,6 +108,8 @@ final class BlockFormDataProvider implements FormDataProviderInterface
      */
     public function getDefaultData()
     {
-        return [];
+        return [
+            BlockType::FIELD_TYPE => 'text',
+        ];
     }
 }
