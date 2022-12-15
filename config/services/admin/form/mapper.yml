@@ -1,0 +1,6 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.blocks.form.mapper.container:
+    class: Kaudaj\Module\Blocks\Form\Mapper\ContainerBlockFormMapper

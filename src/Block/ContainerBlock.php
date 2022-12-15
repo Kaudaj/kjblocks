@@ -27,6 +27,7 @@ use Kaudaj\Module\Blocks\Form\Type\Block\ContainerBlockType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Url;
 
 class ContainerBlock extends Block
 {
@@ -34,6 +35,7 @@ class ContainerBlock extends Block
     public const OPTION_HEIGHT = 'height';
     public const OPTION_CLASSES = 'classes';
     public const OPTION_IDENTIFIER = 'identifier';
+    public const OPTION_BACKGROUND_IMAGE = 'background_image';
 
     public function getName(): string
     {
@@ -47,7 +49,7 @@ class ContainerBlock extends Block
 
     protected function getTemplate(): string
     {
-        return 'module:kjblocks/views/templates/front/components/organisms/blocks/container.tpl';
+        return 'module:kjblocks/views/templates/front/blocks/container.tpl';
     }
 
     protected function getTemplateVariables(array $options): array
@@ -64,6 +66,11 @@ class ContainerBlock extends Block
         if (key_exists(self::OPTION_HEIGHT, $options)) {
             $height = intval($options[self::OPTION_HEIGHT]);
             $inlineStyle .= "height: {$height}px;";
+        }
+
+        if (key_exists(self::OPTION_BACKGROUND_IMAGE, $options)) {
+            $url = strval($options[self::OPTION_BACKGROUND_IMAGE]);
+            $inlineStyle .= "background-image: url(\"{$url}\");";
         }
 
         if (!empty($inlineStyle)) {
@@ -100,12 +107,14 @@ class ContainerBlock extends Block
                 self::OPTION_HEIGHT,
                 self::OPTION_CLASSES,
                 self::OPTION_IDENTIFIER,
+                self::OPTION_BACKGROUND_IMAGE,
             ])
 
             ->setAllowedTypes(self::OPTION_WIDTH, 'int')
             ->setAllowedTypes(self::OPTION_HEIGHT, 'int')
             ->setAllowedTypes(self::OPTION_IDENTIFIER, 'string')
             ->setAllowedTypes(self::OPTION_CLASSES, 'string')
+            ->setAllowedTypes(self::OPTION_BACKGROUND_IMAGE, 'string')
 
             ->setAllowedValues(self::OPTION_WIDTH, $dimensionIsValidCallable)
             ->setAllowedValues(self::OPTION_HEIGHT, $dimensionIsValidCallable)
@@ -115,11 +124,19 @@ class ContainerBlock extends Block
             ->setAllowedValues(self::OPTION_CLASSES, $this->createIsValidCallable(
                 new TypedRegex(TypedRegex::TYPE_SELECTORS)
             ))
+            ->setAllowedValues(self::OPTION_BACKGROUND_IMAGE, $this->createIsValidCallable(
+                new Url()
+            ))
         ;
     }
 
     public function getFormType(): string
     {
         return ContainerBlockType::class;
+    }
+
+    public function getFormMapper(): string
+    {
+        return 'kaudaj.module.blocks.form.mapper.container';
     }
 }

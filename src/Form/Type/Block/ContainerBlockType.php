@@ -21,10 +21,12 @@ namespace Kaudaj\Module\Blocks\Form\Type\Block;
 
 use Kaudaj\Module\Blocks\Constraint\TypedRegex;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\Image;
 
 class ContainerBlockType extends TranslatorAwareType
 {
@@ -32,6 +34,7 @@ class ContainerBlockType extends TranslatorAwareType
     public const FIELD_HEIGHT = 'height';
     public const FIELD_CLASSES = 'classes';
     public const FIELD_IDENTIFIER = 'identifier';
+    public const FIELD_BACKGROUND_IMAGE = 'background_image';
 
     /**
      * @param FormBuilderInterface<string, mixed> $builder
@@ -70,6 +73,14 @@ class ContainerBlockType extends TranslatorAwareType
                 'required' => false,
                 'constraints' => [
                     new TypedRegex(TypedRegex::TYPE_SELECTOR),
+                ],
+            ])
+            ->add(self::FIELD_BACKGROUND_IMAGE, FileType::class, [
+                'label' => $this->trans('Background image', 'Admin.Global'),
+                'help' => $this->trans('Background image of the block.', 'Modules.Kjblocks.Admin'),
+                'required' => false,
+                'constraints' => [
+                    new Image(),
                 ],
             ])
         ;
