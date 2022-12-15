@@ -27,7 +27,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TextBlock extends ContainerBlock
 {
-    public const OPTION_CONTENT = 'content';
+    public const OPTION_TEXT = 'text';
 
     public function getName(): string
     {
@@ -48,7 +48,7 @@ class TextBlock extends ContainerBlock
     {
         $variables = parent::getTemplateVariables($options);
 
-        $variables[self::OPTION_CONTENT] = $options[self::OPTION_CONTENT];
+        $variables[self::OPTION_TEXT] = $options[self::OPTION_TEXT];
 
         return $variables;
     }
@@ -58,9 +58,9 @@ class TextBlock extends ContainerBlock
         parent::configureOptions($resolver);
 
         $resolver
-            ->setRequired(self::OPTION_CONTENT)
-            ->setAllowedTypes(self::OPTION_CONTENT, 'string')
-            ->setAllowedValues(self::OPTION_CONTENT, $this->createIsValidCallable(
+            ->setRequired(self::OPTION_TEXT)
+            ->setAllowedTypes(self::OPTION_TEXT, 'string')
+            ->setAllowedValues(self::OPTION_TEXT, $this->createIsValidCallable(
                 new CleanHtml()
             ))
         ;
@@ -73,6 +73,6 @@ class TextBlock extends ContainerBlock
 
     public function getMultiLangOptions(): array
     {
-        return [self::OPTION_CONTENT];
+        return [self::OPTION_TEXT];
     }
 }

@@ -18,5 +18,5 @@
 {extends 'module:kjblocks/views/templates/front/blocks/container.tpl'}
 
 {block name="content"}
-    {$content}
+    {$text nofilter}
 {/block}

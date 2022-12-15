@@ -27,7 +27,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class TextBlockType extends ContainerBlockType
 {
-    public const FIELD_CONTENT = 'content';
+    public const FIELD_TEXT = 'text';
 
     /**
      * @param FormBuilderInterface<string, mixed> $builder
@@ -36,8 +36,8 @@ class TextBlockType extends ContainerBlockType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(self::FIELD_CONTENT, TranslatableType::class, [
-                'label' => $this->trans('Block content', 'Admin.Global'),
+            ->add(self::FIELD_TEXT, TranslatableType::class, [
+                'label' => $this->trans('Block text', 'Admin.Global'),
                 'help' => $this->trans('Content of the block.', 'Modules.Kjblocks.Admin'),
                 'type' => FormattedTextareaType::class,
                 'constraints' => [
