@@ -63,25 +63,7 @@ class BlockRenderer
         $multiLangOptions = $block->getMultiLangOptions();
         $defaultLangId = (new Configuration())->getInt('PS_LANG_DEFAULT');
 
-        foreach ($options as $option => &$value) {
-            $option = strval($option);
-
-            if (!(in_array($option, $multiLangOptions) && is_array($value))) {
-                continue;
-            }
-
-            if (key_exists(0, $value)) {
-                foreach ($value as $langValues) {
-                    if (!is_array($langValues)) {
-                        continue;
-                    }
-
-                    $value = $this->getContextLangValue($langValues, $defaultLangId);
-                }
-            } else {
-                $value = $this->getContextLangValue($value, $defaultLangId);
-            }
-        }
+        $this->setContextLangValue($options, $defaultLangId, $multiLangOptions);
 
         $resolver = new OptionsResolver();
         $block->configureOptions($resolver);
@@ -110,18 +92,31 @@ class BlockRenderer
     }
 
     /**
-     * @param array<int, mixed> $langValues
-     *
-     * @return mixed
+     * @param mixed[] $optionValue
+     * @param string[] $multiLangOptions
      */
-    private function getContextLangValue(array $langValues, int $defaultLangId)
+    private function setContextLangValue(array &$optionValue, int $defaultLangId, array $multiLangOptions): void
     {
-        if (key_exists($this->contextLangId, $langValues)) {
-            return $langValues[$this->contextLangId];
-        } elseif (key_exists($defaultLangId, $langValues)) {
-            return $langValues[$defaultLangId];
+        $isAssoc = count(array_filter(array_keys($optionValue), 'is_string')) > 0;
+
+        if (!$isAssoc && !key_exists(0, $optionValue)) {
+            if (key_exists($this->contextLangId, $optionValue)) {
+                $optionValue = $optionValue[$this->contextLangId];
+            } elseif (key_exists($defaultLangId, $optionValue)) {
+                $optionValue = $optionValue[$defaultLangId];
+            } else {
+                $optionValue = null;
+            }
+
+            return;
         }
 
-        return null;
+        foreach ($optionValue as $option => &$value) {
+            if (!is_array($value) || ($isAssoc && !in_array($option, $multiLangOptions))) {
+                continue;
+            }
+
+            $this->setContextLangValue($value, $defaultLangId, $multiLangOptions);
+        }
     }
 }
