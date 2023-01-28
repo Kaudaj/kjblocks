@@ -8,6 +8,14 @@ services:
     class: Kaudaj\Module\Blocks\Form\Type\BlockType
     arguments:
       - '@=service("kaudaj.module.blocks.form.choice_provider.hook").getChoices()'
+    tags:
+      - { name: form.type }
+
+  kaudaj.module.blocks.form.type.block_type:
+    public: true
+    parent: "form.type.translatable.aware"
+    class: Kaudaj\Module\Blocks\Form\Type\BlockTypeType
+    arguments:
       - '@kaudaj.module.blocks.block_type_provider'
     tags:
       - { name: form.type }

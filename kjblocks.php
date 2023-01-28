@@ -40,7 +40,9 @@ class KJBlocks extends Module implements WidgetInterface
     /**
      * @var string[] Hooks to register
      */
-    public const HOOKS = [];
+    public const HOOKS = [
+        'actionGetBlockTypes',
+    ];
 
     public function __construct()
     {
@@ -215,6 +217,17 @@ EOF
 
             Tools::redirectAdmin($router->generate('kj_blocks_blocks_index'));
         }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function hookActionGetBlockTypes(): array
+    {
+        return [
+            'kaudaj.module.blocks.block.container',
+            'kaudaj.module.blocks.block.text',
+        ];
     }
 
     /**

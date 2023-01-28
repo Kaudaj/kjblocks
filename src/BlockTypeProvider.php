@@ -24,18 +24,27 @@ namespace Kaudaj\Module\Blocks;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\Debug\DebugMode;
 use PrestaShop\PrestaShop\Core\Exception\ContainerNotFoundException;
+use RuntimeException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Validation;
 
 class BlockTypeProvider
 {
-    public const HOOK_EXTRA_BLOCKS = 'actionGetExtraBlocks';
-    public const HOOK_PARAM_BLOCKS_SERVICES = 'blocks_services';
-
     /**
      * @var array<string, array<string, BlockInterface>> [module name => [block name => block instance]]
      */
     private static $blockTypes = null;
+
+    /**
+     * @var string
+     */
+    private $hookName;
+
+    public function __construct(string $hookName)
+    {
+        $this->hookName = $hookName;
+    }
 
     /**
      * @return array<string, array<string, BlockInterface>> [module name => [block name => block instance]]
@@ -46,27 +55,17 @@ class BlockTypeProvider
             return self::$blockTypes;
         }
 
-        try {
-            $context = \Context::getContext();
-            if ($context === null) {
-                return [];
-            }
-
-            $finder = new ContainerFinder($context);
-            $container = $finder->getContainer();
-        } catch (ContainerNotFoundException $e) {
-            return [];
+        $container = $this->getContainer();
+        if ($container === null) {
+            throw new RuntimeException("Can't retrieve container");
         }
 
-        $blocks = \Hook::exec(self::HOOK_EXTRA_BLOCKS, [], null, true);
+        $blocks = \Hook::exec($this->hookName, [], null, true);
         $blocks = is_array($blocks) ? $blocks : [];
 
-        $blocks['kjblocks'] = [
-            'kaudaj.module.blocks.block.container',
-            'kaudaj.module.blocks.block.text',
-        ];
-
         $isDebugModeEnabled = (new DebugMode())->isDebugModeEnabled();
+
+        $validator = Validation::createValidator();
 
         self::$blockTypes = [];
         foreach ($blocks as $moduleName => $moduleBlocks) {
@@ -88,7 +87,6 @@ class BlockTypeProvider
                     throw new \RuntimeException('Container not available.');
                 }
 
-                $validator = Validation::createValidator();
                 $violations = $validator->validate($block, [
                     new Type(BlockInterface::class),
                 ]);
@@ -96,6 +94,7 @@ class BlockTypeProvider
                 if (0 !== count($violations)) {
                     if ($isDebugModeEnabled) {
                         $message = 'Block ' . get_class($block) . ' is not valid:';
+
                         foreach ($violations as $violation) {
                             $message .= "- {$violation->getMessage()}\n";
                         }
@@ -111,6 +110,23 @@ class BlockTypeProvider
         }
 
         return self::$blockTypes;
+    }
+
+    private function getContainer(): ?ContainerInterface
+    {
+        try {
+            $context = \Context::getContext();
+            if ($context === null) {
+                return null;
+            }
+
+            $finder = new ContainerFinder($context);
+            $container = $finder->getContainer();
+        } catch (ContainerNotFoundException $e) {
+            return null;
+        }
+
+        return $container;
     }
 
     public function getBlockType(string $type): ?BlockInterface

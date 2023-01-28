@@ -21,16 +21,12 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataProvider;
 
-use Kaudaj\Module\Blocks\BlockFormMapperInterface;
-use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing;
 use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
-use PrestaShop\PrestaShop\Adapter\ContainerFinder;
-use PrestaShop\PrestaShop\Adapter\LegacyContext;
+use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataProvider\FormDataProviderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class BlockFormDataProvider implements FormDataProviderInterface
 {
@@ -40,23 +36,14 @@ final class BlockFormDataProvider implements FormDataProviderInterface
     private $queryBus;
 
     /**
-     * @var ContainerInterface
+     * @var BlockTypeFormDataProvider
      */
-    private $container;
+    private $blockTypeFormDataProvider;
 
-    /**
-     * @var BlockTypeProvider
-     */
-    private $blockTypeProvider;
-
-    public function __construct(CommandBusInterface $queryBus, LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
+    public function __construct(CommandBusInterface $queryBus, BlockTypeFormDataProvider $blockTypeFormDataProvider)
     {
         $this->queryBus = $queryBus;
-
-        $containerFinder = new ContainerFinder($legacyContext->getContext());
-        $this->container = $containerFinder->getContainer();
-
-        $this->blockTypeProvider = $blockTypeProvider;
+        $this->blockTypeFormDataProvider = $blockTypeFormDataProvider;
     }
 
     /**
@@ -82,24 +69,20 @@ final class BlockFormDataProvider implements FormDataProviderInterface
 
         $formOptions = null;
         if ($optionsJson !== null) {
-            $block = $this->blockTypeProvider->getBlockType($type);
-
-            if ($block) {
-                /** @var BlockFormMapperInterface */
-                $blockFormHandler = $this->container->get($block->getFormMapper());
-
-                $options = json_decode($optionsJson->getValue(), true) ?: [];
-                if (is_array($options)) {
-                    $formOptions = $blockFormHandler->mapToFormData($blockId, $options);
-                }
-            }
+            $formOptions = $this->blockTypeFormDataProvider->buildFormOptions(
+                $optionsJson,
+                $editableBlock->getBlockId()->getValue(),
+                $type
+            );
         }
 
         return [
             BlockType::FIELD_HOOKS => $hooksIds,
             BlockType::FIELD_NAME => $localizedNames,
-            BlockType::FIELD_TYPE => $type,
-            BlockType::FIELD_OPTIONS => $formOptions,
+            BlockType::FIELD_TYPE => [
+                BlockTypeType::FIELD_TYPE => $type,
+                BlockTypeType::FIELD_OPTIONS => $formOptions,
+            ],
         ];
     }
 
@@ -109,7 +92,9 @@ final class BlockFormDataProvider implements FormDataProviderInterface
     public function getDefaultData()
     {
         return [
-            BlockType::FIELD_TYPE => 'text',
+            BlockType::FIELD_TYPE => [
+                BlockTypeType::FIELD_TYPE => 'text',
+            ],
         ];
     }
 }

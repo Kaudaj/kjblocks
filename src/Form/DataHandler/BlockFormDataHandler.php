@@ -21,18 +21,14 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
-use Kaudaj\Module\Blocks\BlockFormMapperInterface;
-use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
+use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
-use PrestaShop\PrestaShop\Adapter\ContainerFinder;
-use PrestaShop\PrestaShop\Adapter\LegacyContext;
+use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 final class BlockFormDataHandler implements FormDataHandlerInterface
 {
@@ -42,23 +38,14 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
     private $commandBus;
 
     /**
-     * @var ContainerInterface
+     * @var BlockTypeFormDataHandler
      */
-    private $container;
+    private $blockTypeFormDataHandler;
 
-    /**
-     * @var BlockTypeProvider
-     */
-    private $blockTypeProvider;
-
-    public function __construct(CommandBusInterface $commandBus, LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
+    public function __construct(CommandBusInterface $commandBus, BlockTypeFormDataHandler $blockTypeFormDataHandler)
     {
         $this->commandBus = $commandBus;
-
-        $containerFinder = new ContainerFinder($legacyContext->getContext());
-        $this->container = $containerFinder->getContainer();
-
-        $this->blockTypeProvider = $blockTypeProvider;
+        $this->blockTypeFormDataHandler = $blockTypeFormDataHandler;
     }
 
     /**
@@ -68,7 +55,11 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     public function create(array $data): int
     {
-        $type = strval($data[BlockType::FIELD_TYPE]);
+        if (!is_array($data[BlockType::FIELD_TYPE])) {
+            throw new BlockException('Block type has not been found.');
+        }
+
+        $type = strval($data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_TYPE]);
 
         $addBlockCommand = (new AddBlockCommand())
             ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
@@ -81,8 +72,14 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
         $blockId = $blockId->getValue();
 
         $options = null;
-        if (is_array($data[BlockType::FIELD_OPTIONS])) {
-            $options = $this->buildBlockOptions($blockId, $type, $data[BlockType::FIELD_OPTIONS]);
+        if (is_array($data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_OPTIONS])) {
+            $options = $this->blockTypeFormDataHandler->buildBlockOptions(
+                $blockId,
+                'block',
+                BlockType::FIELD_TYPE,
+                $type,
+                $data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_OPTIONS]
+            );
         }
 
         $editBlockCommand = (new EditBlockCommand($blockId))
@@ -100,77 +97,29 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     public function update($id, array $data): void
     {
-        $type = strval($data[BlockType::FIELD_TYPE]);
+        if (!is_array($data[BlockType::FIELD_TYPE])) {
+            throw new BlockException('Block type has not been found.');
+        }
+
+        $type = strval($data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_TYPE]);
 
         $options = null;
-        if (is_array($data[BlockType::FIELD_OPTIONS])) {
-            $options = $this->buildBlockOptions($id, $type, $data[BlockType::FIELD_OPTIONS]);
+        if (is_array($data[BlockType::FIELD_TYPE][BlockType::FIELD_OPTIONS])) {
+            $options = $this->blockTypeFormDataHandler->buildBlockOptions(
+                $id,
+                'block',
+                BlockType::FIELD_TYPE,
+                $type,
+                $data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_OPTIONS]
+            );
         }
 
         $editBlockCommand = (new EditBlockCommand((int) $id))
             ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
-            ->setType(strval($data[BlockType::FIELD_TYPE]))
+            ->setType($type)
             ->setOptions($options);
 
         $this->commandBus->handle($editBlockCommand);
-    }
-
-    /**
-     * @param array<string, mixed> $formOptions
-     */
-    private function buildBlockOptions(int $blockId, string $type, array $formOptions): ?string
-    {
-        $block = $this->blockTypeProvider->getBlockType($type);
-
-        if (!$block) {
-            return null;
-        }
-
-        /** @var BlockFormMapperInterface */
-        $blockFormHandler = $this->container->get($block->getFormMapper());
-
-        // Filter old options from previous block type
-
-        /** @var RequestStack */
-        $requestStack = $this->container->get('request_stack');
-        $currentRequest = $requestStack->getCurrentRequest();
-
-        if ($currentRequest !== null) {
-            $requestBlockParam = $currentRequest->request->get('block') ?: [];
-            $filesBlockParam = $currentRequest->files->get('block') ?: [];
-
-            $requestOptions = [];
-
-            if (is_array($requestBlockParam) && key_exists(BlockType::FIELD_OPTIONS, $requestBlockParam)) {
-                $requestOptions = $requestBlockParam[BlockType::FIELD_OPTIONS];
-            }
-
-            if (is_array($filesBlockParam) && key_exists(BlockType::FIELD_OPTIONS, $filesBlockParam)) {
-                $requestOptions = array_merge($requestOptions, $filesBlockParam[BlockType::FIELD_OPTIONS]);
-            }
-
-            $formOptions = array_intersect_key($formOptions, $requestOptions);
-        }
-
-        $formOptions = $this->array_filter_recursive($formOptions);
-
-        return json_encode($blockFormHandler->mapToBlockOptions($blockId, $formOptions)) ?: null;
-    }
-
-    /**
-     * @param array<string, mixed> $input
-     *
-     * @return array<string, mixed>
-     */
-    private function array_filter_recursive(array $input): array
-    {
-        foreach ($input as &$value) {
-            if (is_array($value)) {
-                $value = $this->array_filter_recursive($value);
-            }
-        }
-
-        return array_filter($input);
     }
 }

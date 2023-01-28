@@ -72,9 +72,12 @@ class BlockRenderer
         $block->configureOptions($resolver);
         $options = $resolver->resolve($options);
 
-        return strval(\Hook::exec(self::HOOK_FILTER_RENDER, [
-            self::HOOK_PARAM_RENDER => $block->render($options),
+        $blockRender = $block->render($options);
+        $filteredBlockRender = strval(\Hook::exec(self::HOOK_FILTER_RENDER, [
+            self::HOOK_PARAM_RENDER => $blockRender,
         ]));
+
+        return $filteredBlockRender ?: $blockRender;
     }
 
     /**

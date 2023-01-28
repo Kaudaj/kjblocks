@@ -8,8 +8,14 @@ services:
     arguments:
       - "@doctrine.orm.entity_manager"
 
+  kaudaj.module.blocks.block_type_provider.factory:
+    class: Kaudaj\Module\Blocks\BlockTypeProviderFactory
+
   kaudaj.module.blocks.block_type_provider:
     class: Kaudaj\Module\Blocks\BlockTypeProvider
+    factory: ["@kaudaj.module.blocks.block_type_provider.factory", "create"]
+    arguments:
+      - 'actionGetBlockTypes'
 
   kaudaj.module.blocks.block_renderer:
     class: Kaudaj\Module\Blocks\BlockRenderer
