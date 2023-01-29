@@ -8,12 +8,16 @@ services:
     arguments:
       - "@doctrine.orm.entity_manager"
 
-  kaudaj.module.blocks.block_type_provider.factory:
-    class: Kaudaj\Module\Blocks\BlockTypeProviderFactory
+  kaudaj.module.blocks.block.query_handler.get_by_hook:
+    public: true
+    parent: kaudaj.module.blocks.block.query_handler.abstract
+    class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlocksByHookHandler
+    tags:
+      - name: tactician.handler
+        command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook
 
   kaudaj.module.blocks.block_type_provider:
     class: Kaudaj\Module\Blocks\BlockTypeProvider
-    factory: ["@kaudaj.module.blocks.block_type_provider.factory", "create"]
     arguments:
       - 'actionGetBlockTypes'
 

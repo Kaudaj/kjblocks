@@ -29,17 +29,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Validation;
 
+/**
+ * @template T of BlockInterface
+ */
 class BlockTypeProvider
 {
     /**
-     * @var array<string, array<string, BlockInterface>> [module name => [block name => block instance]]
+     * @var array<string, array<string, T>> [module name => [block name => block instance]]
      */
-    private static $blockTypes = null;
+    protected static $blockTypes = null;
 
     /**
      * @var string
      */
-    private $hookName;
+    protected $hookName;
 
     public function __construct(string $hookName)
     {
@@ -47,7 +50,7 @@ class BlockTypeProvider
     }
 
     /**
-     * @return array<string, array<string, BlockInterface>> [module name => [block name => block instance]]
+     * @return array<string, array<string, T>> [module name => [block name => block instance]]
      */
     public function getBlockTypes(): array
     {
@@ -73,7 +76,7 @@ class BlockTypeProvider
 
             foreach ($moduleBlocks as $blockService) {
                 try {
-                    /** @var BlockInterface|false */
+                    /** @var T|false */
                     $block = $container->get($blockService);
                 } catch (\Exception $e) {
                     if ($isDebugModeEnabled) {
@@ -129,6 +132,9 @@ class BlockTypeProvider
         return $container;
     }
 
+    /**
+     * @return T|null
+     */
     public function getBlockType(string $type): ?BlockInterface
     {
         $blockTypes = $this->getBlockTypes();

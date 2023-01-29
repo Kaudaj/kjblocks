@@ -9,6 +9,7 @@ parameters:
   ignoreErrors:
     # - "#Insert your error here (don't forget to escape special characters like the following hash: \\#)#"
   reportUnmatchedIgnoredErrors: true
+  checkGenericClassInNonGenericObjectType: false
   level: 9
 
 includes:
