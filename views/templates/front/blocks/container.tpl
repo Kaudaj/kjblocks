@@ -18,7 +18,7 @@
 
 <div 
     {if isset($identifier)}id="{$identifier}"{/if}
-    {if isset($classes)}class="{$classes|implode:' '}"{/if}
+    {if isset($classes)}class="{' '|implode:$classes}"{/if}
     {if isset($inline_style)}style="{$inline_style}"{/if}
 >
     {block name="content"}
