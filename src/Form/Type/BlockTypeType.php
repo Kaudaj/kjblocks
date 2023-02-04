@@ -19,6 +19,7 @@
 
 namespace Kaudaj\Module\Blocks\Form\Type;
 
+use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -36,12 +37,13 @@ class BlockTypeType extends TranslatorAwareType
     public const FIELD_OPTIONS = 'options';
 
     /**
-     * @var BlockTypeProvider
+     * @var BlockTypeProvider<BlockInterface>
      */
     private $blockTypeProvider;
 
     /**
      * @param array<string, mixed> $locales
+     * @param BlockTypeProvider<BlockInterface> $blockTypeProvider
      */
     public function __construct(TranslatorInterface $translator, array $locales, BlockTypeProvider $blockTypeProvider)
     {
@@ -106,7 +108,7 @@ class BlockTypeType extends TranslatorAwareType
                     $event->getForm(),
                     is_array($data) && key_exists(self::FIELD_TYPE, $data)
                         ? strval($data[self::FIELD_TYPE])
-                        : $this->getDefaultType()
+                        : 'text'
                 );
             }
         );
@@ -131,10 +133,5 @@ class BlockTypeType extends TranslatorAwareType
         $resolver
             ->setDefault('label', false)
         ;
-    }
-
-    protected function getDefaultType(): string
-    {
-        return 'container';
     }
 }

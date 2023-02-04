@@ -83,7 +83,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
         }
 
         $editBlockCommand = (new EditBlockCommand($blockId))
-            ->setOptions($options);
+            ->setOptions(json_encode($options) ?: null);
 
         $this->commandBus->handle($editBlockCommand);
 
@@ -118,7 +118,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
             ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setType($type)
-            ->setOptions($options);
+            ->setOptions(json_encode($options) ?: null);
 
         $this->commandBus->handle($editBlockCommand);
     }

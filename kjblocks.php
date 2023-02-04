@@ -23,6 +23,7 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
+use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockRenderer;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
 use Kaudaj\Module\Blocks\Entity\Block;
@@ -242,7 +243,7 @@ EOF
             /** @var Block[] */
             $blocks = $this->getCommandBus()->handle(new GetBlocksByHook($hookName));
 
-            /** @var BlockRenderer */
+            /** @var BlockRenderer<BlockInterface> */
             $blockRenderer = $this->get('kaudaj.module.blocks.block_renderer');
 
             foreach ($blocks as $block) {

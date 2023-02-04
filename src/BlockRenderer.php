@@ -23,6 +23,9 @@ use Kaudaj\Module\Blocks\Entity\Block;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @template T of BlockInterface
+ */
 class BlockRenderer
 {
     public const HOOK_FILTER_RENDER = 'filterBlockRender';
@@ -31,13 +34,16 @@ class BlockRenderer
     /**
      * @var int
      */
-    private $contextLangId;
+    protected $contextLangId;
 
     /**
-     * @var BlockTypeProvider
+     * @var BlockTypeProvider<T>
      */
-    private $blockTypeProvider;
+    protected $blockTypeProvider;
 
+    /**
+     * @param BlockTypeProvider<T> $blockTypeProvider
+     */
     public function __construct(int $contextLangId, BlockTypeProvider $blockTypeProvider)
     {
         $this->contextLangId = $contextLangId;

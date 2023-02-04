@@ -16,8 +16,12 @@ services:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook
 
+  kaudaj.module.blocks.block_type_provider.factory:
+    class: Kaudaj\Module\Blocks\BlockTypeProviderFactory
+
   kaudaj.module.blocks.block_type_provider:
     class: Kaudaj\Module\Blocks\BlockTypeProvider
+    factory: ["@kaudaj.module.blocks.block_type_provider.factory", "create"]
     arguments:
       - 'actionGetBlockTypes'
 

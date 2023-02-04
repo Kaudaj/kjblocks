@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
 use Kaudaj\Module\Blocks\BlockFormMapperInterface;
+use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
@@ -37,10 +38,13 @@ class BlockTypeFormDataHandler
     private $container;
 
     /**
-     * @var BlockTypeProvider
+     * @var BlockTypeProvider<BlockInterface>
      */
     private $blockTypeProvider;
 
+    /**
+     * @param BlockTypeProvider<BlockInterface> $blockTypeProvider
+     */
     public function __construct(LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
     {
         $containerFinder = new ContainerFinder($legacyContext->getContext());
@@ -51,13 +55,15 @@ class BlockTypeFormDataHandler
 
     /**
      * @param array<string, mixed> $formOptions
+     *
+     * @return array<string, mixed>
      */
-    public function buildBlockOptions(int $blockId, string $formName, string $typeFieldName, string $type, array $formOptions): ?string
+    public function buildBlockOptions(int $blockId, string $formName, string $typeFieldName, string $type, array $formOptions): array
     {
         $block = $this->blockTypeProvider->getBlockType($type);
 
         if (!$block) {
-            return null;
+            return [];
         }
 
         /** @var BlockFormMapperInterface */
@@ -73,24 +79,24 @@ class BlockTypeFormDataHandler
             $requestParam = $currentRequest->request->get($formName) ?: [];
             $filesParam = $currentRequest->files->get($formName) ?: [];
 
-            $optionsInParam = function ($param) use ($typeFieldName): ?array {
+            $optionsInParam = function ($param) use ($typeFieldName): array {
                 if (is_array($param) && key_exists($typeFieldName, $param)
                     && is_array($param[$typeFieldName]) && key_exists(BlockTypeType::FIELD_OPTIONS, $param[$typeFieldName])) {
                     return $param[$typeFieldName][BlockTypeType::FIELD_OPTIONS];
                 }
 
-                return null;
+                return [];
             };
 
-            $requestOptions = $optionsInParam($requestParam) ?: [];
-            $requestOptions = array_merge($requestOptions, $optionsInParam($filesParam) ?: []);
+            $requestOptions = $optionsInParam($requestParam);
+            $requestOptions = array_merge($requestOptions, $optionsInParam($filesParam));
 
             $formOptions = array_intersect_key($formOptions, $requestOptions);
         }
 
         $formOptions = $this->array_filter_recursive($formOptions);
 
-        return json_encode($blockFormHandler->mapToBlockOptions($blockId, $formOptions)) ?: null;
+        return $blockFormHandler->mapToBlockOptions($blockId, $formOptions);
     }
 
     /**

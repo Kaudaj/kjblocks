@@ -37,7 +37,7 @@ class BlockTypeProvider
     /**
      * @var array<string, array<string, T>> [module name => [block name => block instance]]
      */
-    protected static $blockTypes = null;
+    protected $blockTypes = null;
 
     /**
      * @var string
@@ -54,8 +54,8 @@ class BlockTypeProvider
      */
     public function getBlockTypes(): array
     {
-        if (self::$blockTypes !== null) {
-            return self::$blockTypes;
+        if ($this->blockTypes !== null) {
+            return $this->blockTypes;
         }
 
         $container = $this->getContainer();
@@ -70,9 +70,9 @@ class BlockTypeProvider
 
         $validator = Validation::createValidator();
 
-        self::$blockTypes = [];
+        $this->blockTypes = [];
         foreach ($blocks as $moduleName => $moduleBlocks) {
-            self::$blockTypes[$moduleName] = [];
+            $this->blockTypes[$moduleName] = [];
 
             foreach ($moduleBlocks as $blockService) {
                 try {
@@ -108,11 +108,11 @@ class BlockTypeProvider
                     continue;
                 }
 
-                self::$blockTypes[$moduleName][$block->getName()] = $block;
+                $this->blockTypes[$moduleName][$block->getName()] = $block;
             }
         }
 
-        return self::$blockTypes;
+        return $this->blockTypes;
     }
 
     private function getContainer(): ?ContainerInterface

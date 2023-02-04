@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Controller\Admin;
 
+use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
@@ -137,7 +138,7 @@ class BlockController extends FrameworkBundleAdminController
     {
         $formThemes = [];
 
-        /** @var BlockTypeProvider */
+        /** @var BlockTypeProvider<BlockInterface> */
         $blockTypeProvider = $this->get('kaudaj.module.blocks.block_type_provider');
 
         foreach (array_keys($blockTypeProvider->getBlockTypes()) as $moduleName) {
