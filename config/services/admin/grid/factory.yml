@@ -17,3 +17,19 @@ services:
       - "@kaudaj.module.blocks.grid.data.factory.block"
       - "@prestashop.core.grid.filter.form_factory"
       - "@prestashop.core.hook.dispatcher"
+
+  kaudaj.module.blocks.grid.data.factory.block_group:
+    class: PrestaShop\PrestaShop\Core\Grid\Data\Factory\DoctrineGridDataFactory
+    arguments:
+      - "@kaudaj.module.blocks.grid.query.block_group"
+      - "@prestashop.core.hook.dispatcher"
+      - "@prestashop.core.grid.query.doctrine_query_parser"
+      - block_groups
+
+  kaudaj.module.blocks.grid.factory.block_group:
+    class: PrestaShop\PrestaShop\Core\Grid\GridFactory
+    arguments:
+      - "@kaudaj.module.blocks.grid.definition.factory.block_group"
+      - "@kaudaj.module.blocks.grid.data.factory.block_group"
+      - "@prestashop.core.grid.filter.form_factory"
+      - "@prestashop.core.hook.dispatcher"

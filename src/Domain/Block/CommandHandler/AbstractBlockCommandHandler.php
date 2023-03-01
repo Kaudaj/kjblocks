@@ -25,9 +25,9 @@ use Doctrine\ORM\EntityManager;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
 use Kaudaj\Module\Blocks\Entity\Block;
-use Kaudaj\Module\Blocks\Entity\BlockHook;
+use Kaudaj\Module\Blocks\Entity\BlockGroupBlock;
 use Kaudaj\Module\Blocks\Entity\BlockLang;
-use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
+use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShopBundle\Entity\Lang;
@@ -54,9 +54,9 @@ abstract class AbstractBlockCommandHandler
     protected $langRepository;
 
     /**
-     * @var BlockHookRepository
+     * @var BlockGroupBlockRepository
      */
-    protected $blockHookRepository;
+    protected $blockGroupBlockRepository;
 
     public function __construct(EntityManager $entityManager)
     {
@@ -69,8 +69,9 @@ abstract class AbstractBlockCommandHandler
         $langRepository = $this->entityManager->getRepository(Lang::class);
         $this->langRepository = $langRepository;
 
-        $blockHookRepository = $this->entityManager->getRepository(BlockHook::class);
-        $this->blockHookRepository = $blockHookRepository;
+        /** @var BlockGroupBlockRepository */
+        $blockGroupBlockRepository = $this->entityManager->getRepository(BlockGroupBlock::class);
+        $this->blockGroupBlockRepository = $blockGroupBlockRepository;
     }
 
     /**

@@ -19,25 +19,27 @@
 
 namespace Kaudaj\Module\Blocks\Form\ChoiceProvider;
 
-use Hook;
-use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocks;
-use Kaudaj\Module\Blocks\Entity\Block;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroups;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\FormChoiceProviderInterface;
 
-/**
- * Class BlockHookChoiceProvider provides hook choices from actual blocks.
- */
-final class BlockHookChoiceProvider implements FormChoiceProviderInterface
+final class BlockGroupChoiceProvider implements FormChoiceProviderInterface
 {
     /**
      * @var CommandBusInterface
      */
     private $commandBus;
 
-    public function __construct(CommandBusInterface $commandBus)
+    /**
+     * @var int
+     */
+    private $contextLangId;
+
+    public function __construct(CommandBusInterface $commandBus, int $contextLangId)
     {
         $this->commandBus = $commandBus;
+        $this->contextLangId = $contextLangId;
     }
 
     /**
@@ -47,17 +49,17 @@ final class BlockHookChoiceProvider implements FormChoiceProviderInterface
      */
     public function getChoices(array $options = [])
     {
-        /** @var Block[] */
-        $blocks = $this->commandBus->handle(new GetBlocks());
+        /** @var BlockGroup[] */
+        $blockGroups = $this->commandBus->handle(new GetBlockGroups());
 
         $choices = [];
-        foreach ($blocks as $block) {
-            foreach ($block->getBlockHooks() as $blockHook) {
-                $hookId = $blockHook->getHookId();
-                $hookName = strval(\Hook::getNameById($hookId));
-
-                $choices[$hookName] = $hookId;
+        foreach ($blockGroups as $blockGroup) {
+            $blockGroupLang = $blockGroup->getBlockGroupLang($this->contextLangId);
+            if ($blockGroupLang === null) {
+                continue;
             }
+
+            $choices[$blockGroupLang->getName()] = $blockGroup->getId();
         }
 
         return $choices;

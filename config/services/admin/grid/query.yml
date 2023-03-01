@@ -10,3 +10,12 @@ services:
       - "@prestashop.core.query.doctrine_search_criteria_applicator"
       - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
       - '@=service("prestashop.adapter.legacy.context").getContext().shop.id'
+
+  kaudaj.module.blocks.grid.query.block_group:
+    public: true
+    class: Kaudaj\Module\Blocks\Grid\Query\BlockGroupGridQueryBuilder
+    parent: prestashop.core.grid.abstract_query_builder
+    arguments:
+      - "@prestashop.core.query.doctrine_search_criteria_applicator"
+      - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+      - '@=service("prestashop.adapter.legacy.context").getContext().shop.id'

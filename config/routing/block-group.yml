@@ -1,0 +1,56 @@
+kj_blocks_block_groups_index:
+  path: /
+  methods: GET
+  defaults:
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockGroupController::indexAction'
+    _legacy_controller: KJBlocksBlockGroup
+
+kj_blocks_block_groups_search:
+  path: /
+  methods: POST
+  defaults:
+    _controller: 'PrestaShopBundle:Admin\Common:searchGrid'
+    _legacy_controller: KJBlocksBlockGroup
+    _legacy_link: KJBlocksBlockGroup:submitFilters
+    gridDefinitionFactoryServiceId: kaudaj.module.blocks.grid.definition.factory.block_group
+    redirectRoute: kj_blocks_block_groups_index
+
+kj_blocks_block_groups_create:
+  path: /new
+  methods: [GET, POST]
+  defaults:
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockGroupController::createAction'
+    _legacy_controller: KJBlocksBlockGroup
+    _legacy_link: KJBlocksBlockGroup:add
+
+kj_blocks_block_groups_edit:
+  path: /{blockGroupId}/edit
+  methods: [GET, POST]
+  defaults:
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockGroupController::editAction'
+    _legacy_controller: KJBlocksBlockGroup
+    _legacy_link: KJBlocksBlockGroup:update
+    _legacy_parameters:
+      id_block_group: blockGroupId
+  requirements:
+    blockGroupId: \d+
+
+kj_blocks_block_groups_delete:
+  path: /{blockGroupId}/delete
+  methods: DELETE
+  defaults:
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockGroupController::deleteAction'
+    _legacy_controller: KJBlocksBlockGroup
+    _legacy_link: KJBlocksBlockGroup:delete
+    _legacy_parameters:
+      id_block_group: blockGroupId
+  requirements:
+    blockGroupId: \d+
+
+kj_blocks_block_groups_update_position:
+  path: /update-position
+  methods: POST
+  defaults:
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockGroupController::updatePositionAction'
+    _legacy_controller: KJBlocksBlockGroup
+    _legacy_link: KJBlocksBlockGroup:updatePosition

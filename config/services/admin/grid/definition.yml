@@ -7,7 +7,7 @@ services:
     class: Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGridDefinitionFactory
     parent: prestashop.core.grid.definition.factory.abstract_grid_definition
     arguments:
-      - "@kaudaj.module.blocks.form.choice_provider.block_hook"
+      - "@kaudaj.module.blocks.form.choice_provider.block_group_block"
       - "@prestashop.core.admin.admin_filter.repository"
       - "@prestashop.adapter.data_provider.employee"
       - "@prestashop.adapter.shop.context"
@@ -26,7 +26,26 @@ services:
   kaudaj.module.blocks.grid.position_definition.block:
     class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
     arguments:
-      $table: !php/const Kaudaj\Module\Blocks\Repository\BlockHookRepository::TABLE_NAME
+      $table: !php/const Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository::TABLE_NAME
       $idField: "id_block"
+      $positionField: "position"
+      $parentIdField: "id_block_group"
+
+
+  kaudaj.module.blocks.grid.definition.factory.block_group:
+    public: true
+    class: Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGroupGridDefinitionFactory
+    parent: prestashop.core.grid.definition.factory.abstract_grid_definition
+    arguments:
+      - "@kaudaj.module.blocks.form.choice_provider.block_group_hook"
+      - "@prestashop.core.admin.admin_filter.repository"
+      - "@prestashop.adapter.data_provider.employee"
+      - "@prestashop.adapter.shop.context"
+
+  kaudaj.module.blocks.grid.position_definition.block_group:
+    class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
+    arguments:
+      $table: !php/const Kaudaj\Module\Blocks\Repository\BlockGroupHookRepository::TABLE_NAME
+      $idField: "id_block_group"
       $positionField: "position"
       $parentIdField: "id_hook"

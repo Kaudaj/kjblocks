@@ -22,8 +22,8 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Domain\Block\Command;
 
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\ValueObject\BlockGroupId;
 use Kaudaj\Module\Blocks\Domain\ValueObject\Json;
-use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
  * Class AddBlockCommand is responsible for adding block data.
@@ -31,9 +31,9 @@ use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 class AddBlockCommand extends AbstractBlockCommand
 {
     /**
-     * @var HookId[]
+     * @var BlockGroupId[]
      */
-    private $hooksIds = [];
+    private $blockGroupsIds = [];
 
     /**
      * @var array<int, Name>
@@ -51,21 +51,21 @@ class AddBlockCommand extends AbstractBlockCommand
     private $options;
 
     /**
-     * @return HookId[]
+     * @return BlockGroupId[]
      */
-    public function getHooksIds(): array
+    public function getBlockGroupsIds(): array
     {
-        return $this->hooksIds;
+        return $this->blockGroupsIds;
     }
 
     /**
-     * @param int[] $hooksIds
+     * @param int[] $blockGroupsIds
      */
-    public function setHooksIds(array $hooksIds): self
+    public function setBlockGroupsIds(array $blockGroupsIds): self
     {
-        foreach ($hooksIds as $hookId) {
-            $this->hooksIds[] = new HookId($hookId);
-        }
+        $this->blockGroupsIds = array_map(function (int $blockGroupsId): BlockGroupId {
+            return new BlockGroupId($blockGroupsId);
+        }, $blockGroupsIds);
 
         return $this;
     }

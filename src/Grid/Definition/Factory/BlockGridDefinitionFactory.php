@@ -52,25 +52,25 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
     /**
      * @var FormChoiceProviderInterface
      */
-    private $hookChoiceProvider;
+    private $blockGroupBlockChoiceProvider;
 
     /**
      * @var string|null
      */
-    private $hookFilter;
+    private $blockGroupFilter;
 
     public function __construct(
         HookDispatcherInterface $hookDispatcher,
-        FormChoiceProviderInterface $hookChoiceProvider,
+        FormChoiceProviderInterface $blockGroupBlockChoiceProvider,
         AdminFilterRepository $adminFilterRepository,
         ContextEmployeeProvider $contextEmployeeProvider,
         ShopContext $shopContext
     ) {
         parent::__construct($hookDispatcher);
 
-        $this->hookChoiceProvider = $hookChoiceProvider;
+        $this->blockGroupBlockChoiceProvider = $blockGroupBlockChoiceProvider;
 
-        $this->hookFilter = $this->getHookFilter(
+        $this->blockGroupFilter = $this->getBlockGroupFilter(
             $adminFilterRepository,
             $contextEmployeeProvider->getId(),
             $shopContext->getContextShopID() ?: 0
@@ -108,14 +108,14 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'field' => 'type',
                 ])
             )
-            ->add((new DataColumn('hooks'))
+            ->add((new DataColumn('groups'))
                 ->setName(
-                    $this->hookFilter !== null
-                        ? $this->trans('Hooks', [], 'Admin.Global')
-                        : $this->trans('Hook', [], 'Admin.Global')
+                    $this->blockGroupFilter !== null
+                        ? $this->trans('Groups', [], 'Admin.Global')
+                        : $this->trans('Group', [], 'Admin.Global')
                 )
                 ->setOptions([
-                'field' => 'hooks',
+                    'field' => 'groups',
                 ])
             )
             ->add((new ActionColumn('actions'))
@@ -126,7 +126,7 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
             )
         ;
 
-        if ($this->hookFilter !== null) {
+        if ($this->blockGroupFilter !== null) {
             $positionColumn = (new PositionColumn('position'))
                 ->setName($this->trans('Position', [], 'Modules.Kjblocks.Admin'))
                 ->setOptions([
@@ -137,7 +137,7 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ])
             ;
 
-            $columns->addAfter('hooks', $positionColumn);
+            $columns->addAfter('groups', $positionColumn);
         }
 
         return $columns;
@@ -197,16 +197,16 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ])
                 ->setAssociatedColumn('type')
             )
-            ->add((new Filter('hook', ChoiceType::class))
+            ->add((new Filter('group', ChoiceType::class))
                 ->setTypeOptions([
                     'required' => false,
-                    'choices' => $this->hookChoiceProvider->getChoices(),
+                    'choices' => $this->blockGroupBlockChoiceProvider->getChoices(),
                     'choice_translation_domain' => false,
                     'attr' => [
                         'placeholder' => $this->trans('Hook', [], 'Admin.Global'),
                     ],
                 ])
-                ->setAssociatedColumn('hooks')
+                ->setAssociatedColumn('groups')
             )
             ->add((new Filter('actions', SearchAndResetType::class))
                 ->setTypeOptions([
@@ -220,7 +220,7 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
             )
         ;
 
-        if ($this->hookFilter !== null) {
+        if ($this->blockGroupFilter !== null) {
             $positionFilter = (new Filter('position', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
@@ -249,7 +249,7 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
         ];
     }
 
-    private function getHookFilter(
+    private function getBlockGroupFilter(
         AdminFilterRepository $adminFilterRepository,
         int $employeeId,
         int $shopId
@@ -280,10 +280,10 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
 
         $filters = $filter['filters'];
 
-        if (!is_array($filters) || !key_exists('hook', $filters)) {
+        if (!is_array($filters) || !key_exists('group', $filters)) {
             return null;
         }
 
-        return strval($filters['hook']);
+        return strval($filters['group']);
     }
 }

@@ -24,9 +24,12 @@ namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotUpdateBlockException;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\BlockGroupNotFoundException;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\ValueObject\BlockGroupId;
 use Kaudaj\Module\Blocks\Entity\Block;
-use Kaudaj\Module\Blocks\Entity\BlockHook;
-use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
+use Kaudaj\Module\Blocks\Entity\BlockGroupBlock;
+use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
 
 /**
  * Class EditBlockHandler is responsible for editing block data.
@@ -53,13 +56,13 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
                 $block->setOptions($command->getOptions()->getValue());
             }
 
-            $hooksIds = $command->getHooksIds();
-            if ($hooksIds) {
-                $hooksIds = array_map(function (HookId $hookId): int {
-                    return $hookId->getValue();
-                }, $hooksIds);
+            $blockGroupsIds = $command->getBlockGroupsIds();
+            if ($blockGroupsIds) {
+                $blockGroupsIds = array_map(function (BlockGroupId $blockGroupId): int {
+                    return $blockGroupId->getValue();
+                }, $blockGroupsIds);
 
-                $this->updateHooks($block, $hooksIds);
+                $this->updateBlockGroups($block, $blockGroupsIds);
             }
 
             $localizedNames = $command->getLocalizedNames();
@@ -89,33 +92,47 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
     }
 
     /**
-     * @param int[] $hooksIds
+     * @param int[] $blockGroupsIds
      */
-    protected function updateHooks(Block $block, array $hooksIds): void
+    protected function updateBlockGroups(Block $block, array $blockGroupsIds): void
     {
-        foreach ($hooksIds as $hookId) {
-            if ($block->getBlockHook($hookId)) {
-                continue;
+        /** @var BlockGroupRepository */
+        $blockGroupRepository = $this->entityManager->getRepository(BlockGroup::class);
+
+        foreach ($blockGroupsIds as $blockGroupId) {
+            $blockGroup = $blockGroupRepository->find($blockGroupId);
+            if ($blockGroup === null) {
+                throw new BlockGroupNotFoundException();
             }
 
-            $blockHook = new BlockHook();
+            $blockGroupBlock = new BlockGroupBlock();
+            $existingBlockGroup = $block->getBlockGroup($blockGroupId);
 
-            $blockHook->setHookId($hookId);
-            $blockHook->setPosition($this->blockHookRepository->findMaxPosition($hookId) + 1);
+            if ($existingBlockGroup) {
+                $blockGroupBlock->setPosition($existingBlockGroup->getPosition());
 
-            $block->addBlockHook($blockHook);
+                $block->removeBlockGroup($existingBlockGroup);
+                $this->entityManager->remove($existingBlockGroup);
+                $this->entityManager->flush();
+            } else {
+                $blockGroupBlock->setPosition($this->blockGroupBlockRepository->findMaxPosition($blockGroupId) + 1);
+            }
+
+            $blockGroupBlock->setBlockGroup($blockGroup);
+
+            $block->addBlockGroup($blockGroupBlock);
         }
 
-        foreach ($block->getBlockHooks() as $blockHook) {
-            $hookId = $blockHook->getHookId();
-            if (in_array($hookId, $hooksIds)) {
+        foreach ($block->getBlockGroups() as $blockGroupBlock) {
+            $blockGroupId = $blockGroupBlock->getBlockGroup()->getId();
+            if (in_array($blockGroupId, $blockGroupsIds)) {
                 continue;
             }
 
-            $block->removeBlockHook($blockHook);
-            $this->entityManager->remove($blockHook);
+            $block->removeBlockGroup($blockGroupBlock);
+            $this->entityManager->remove($blockGroupBlock);
 
-            $this->blockHookRepository->cleanPositions($hookId);
+            $this->blockGroupBlockRepository->cleanPositions($blockGroupId);
         }
     }
 }

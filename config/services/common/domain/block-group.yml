@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    public: true
+  
+  kaudaj.module.blocks.block_group.query_handler.abstract:
+    abstract: true
+    class: Kaudaj\Module\Blocks\Domain\BlockGroup\QueryHandler\AbstractBlockGroupQueryHandler
+    arguments:
+      - "@doctrine.orm.entity_manager"
+
+  kaudaj.module.blocks.block_group.query_handler.get_by_hook:
+    public: true
+    parent: kaudaj.module.blocks.block_group.query_handler.abstract
+    class: Kaudaj\Module\Blocks\Domain\BlockGroup\QueryHandler\GetBlockGroupsByHookHandler
+    tags:
+      - name: tactician.handler
+        command: Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupsByHook

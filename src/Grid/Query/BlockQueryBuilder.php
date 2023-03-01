@@ -23,7 +23,8 @@ namespace Kaudaj\Module\Blocks\Grid\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
+use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
+use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
 use PrestaShop\PrestaShop\Core\Grid\Query\AbstractDoctrineQueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Query\DoctrineSearchCriteriaApplicatorInterface;
@@ -59,8 +60,8 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
         $qb = $this->getQueryBuilder($filters);
         $qb
-            ->select('cb.id_block, cbl.name, cb.type, cbh.position')
-            ->addSelect((!key_exists('hook', $filters) ? "GROUP_CONCAT(h.name SEPARATOR ', ')" : 'h.name') . ' AS hooks')
+            ->select('b.id_block, bl.name, b.type, bgb.position')
+            ->addSelect((!key_exists('group', $filters) ? "GROUP_CONCAT(bgl.name SEPARATOR ', ')" : 'bgl.name') . ' AS `groups`')
         ;
 
         $this->searchCriteriaApplicator
@@ -74,7 +75,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
     public function getCountQueryBuilder(SearchCriteriaInterface $searchCriteria)
     {
         $qb = $this->getQueryBuilder($searchCriteria->getFilters());
-        $qb->select('COUNT(cb.id_block)');
+        $qb->select('COUNT(b.id_block)');
 
         return $qb;
     }
@@ -86,7 +87,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
     {
         $availableFilters = [
             'id_block',
-            'hook',
+            'group',
             'name',
             'position',
             'type',
@@ -94,25 +95,25 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
         $qb = $this->connection
             ->createQueryBuilder()
-            ->from($this->dbPrefix . BlockRepository::TABLE_NAME, 'cb')
+            ->from($this->dbPrefix . BlockRepository::TABLE_NAME, 'b')
             ->leftJoin(
-                'cb',
+                'b',
                 $this->dbPrefix . BlockRepository::LANG_TABLE_NAME,
-                'cbl',
-                'cb.id_block = cbl.id_block AND cbl.id_lang = :langId'
+                'bl',
+                'b.id_block = bl.id_block AND bl.id_lang = :langId'
             )
             ->setParameter('langId', $this->contextLangId)
         ;
 
-        if (!key_exists('hook', $filters)) {
+        if (!key_exists('group', $filters)) {
             $qb
                 ->leftJoin(
-                    'cb',
-                    $this->dbPrefix . BlockHookRepository::TABLE_NAME,
-                    'cbh',
-                    'cb.id_block = cbh.id_block'
+                    'b',
+                    $this->dbPrefix . BlockGroupBlockRepository::TABLE_NAME,
+                    'bgb',
+                    'b.id_block = bgb.id_block'
                 )
-                ->groupBy('cb.id_block')
+                ->groupBy('b.id_block')
             ;
         }
 
@@ -123,46 +124,46 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
             switch ($filterName) {
                 case 'id_block':
-                    $qb->andWhere('cb.`' . $filterName . '` = :' . $filterName);
+                    $qb->andWhere('b.`' . $filterName . '` = :' . $filterName);
                     $qb->setParameter($filterName, $value);
 
                     break;
                 case 'position':
                     $modifiedPositionFilter = $this->getModifiedPositionFilter($value);
-                    $qb->andWhere('cb.`' . $filterName . '` = :' . $filterName);
+                    $qb->andWhere('b.`' . $filterName . '` = :' . $filterName);
                     $qb->setParameter($filterName, $modifiedPositionFilter);
 
                     break;
                 case 'name':
-                    $qb->andWhere('cbl.`' . $filterName . '` LIKE :' . $filterName);
+                    $qb->andWhere('bl.`' . $filterName . '` LIKE :' . $filterName);
                     $qb->setParameter($filterName, '%' . $value . '%');
 
                     break;
-                case 'hook':
+                case 'group':
                     $qb
                         ->innerJoin(
-                            'cb',
-                            $this->dbPrefix . BlockHookRepository::TABLE_NAME,
-                            'cbh',
-                            'cb.id_block = cbh.id_block AND cbh.id_hook = :hookId'
+                            'b',
+                            $this->dbPrefix . BlockGroupBlockRepository::TABLE_NAME,
+                            'bgb',
+                            'b.id_block = bgb.id_block AND bgb.id_block_group = :blockGroupId'
                         )
                     ;
 
-                    $qb->setParameter('hookId', $value);
+                    $qb->setParameter('blockGroupId', $value);
 
                     break;
                 default:
-                    $qb->andWhere('cb.`' . $filterName . '` LIKE :' . $filterName);
+                    $qb->andWhere('b.`' . $filterName . '` LIKE :' . $filterName);
                     $qb->setParameter($filterName, '%' . $value . '%');
             }
         }
 
         $qb
             ->leftJoin(
-                'cbh',
-                $this->dbPrefix . 'hook',
-                'h',
-                'cbh.id_hook = h.id_hook'
+                'bgb',
+                $this->dbPrefix . BlockGroupRepository::LANG_TABLE_NAME,
+                'bgl',
+                'bgb.id_block_group = bgl.id_block_group AND bgl.id_lang = :langId'
             )
         ;
 

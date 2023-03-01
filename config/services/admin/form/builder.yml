@@ -8,3 +8,10 @@ services:
     arguments:
       - Kaudaj\Module\Blocks\Form\Type\BlockType
       - "@kaudaj.module.blocks.form.data_provider.block"
+
+  kaudaj.module.blocks.form.builder.block_group:
+    class: PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Builder\FormBuilder
+    factory: "prestashop.core.form.builder.form_builder_factory:create"
+    arguments:
+      - Kaudaj\Module\Blocks\Form\Type\BlockGroupType
+      - "@kaudaj.module.blocks.form.data_provider.block_group"

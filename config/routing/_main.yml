@@ -8,3 +8,7 @@ kj_blocks:
 kj_blocks_blocks:
   resource: "block.yml"
   prefix: /blocks
+
+kj_blocks_block_groups:
+  resource: "block-group.yml"
+  prefix: /block-groups

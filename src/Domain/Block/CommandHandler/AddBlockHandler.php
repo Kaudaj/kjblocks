@@ -25,8 +25,10 @@ use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotAddBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\BlockGroupNotFoundException;
 use Kaudaj\Module\Blocks\Entity\Block;
-use Kaudaj\Module\Blocks\Entity\BlockHook;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
+use Kaudaj\Module\Blocks\Entity\BlockGroupBlock;
 
 /**
  * Class AddBlockHandler is used for adding block data.
@@ -45,15 +47,23 @@ final class AddBlockHandler extends AbstractBlockCommandHandler
             $block->setType($command->getType());
             $block->setOptions($command->getOptions() !== null ? $command->getOptions()->getValue() : null);
 
-            foreach ($command->getHooksIds() as $hookId) {
-                $blockHook = new BlockHook();
+            $blockGroupRepository = $this->entityManager->getRepository(BlockGroup::class);
 
-                $hookId = $hookId->getValue();
+            foreach ($command->getBlockGroupsIds() as $blockGroupId) {
+                $blockGroupBlock = new BlockGroupBlock();
 
-                $blockHook->setHookId($hookId);
-                $blockHook->setPosition($this->blockHookRepository->findMaxPosition($hookId) + 1);
+                $blockGroup = $blockGroupRepository->find($blockGroupId->getValue());
 
-                $block->addBlockHook($blockHook);
+                if ($blockGroup === null) {
+                    throw new BlockGroupNotFoundException();
+                }
+
+                $blockGroupBlock->setBlockGroup($blockGroup);
+
+                $position = $this->blockGroupBlockRepository->findMaxPosition($blockGroupId->getValue()) + 1;
+                $blockGroupBlock->setPosition($position);
+
+                $block->addBlockGroup($blockGroupBlock);
             }
 
             $localizedNames = $command->getLocalizedNames();

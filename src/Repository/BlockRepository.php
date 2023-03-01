@@ -20,7 +20,6 @@
 namespace Kaudaj\Module\Blocks\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 use Kaudaj\Module\Blocks\Entity\Block;
 
 /**
@@ -36,30 +35,6 @@ class BlockRepository extends EntityRepository
     public const TABLE_NAME = 'kj_blocks_block';
     public const TABLE_NAME_WITH_PREFIX = _DB_PREFIX_ . self::TABLE_NAME;
 
-    public const LANG_TABLE_NAME = 'kj_blocks_block_lang';
+    public const LANG_TABLE_NAME = self::TABLE_NAME . '_lang';
     public const LANG_TABLE_NAME_WITH_PREFIX = _DB_PREFIX_ . self::LANG_TABLE_NAME;
-
-    /**
-     * @return Block[]
-     */
-    public function findByHook(int $hookId): array
-    {
-        $qb = $this->createQueryBuilder('cb');
-
-        $qb
-            ->innerJoin(
-                'cb.blockHooks',
-                'cbh',
-                Join::WITH,
-                $qb->expr()->eq('cbh.hookId', ':hookId')
-            )
-            ->setParameter('hookId', $hookId)
-            ->orderBy('cbh.position', 'ASC')
-        ;
-
-        /** @var Block[] */
-        $result = $qb->getQuery()->execute();
-
-        return $result;
-    }
 }

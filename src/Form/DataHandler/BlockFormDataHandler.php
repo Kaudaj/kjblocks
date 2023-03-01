@@ -21,12 +21,18 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
+use Hook;
 use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Command\AddBlockGroupCommand;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupByName;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\ValueObject\BlockGroupId;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
 use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
 
@@ -60,9 +66,10 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
         }
 
         $type = strval($data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_TYPE]);
+        $groups = is_array($data[BlockType::FIELD_GROUPS]) ? $data[BlockType::FIELD_GROUPS] : [];
 
         $addBlockCommand = (new AddBlockCommand())
-            ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
+            ->setBlockGroupsIds($this->getBlockGroupIds($groups))
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setType($type)
         ;
@@ -114,12 +121,58 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
             );
         }
 
+        $groups = is_array($data[BlockType::FIELD_GROUPS]) ? $data[BlockType::FIELD_GROUPS] : [];
+
         $editBlockCommand = (new EditBlockCommand((int) $id))
-            ->setHooksIds(is_array($data[BlockType::FIELD_HOOKS]) ? $data[BlockType::FIELD_HOOKS] : [])
+            ->setBlockGroupsIds($this->getBlockGroupIds($groups))
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setType($type)
             ->setOptions(json_encode($options) ?: null);
 
         $this->commandBus->handle($editBlockCommand);
+    }
+
+    /**
+     * @param string[] $groups
+     *
+     * @return int[]
+     */
+    private function getBlockGroupIds(array $groups): array
+    {
+        $blockGroupIds = [];
+
+        foreach ($groups as $group) {
+            list($type, $id) = explode('-', $group, 2);
+            $id = (int) $id;
+
+            if ($type === 'group') {
+                $blockGroupIds[] = $id;
+
+                continue;
+            }
+
+            $hookName = Hook::getNameById((int) $id);
+
+            /** @var BlockGroup|null */
+            $blockGroup = $this->commandBus->handle(new GetBlockGroupByName($hookName));
+
+            if ($blockGroup) {
+                $blockGroupIds[] = $blockGroup->getId();
+
+                continue;
+            }
+
+            $defaultLangId = (new Configuration())->getInt('PS_LANG_DEFAULT');
+
+            /** @var BlockGroupId */
+            $id = $this->commandBus->handle((new AddBlockGroupCommand())
+                ->setHooksIds([$id])
+                ->setLocalizedNames([$defaultLangId => $hookName])
+            );
+
+            $blockGroupIds[] = $id->getValue();
+        }
+
+        return $blockGroupIds;
     }
 }

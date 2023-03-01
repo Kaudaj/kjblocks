@@ -28,11 +28,6 @@ $(() => {
 function initForm() {
   window.prestashop.component.initComponents(['TranslatableInput']);
 
-  // Fix select2 field taking value by default
-  if ($('#block_hooks').length) {
-    $('#block_hooks option')[0].remove();
-  }
-
   const blockType = new BlockType('block_type');
   blockType.init();
 }

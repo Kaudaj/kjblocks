@@ -24,8 +24,8 @@ namespace Kaudaj\Module\Blocks\Domain\Block\Command;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\ValueObject\BlockGroupId;
 use Kaudaj\Module\Blocks\Domain\ValueObject\Json;
-use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
  * Class EditBlockCommand is responsible for editing block data.
@@ -38,9 +38,9 @@ class EditBlockCommand extends AbstractBlockCommand
     private $blockId;
 
     /**
-     * @var HookId[]|null
+     * @var BlockGroupId[]|null
      */
-    private $hooksIds;
+    private $blockGroupsIds;
 
     /**
      * @var array<int, Name>|null
@@ -73,25 +73,25 @@ class EditBlockCommand extends AbstractBlockCommand
     }
 
     /**
-     * @return HookId[]|null
+     * @return BlockGroupId[]|null
      */
-    public function getHooksIds(): ?array
+    public function getBlockGroupsIds(): ?array
     {
-        return $this->hooksIds;
+        return $this->blockGroupsIds;
     }
 
     /**
-     * @param int[]|null $hooksIds
+     * @param int[]|null $blockGroupsIds
      */
-    public function setHooksIds(?array $hooksIds): self
+    public function setBlockGroupsIds(?array $blockGroupsIds): self
     {
-        if ($hooksIds) {
-            $hooksIds = array_map(function (int $hookId): HookId {
-                return new HookId($hookId);
-            }, $hooksIds);
+        if ($blockGroupsIds) {
+            $blockGroupsIds = array_map(function (int $blockGroupsId): BlockGroupId {
+                return new BlockGroupId($blockGroupsId);
+            }, $blockGroupsIds);
         }
 
-        $this->hooksIds = $hooksIds;
+        $this->blockGroupsIds = $blockGroupsIds;
 
         return $this;
     }
@@ -116,11 +116,6 @@ class EditBlockCommand extends AbstractBlockCommand
         $this->localizedNames = $localizedNames;
 
         return $this;
-    }
-
-    public function getLocalizedOptions(): ?Json
-    {
-        return $this->options;
     }
 
     public function getType(): ?string

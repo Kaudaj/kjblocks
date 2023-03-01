@@ -29,10 +29,15 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class BlockType extends TranslatorAwareType
 {
-    public const FIELD_HOOKS = 'hooks';
+    public const FIELD_GROUPS = 'groups';
     public const FIELD_NAME = 'name';
     public const FIELD_TYPE = 'type';
     public const FIELD_OPTIONS = 'options';
+
+    /**
+     * @var array<string, int>
+     */
+    private $groupsChoices;
 
     /**
      * @var array<string, int>
@@ -41,12 +46,14 @@ class BlockType extends TranslatorAwareType
 
     /**
      * @param array<string, mixed> $locales
+     * @param array<string, int> $groupsChoices
      * @param array<string, int> $hookChoices
      */
-    public function __construct(TranslatorInterface $translator, array $locales, array $hookChoices)
+    public function __construct(TranslatorInterface $translator, array $locales, array $groupsChoices, array $hookChoices)
     {
         parent::__construct($translator, $locales);
 
+        $this->groupsChoices = $groupsChoices;
         $this->hookChoices = $hookChoices;
     }
 
@@ -56,16 +63,29 @@ class BlockType extends TranslatorAwareType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $groupsChoices = [];
+        foreach ($this->groupsChoices as $name => $id) {
+            $groupsChoices[$name] = "group-$id";
+        }
+
+        $hookChoices = [];
+        foreach ($this->hookChoices as $name => $id) {
+            $hookChoices[$name] = "hook-$id";
+        }
+
         $builder
-            ->add(self::FIELD_HOOKS, ChoiceType::class, [
-                'choices' => $this->hookChoices,
+            ->add(self::FIELD_GROUPS, ChoiceType::class, [
+                'choices' => [
+                    $this->trans('Available block groups', 'Admin.Global') => array_diff_key($groupsChoices, $hookChoices),
+                    $this->trans('Available hooks', 'Admin.Global') => $hookChoices,
+                ],
                 'attr' => [
                     'data-toggle' => 'select2',
                     'data-minimumResultsForSearch' => '7',
                 ],
                 'multiple' => true,
                 'required' => false,
-                'label' => $this->trans('Hooks', 'Admin.Global'),
+                'label' => $this->trans('Block groups', 'Admin.Global'),
             ])
             ->add(self::FIELD_NAME, TranslatableType::class, [
                 'label' => $this->trans('Block name', 'Admin.Global'),

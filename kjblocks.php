@@ -25,9 +25,13 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 
 use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockRenderer;
-use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupsByHook;
 use Kaudaj\Module\Blocks\Entity\Block;
-use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
+use Kaudaj\Module\Blocks\Entity\BlockGroupBlock;
+use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
+use Kaudaj\Module\Blocks\Repository\BlockGroupHookRepository;
+use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
@@ -84,9 +88,15 @@ EOF
                 'wording' => 'Blocks',
                 'wording_domain' => 'Modules.Kjblocks.Admin',
             ],
+            [
+                'name' => 'Block groups',
+                'class_name' => 'KJBlocksBlockGroup',
+                'route_name' => 'kj_blocks_block_groups_index',
+                'parent_class_name' => 'KJBlocks',
+                'wording' => 'Block groups',
+                'wording_domain' => 'Modules.Kjblocks.Admin',
+            ],
         ];
-
-        // $blcoks = $this->getAvailableBlocks();
     }
 
     /**
@@ -143,16 +153,52 @@ EOF
         ";
 
         $sql[] = "
-            CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockHookRepository::TABLE_NAME . "` (
-                `id_block` INT UNSIGNED NOT NULL,
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockGroupRepository::TABLE_NAME . "` (
+                `id_block_group` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY
+            ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
+        ";
+
+        $sql[] = "
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockGroupRepository::LANG_TABLE_NAME . "` (
+                `id_block_group` INT UNSIGNED NOT NULL,
+                `id_lang` INT NOT NULL,
+                `name` VARCHAR(255) NOT NULL,
+                PRIMARY KEY (id_block_group, id_lang),
+                FOREIGN KEY (`id_block_group`)
+                REFERENCES `{$dbPrefix}" . BlockGroupRepository::TABLE_NAME . "` (`id_block_group`)
+                ON DELETE CASCADE,
+                FOREIGN KEY (`id_lang`)
+                REFERENCES `{$dbPrefix}lang` (`id_lang`)
+                ON DELETE CASCADE
+            ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
+        ";
+
+        $sql[] = "
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockGroupHookRepository::TABLE_NAME . "` (
+                `id_block_group` INT UNSIGNED NOT NULL,
                 `id_hook` INT UNSIGNED NOT NULL,
                 `position` INT UNSIGNED NOT NULL,
-                PRIMARY KEY (id_block, id_hook),
-                FOREIGN KEY (`id_block`)
-                REFERENCES `{$dbPrefix}" . BlockRepository::TABLE_NAME . "` (`id_block`)
+                PRIMARY KEY (id_block_group, id_hook),
+                FOREIGN KEY (`id_block_group`)
+                REFERENCES `{$dbPrefix}" . BlockGroupRepository::TABLE_NAME . "` (`id_block_group`)
                 ON DELETE CASCADE,
                 FOREIGN KEY (`id_hook`)
                 REFERENCES `{$dbPrefix}hook` (`id_hook`)
+                ON DELETE CASCADE
+            ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
+        ";
+
+        $sql[] = "
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockGroupBlockRepository::TABLE_NAME . "` (
+                `id_block` INT UNSIGNED NOT NULL,
+                `id_block_group` INT UNSIGNED NOT NULL,
+                `position` INT UNSIGNED NOT NULL,
+                PRIMARY KEY (id_block, id_block_group),
+                FOREIGN KEY (`id_block`)
+                REFERENCES `{$dbPrefix}" . BlockRepository::TABLE_NAME . "` (`id_block`)
+                ON DELETE CASCADE,
+                FOREIGN KEY (`id_block_group`)
+                REFERENCES `{$dbPrefix}" . BlockGroupRepository::TABLE_NAME . "` (`id_block_group`)
                 ON DELETE CASCADE
             ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
         ";
@@ -186,7 +232,19 @@ EOF
         $dbPrefix = pSQL(_DB_PREFIX_);
 
         $sql[] = "
-            DROP TABLE IF EXISTS `$dbPrefix" . BlockHookRepository::TABLE_NAME . '`
+            DROP TABLE IF EXISTS `$dbPrefix" . BlockGroupBlockRepository::TABLE_NAME . '`
+        ';
+
+        $sql[] = "
+            DROP TABLE IF EXISTS `$dbPrefix" . BlockGroupHookRepository::TABLE_NAME . '`
+        ';
+
+        $sql[] = "
+            DROP TABLE IF EXISTS `$dbPrefix" . BlockGroupRepository::LANG_TABLE_NAME . '`
+        ';
+
+        $sql[] = "
+            DROP TABLE IF EXISTS `$dbPrefix" . BlockGroupRepository::TABLE_NAME . '`
         ';
 
         $sql[] = "
@@ -240,14 +298,33 @@ EOF
         $render = '';
 
         try {
-            /** @var Block[] */
-            $blocks = $this->getCommandBus()->handle(new GetBlocksByHook($hookName));
-
             /** @var BlockRenderer<BlockInterface> */
             $blockRenderer = $this->get('kaudaj.module.blocks.block_renderer');
 
-            foreach ($blocks as $block) {
-                $render .= $blockRenderer->renderBlock($block);
+            /** @var BlockGroup[] */
+            $blockGroups = $this->getCommandBus()->handle(new GetBlockGroupsByHook($hookName));
+
+            foreach ($blockGroups as $blockGroup) {
+                $blockGroupBlocks = $blockGroup->getBlockGroupBlocks()->getValues();
+
+                usort($blockGroupBlocks, function (BlockGroupBlock $blockGroupBlock1, BlockGroupBlock $blockGroupBlock2): int {
+                    if ($blockGroupBlock1->getPosition() == $blockGroupBlock2->getPosition()) {
+                        return 0;
+                    }
+
+                    return ($blockGroupBlock1->getPosition() < $blockGroupBlock2->getPosition()) ? -1 : 1;
+                });
+
+                $blocks = array_map(function (BlockGroupBlock $blockGroupBlock): Block {
+                    return $blockGroupBlock->getBlock();
+                }, $blockGroupBlocks);
+
+                /** @var BlockRenderer<BlockInterface> */
+                $blockRenderer = $this->get('kaudaj.module.blocks.block_renderer');
+
+                foreach ($blocks as $block) {
+                    $render .= $blockRenderer->renderBlock($block);
+                }
             }
         } catch (Exception $e) {
             // return '';

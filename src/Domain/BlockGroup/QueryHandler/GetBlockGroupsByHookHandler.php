@@ -19,27 +19,25 @@
 
 declare(strict_types=1);
 
-namespace Kaudaj\Module\Blocks\Domain\Block\QueryHandler;
+namespace Kaudaj\Module\Blocks\Domain\BlockGroup\QueryHandler;
 
-use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
-use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
-use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocksByHook;
-use Kaudaj\Module\Blocks\Entity\Block;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\BlockGroupException;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\BlockGroupNotFoundException;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupsByHook;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
 
 /**
- * Class GetBlocksHandler is responsible for getting block entities.
- *
  * @internal
  */
-final class GetBlocksByHookHandler extends AbstractBlockQueryHandler
+final class GetBlockGroupsByHookHandler extends AbstractBlockGroupQueryHandler
 {
     /**
-     * @return Block[]
+     * @return BlockGroup[]
      *
      * @throws \PrestaShopException
-     * @throws BlockNotFoundException
+     * @throws BlockGroupNotFoundException
      */
-    public function handle(GetBlocksByHook $query): array
+    public function handle(GetBlockGroupsByHook $query): array
     {
         try {
             $hookId = \Hook::getIdByName($query->getHookName());
@@ -47,13 +45,13 @@ final class GetBlocksByHookHandler extends AbstractBlockQueryHandler
                 return [];
             }
 
-            $blocks = $this->entityRepository->findByHook(intval($hookId));
+            $blockGroups = $this->entityRepository->findByHook(intval($hookId));
         } catch (\PrestaShopException $e) {
-            $message = 'An unexpected error occurred when retrieving blocks';
+            $message = 'An unexpected error occurred when retrieving block groups';
 
-            throw new BlockException($message, 0, $e);
+            throw new BlockGroupException($message, 0, $e);
         }
 
-        return $blocks;
+        return $blockGroups;
     }
 }

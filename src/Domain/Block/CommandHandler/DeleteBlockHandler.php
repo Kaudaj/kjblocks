@@ -43,13 +43,13 @@ final class DeleteBlockHandler extends AbstractBlockCommandHandler
         $block = $this->getBlockEntity($blockId);
 
         try {
-            $blockHooks = $block->getBlockHooks();
+            $blockGroupBlocks = $block->getBlockGroups();
 
             $this->entityManager->remove($block);
             $this->entityManager->flush();
 
-            foreach ($blockHooks as $blockHook) {
-                $this->blockHookRepository->cleanPositions($blockHook->getHookId());
+            foreach ($blockGroupBlocks as $blockGroupBlock) {
+                $this->blockGroupBlockRepository->cleanPositions($blockGroupBlock->getBlockGroup()->getId());
             }
 
             $imageManager = new BlockImageManager();

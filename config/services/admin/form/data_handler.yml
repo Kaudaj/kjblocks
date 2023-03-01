@@ -13,3 +13,8 @@ services:
     arguments:
       - '@prestashop.adapter.legacy.context'
       - '@kaudaj.module.blocks.block_type_provider'
+
+  kaudaj.module.blocks.form.data_handler.block_group:
+    class: Kaudaj\Module\Blocks\Form\DataHandler\BlockGroupFormDataHandler
+    arguments:
+      - '@prestashop.core.command_bus'

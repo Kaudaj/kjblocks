@@ -40,18 +40,18 @@ class Block
     private $id;
 
     /**
-     * @var Collection<int, BlockHook>
-     *
-     * @ORM\OneToMany(targetEntity=BlockHook::class, cascade={"persist", "remove"}, mappedBy="block")
-     */
-    private $blockHooks;
-
-    /**
      * @var Collection<int, BlockLang>
      *
      * @ORM\OneToMany(targetEntity=BlockLang::class, cascade={"persist", "remove"}, mappedBy="block")
      */
     private $blockLangs;
+
+    /**
+     * @var Collection<int, BlockGroupBlock>
+     *
+     * @ORM\OneToMany(targetEntity=BlockGroupBlock::class, cascade={"persist", "remove"}, mappedBy="block")
+     */
+    private $blockGroups;
 
     /**
      * @var string
@@ -70,7 +70,7 @@ class Block
     public function __construct()
     {
         $this->blockLangs = new ArrayCollection();
-        $this->blockHooks = new ArrayCollection();
+        $this->blockGroups = new ArrayCollection();
     }
 
     public function getId(): int
@@ -79,37 +79,38 @@ class Block
     }
 
     /**
-     * @return Collection<int, BlockHook>
+     * @return Collection<int, BlockGroupBlock>
      */
-    public function getBlockHooks(): Collection
+    public function getBlockGroups(): Collection
     {
-        return $this->blockHooks;
+        return $this->blockGroups;
     }
 
-    public function getBlockHook(int $hookId): ?BlockHook
+    public function getBlockGroup(int $groupId): ?BlockGroupBlock
     {
-        foreach ($this->blockHooks as $blockHook) {
-            if ($hookId == $blockHook->getHookId()) {
-                return $blockHook;
+        foreach ($this->blockGroups as $blockGroup) {
+            if ($groupId === $blockGroup->getBlockGroup()->getId()) {
+                return $blockGroup;
             }
         }
 
         return null;
     }
 
-    public function addBlockHook(BlockHook $blockHook): self
+    public function addBlockGroup(BlockGroupBlock $blockGroup): self
     {
-        if (!$this->blockHooks->contains($blockHook)) {
-            $this->blockHooks[] = $blockHook;
-            $blockHook->setBlock($this);
+        if (!$this->blockGroups->contains($blockGroup)) {
+            $this->blockGroups[] = $blockGroup;
+
+            $blockGroup->setBlock($this);
         }
 
         return $this;
     }
 
-    public function removeBlockHook(BlockHook $blockLang): self
+    public function removeBlockGroup(BlockGroupBlock $blockGroup): self
     {
-        $this->blockHooks->removeElement($blockLang);
+        $this->blockGroups->removeElement($blockGroup);
 
         return $this;
     }

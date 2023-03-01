@@ -179,12 +179,12 @@ class BlockController extends FrameworkBundleAdminController
     {
         $redirectResponse = $this->redirectToIndexRoute();
 
-        $hookId = $this->getHookIdFromFilters();
+        $hookId = $this->getBlockGroupIdFromFilters();
 
         if (!$hookId) {
             $this->flashErrors([
                 $this->trans(
-                    "Can't update positions if hook id filter is not set.",
+                    "Can't update positions if block group id filter is not set.",
                     'Modules.Kjblocks.Admin'
                 ),
             ]);
@@ -227,7 +227,7 @@ class BlockController extends FrameworkBundleAdminController
         return $redirectResponse;
     }
 
-    private function getHookIdFromFilters(): ?int
+    private function getBlockGroupIdFromFilters(): ?int
     {
         /** @var AdminFilterRepository */
         $adminFilterRepository = $this->get('prestashop.core.admin.admin_filter.repository');
@@ -254,11 +254,11 @@ class BlockController extends FrameworkBundleAdminController
         }
 
         $filters = $filter['filters'];
-        if (!is_array($filters) || !key_exists('hook', $filters)) {
+        if (!is_array($filters) || !key_exists('group', $filters)) {
             return null;
         }
 
-        return intval($filters['hook']);
+        return intval($filters['group']);
     }
 
     private function redirectToIndexRoute(): Response

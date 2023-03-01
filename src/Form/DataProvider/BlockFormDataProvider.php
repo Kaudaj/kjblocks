@@ -21,8 +21,11 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataProvider;
 
+use Hook;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing;
 use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroup;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
 use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
@@ -59,9 +62,21 @@ final class BlockFormDataProvider implements FormDataProviderInterface
             $localizedNames[$langId] = $name->getValue();
         }
 
-        $hooksIds = [];
-        foreach ($editableBlock->getHooksIds() as $hookId) {
-            $hooksIds[] = $hookId->getValue();
+        $blockGroupsIds = [];
+        foreach ($editableBlock->getBlockGroupsIds() as $blockGroupId) {
+            $blockGroupId = $blockGroupId->getValue();
+
+            /** @var BlockGroup */
+            $blockGroup = $this->queryBus->handle(new GetBlockGroup($blockGroupId));
+
+            $firstName = $blockGroup->getBlockGroupLangs()->getValues()[0];
+
+            $hookId = Hook::getIdByName($firstName->getName());
+            if ($hookId) {
+                $blockGroupsIds[] = "hook-$hookId";
+            } else {
+                $blockGroupsIds[] = "group-$blockGroupId";
+            }
         }
 
         $type = $editableBlock->getType();
@@ -77,7 +92,7 @@ final class BlockFormDataProvider implements FormDataProviderInterface
         }
 
         return [
-            BlockType::FIELD_HOOKS => $hooksIds,
+            BlockType::FIELD_GROUPS => $blockGroupsIds,
             BlockType::FIELD_NAME => $localizedNames,
             BlockType::FIELD_TYPE => [
                 BlockTypeType::FIELD_TYPE => $type,

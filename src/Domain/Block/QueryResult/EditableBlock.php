@@ -24,8 +24,8 @@ namespace Kaudaj\Module\Blocks\Domain\Block\QueryResult;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\BlockId;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\ValueObject\BlockGroupId;
 use Kaudaj\Module\Blocks\Domain\ValueObject\Json;
-use PrestaShop\PrestaShop\Core\Domain\Hook\ValueObject\HookId;
 
 /**
  * Transfers block data for editing.
@@ -48,9 +48,9 @@ class EditableBlock
     private $options;
 
     /**
-     * @var HookId[]
+     * @var BlockGroupId[]
      */
-    private $hooksIds = [];
+    private $blockGroupsIds = [];
 
     /**
      * @var array<int, Name>
@@ -59,7 +59,7 @@ class EditableBlock
 
     /**
      * @param array<int, string> $localizedNames
-     * @param int[] $hooksIds
+     * @param int[] $blockGroupsIds
      *
      * @throws BlockException
      */
@@ -67,15 +67,15 @@ class EditableBlock
         int $blockId,
         string $type,
         ?string $options,
-        array $hooksIds,
+        array $blockGroupsIds,
         array $localizedNames
     ) {
         $this->blockId = new BlockId($blockId);
         $this->type = $type;
         $this->options = $options !== null ? new Json($options) : null;
 
-        foreach ($hooksIds as $hookId) {
-            $this->hooksIds[] = new HookId($hookId);
+        foreach ($blockGroupsIds as $hookId) {
+            $this->blockGroupsIds[] = new BlockGroupId($hookId);
         }
 
         foreach ($localizedNames as $langId => $name) {
@@ -89,11 +89,11 @@ class EditableBlock
     }
 
     /**
-     * @return HookId[]
+     * @return BlockGroupId[]
      */
-    public function getHooksIds(): array
+    public function getBlockGroupsIds(): array
     {
-        return $this->hooksIds;
+        return $this->blockGroupsIds;
     }
 
     /**

@@ -44,16 +44,16 @@ final class GetBlockForEditingHandler extends AbstractBlockQueryHandler
                 $localizedNames[$blockLang->getLang()->getId()] = $blockLang->getName();
             }
 
-            $hooksIds = [];
-            foreach ($block->getBlockHooks() as $blockHook) {
-                $hooksIds[] = $blockHook->getHookId();
+            $blockGroupsIds = [];
+            foreach ($block->getBlockGroups() as $blockGroupBlock) {
+                $blockGroupsIds[] = $blockGroupBlock->getBlockGroup()->getId();
             }
 
             $editableBlock = new EditableBlock(
                 $block->getId(),
                 $block->getType(),
                 $block->getOptions(),
-                $hooksIds,
+                $blockGroupsIds,
                 $localizedNames
             );
         } catch (\Exception $e) {

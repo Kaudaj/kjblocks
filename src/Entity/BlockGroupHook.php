@@ -20,22 +20,22 @@
 namespace Kaudaj\Module\Blocks\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kaudaj\Module\Blocks\Repository\BlockHookRepository;
+use Kaudaj\Module\Blocks\Repository\BlockGroupHookRepository;
 
 /**
- * @ORM\Table(name=BlockHookRepository::TABLE_NAME_WITH_PREFIX)
- * @ORM\Entity(repositoryClass=BlockHookRepository::class)
+ * @ORM\Table(name=BlockGroupHookRepository::TABLE_NAME_WITH_PREFIX)
+ * @ORM\Entity(repositoryClass=BlockGroupHookRepository::class)
  */
-class BlockHook
+class BlockGroupHook
 {
     /**
-     * @var Block
+     * @var BlockGroup
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity=Block::class, inversedBy="blockHooks")
-     * @ORM\JoinColumn(name="id_block", referencedColumnName="id_block", nullable=false, onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity=BlockGroup::class, inversedBy="blockGroupHooks")
+     * @ORM\JoinColumn(name="id_block_group", referencedColumnName="id_block_group", nullable=false, onDelete="CASCADE")
      */
-    private $block;
+    private $blockGroup;
 
     /**
      * @var int
@@ -52,14 +52,14 @@ class BlockHook
      */
     private $position;
 
-    public function getBlock(): Block
+    public function getBlockGroup(): BlockGroup
     {
-        return $this->block;
+        return $this->blockGroup;
     }
 
-    public function setBlock(Block $block): self
+    public function setBlockGroup(BlockGroup $blockGroup): self
     {
-        $this->block = $block;
+        $this->blockGroup = $blockGroup;
 
         return $this;
     }

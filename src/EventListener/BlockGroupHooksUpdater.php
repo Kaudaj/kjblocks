@@ -21,13 +21,13 @@ namespace Kaudaj\Module\Blocks\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Kaudaj\Module\Blocks\Entity\Block;
-use Kaudaj\Module\Blocks\Repository\BlockRepository;
+use Kaudaj\Module\Blocks\Entity\BlockGroup;
+use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
 
-class BlockHooksUpdater
+class BlockGroupHooksUpdater
 {
     /**
-     * @var BlockRepository
+     * @var BlockGroupRepository
      */
     private $entityRepository;
 
@@ -43,7 +43,7 @@ class BlockHooksUpdater
 
     public function __construct(EntityManager $entityManager, ?int $contextShopId)
     {
-        $this->entityRepository = $entityManager->getRepository(Block::class);
+        $this->entityRepository = $entityManager->getRepository(BlockGroup::class);
 
         $module = \Module::getInstanceByName('kjblocks');
         if (!($module instanceof \KJBlocks)) {
@@ -54,17 +54,17 @@ class BlockHooksUpdater
         $this->contextShopId = $contextShopId;
     }
 
-    public function postUpdate(Block $block, LifecycleEventArgs $event): void
+    public function postUpdate(BlockGroup $blockGroup, LifecycleEventArgs $event): void
     {
         $this->updateRegisteredHooks();
     }
 
-    public function postPersist(Block $block, LifecycleEventArgs $event): void
+    public function postPersist(BlockGroup $blockGroup, LifecycleEventArgs $event): void
     {
         $this->updateRegisteredHooks();
     }
 
-    public function postRemove(Block $block, LifecycleEventArgs $event): void
+    public function postRemove(BlockGroup $blockGroup, LifecycleEventArgs $event): void
     {
         $this->updateRegisteredHooks();
     }
@@ -79,8 +79,8 @@ class BlockHooksUpdater
 
         $blocksHooks = [];
         foreach ($blocks as $block) {
-            foreach ($block->getBlockHooks() as $blockHook) {
-                $hookId = $blockHook->getHookId();
+            foreach ($block->getBlockGroupHooks() as $blockGroupHook) {
+                $hookId = $blockGroupHook->getHookId();
 
                 if (key_exists($hookId, $blocksHooks)) {
                     continue;
