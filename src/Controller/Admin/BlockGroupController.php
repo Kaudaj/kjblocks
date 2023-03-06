@@ -27,7 +27,9 @@ use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\BlockGroupNotFoundException
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\CannotAddBlockGroupException;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\CannotDeleteBlockGroupException;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\CannotUpdateBlockGroupException;
+use Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGridDefinitionFactory;
 use Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGroupGridDefinitionFactory;
+use Kaudaj\Module\Blocks\Search\Filters\BlockFilters;
 use Kaudaj\Module\Blocks\Search\Filters\BlockGroupFilters;
 use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
 use PrestaShop\PrestaShop\Core\Employee\ContextEmployeeProviderInterface;
@@ -66,6 +68,23 @@ class BlockGroupController extends FrameworkBundleAdminController
                     'icon' => 'add_circle_outline',
                 ],
             ],
+        ]);
+    }
+
+    /**
+     * @AdminSecurity(
+     *     "is_granted('read', 'KJBlocksBlock')",
+     *     redirectRoute="kj_blocks_block_groups_index",
+     * )
+     */
+    public function viewAction(Request $request, int $blockGroupId): Response
+    {
+        return $this->redirectToRoute('kj_blocks_blocks_index', [
+            BlockGridDefinitionFactory::GRID_ID => [
+                'filters' => [
+                    'group' => $blockGroupId
+                ]
+            ]
         ]);
     }
 
