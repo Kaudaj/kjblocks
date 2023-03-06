@@ -7,7 +7,7 @@ services:
     class: Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGridDefinitionFactory
     parent: prestashop.core.grid.definition.factory.abstract_grid_definition
     arguments:
-      - "@kaudaj.module.blocks.form.choice_provider.block_group_block"
+      - "@kaudaj.module.blocks.form.choice_provider.block_group"
       - "@prestashop.core.admin.admin_filter.repository"
       - "@prestashop.adapter.data_provider.employee"
       - "@prestashop.adapter.shop.context"

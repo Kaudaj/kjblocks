@@ -144,7 +144,7 @@ final class BlockGroupGridDefinitionFactory extends AbstractGridDefinitionFactor
                 ->setName($this->trans('View', [], 'Admin.Actions'))
                 ->setIcon('zoom_in')
                 ->setOptions($this->getRouteOptions('kj_blocks_block_groups_view') + [
-                    'clickable_row' => true
+                    'clickable_row' => true,
                 ])
             )
             ->add((new LinkRowAction('edit'))

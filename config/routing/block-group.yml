@@ -35,6 +35,18 @@ kj_blocks_block_groups_edit:
   requirements:
     blockGroupId: \d+
 
+kj_blocks_block_groups_view:
+  path: /{blockGroupId}/view
+  methods: GET
+  defaults:
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockGroupController::viewAction'
+    _legacy_controller: KJBlocksBlockGroup
+    _legacy_link: KJBlocksBlockGroup:view
+    _legacy_parameters:
+      id_block_group: blockGroupId
+  requirements:
+    blockGroupId: \d+
+
 kj_blocks_block_groups_delete:
   path: /{blockGroupId}/delete
   methods: DELETE

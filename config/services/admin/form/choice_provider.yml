@@ -15,13 +15,6 @@ services:
       - "@prestashop.core.command_bus"
       - '@=service("prestashop.adapter.legacy.context").getLanguage().id'
 
-  kaudaj.module.blocks.form.choice_provider.block_group_block:
-    public: true
-    class: Kaudaj\Module\Blocks\Form\ChoiceProvider\BlockGroupBlockChoiceProvider
-    arguments:
-      - "@prestashop.core.command_bus"
-      - '@=service("prestashop.adapter.legacy.context").getLanguage().id'
-
   kaudaj.module.blocks.form.choice_provider.block_group_hook:
     public: true
     class: Kaudaj\Module\Blocks\Form\ChoiceProvider\BlockGroupHookChoiceProvider

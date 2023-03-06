@@ -29,7 +29,6 @@ use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\CannotDeleteBlockGroupExcep
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Exception\CannotUpdateBlockGroupException;
 use Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGridDefinitionFactory;
 use Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGroupGridDefinitionFactory;
-use Kaudaj\Module\Blocks\Search\Filters\BlockFilters;
 use Kaudaj\Module\Blocks\Search\Filters\BlockGroupFilters;
 use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
 use PrestaShop\PrestaShop\Core\Employee\ContextEmployeeProviderInterface;
@@ -82,9 +81,9 @@ class BlockGroupController extends FrameworkBundleAdminController
         return $this->redirectToRoute('kj_blocks_blocks_index', [
             BlockGridDefinitionFactory::GRID_ID => [
                 'filters' => [
-                    'group' => $blockGroupId
-                ]
-            ]
+                    'group' => $blockGroupId,
+                ],
+            ],
         ]);
     }
 
