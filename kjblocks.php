@@ -24,7 +24,7 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 }
 
 use Kaudaj\Module\Blocks\BlockInterface;
-use Kaudaj\Module\Blocks\BlockRenderer;
+use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupsByHook;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockGroup;
@@ -298,13 +298,12 @@ EOF
         $render = '';
 
         try {
-            /** @var BlockRenderer<BlockInterface> */
-            $blockRenderer = $this->get('kaudaj.module.blocks.block_renderer');
-
             /** @var BlockGroup[] */
             $blockGroups = $this->getCommandBus()->handle(new GetBlockGroupsByHook($hookName));
 
             foreach ($blockGroups as $blockGroup) {
+                $render .= "<div class=\"block-group-{$blockGroup->getId()}\">";
+
                 $blockGroupBlocks = $blockGroup->getBlockGroupBlocks()->getValues();
 
                 usort($blockGroupBlocks, function (BlockGroupBlock $blockGroupBlock1, BlockGroupBlock $blockGroupBlock2): int {
@@ -319,12 +318,14 @@ EOF
                     return $blockGroupBlock->getBlock();
                 }, $blockGroupBlocks);
 
-                /** @var BlockRenderer<BlockInterface> */
-                $blockRenderer = $this->get('kaudaj.module.blocks.block_renderer');
+                /** @var BlockTypeProvider<BlockInterface> */
+                $blockTypeProvider = $this->get('kaudaj.module.blocks.block_type_provider');
 
                 foreach ($blocks as $block) {
-                    $render .= $blockRenderer->renderBlock($block);
+                    $render .= $blockTypeProvider->getBlockTypeFromEntity($block)->render();
                 }
+
+                $render .= '</div>';
             }
         } catch (Exception $e) {
             // return '';

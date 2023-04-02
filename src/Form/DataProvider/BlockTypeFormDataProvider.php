@@ -57,20 +57,21 @@ class BlockTypeFormDataProvider
      */
     public function buildFormOptions(?Json $optionsJson, int $blockId, string $type): array
     {
-        $formOptions = [];
-
-        $block = $this->blockTypeProvider->getBlockType($type);
-
-        if ($block) {
-            /** @var BlockFormMapperInterface */
-            $blockFormHandler = $this->container->get($block->getFormMapper());
-
-            $options = $optionsJson !== null ? (json_decode($optionsJson->getValue(), true) ?: []) : [];
-            if (is_array($options)) {
-                $formOptions = $blockFormHandler->mapToFormData($blockId, $options);
-            }
+        if (!$optionsJson) {
+            return [];
         }
 
-        return $formOptions;
+        $options = json_decode($optionsJson->getValue(), true) ?: [];
+
+        if (!$options || !is_array($options)) {
+            return [];
+        }
+
+        $block = $this->blockTypeProvider->getBlockType($type, $options);
+
+        /** @var BlockFormMapperInterface */
+        $blockFormHandler = $this->container->get($block->getFormMapper());
+
+        return $blockFormHandler->mapToFormData($blockId, $options);
     }
 }

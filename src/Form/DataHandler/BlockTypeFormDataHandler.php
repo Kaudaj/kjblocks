@@ -62,10 +62,6 @@ class BlockTypeFormDataHandler
     {
         $block = $this->blockTypeProvider->getBlockType($type);
 
-        if (!$block) {
-            return [];
-        }
-
         /** @var BlockFormMapperInterface */
         $blockFormHandler = $this->container->get($block->getFormMapper());
 

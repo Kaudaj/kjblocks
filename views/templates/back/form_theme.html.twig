@@ -1,0 +1,68 @@
+{#**
+ * Copyright since 2019 Kaudaj
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@kaudaj.com so we can send you a copy immediately.
+ *
+ * @author    Kaudaj <info@kaudaj.com>
+ * @copyright Since 2019 Kaudaj
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ *#}
+
+{% block block_type_picker_widget %}
+  <div id="block-type-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ 'Choose your block type'|trans({}, 'Admin.Actions') }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="modules-step">
+            <ul class="modules">
+              {% for moduleName, module in block_types %}
+                  <li>
+                      <img src="{{ module.logo ?: '/img/questionmark.png' }}" class="logo" alt="{{ module.displayName }}"/>
+                      <span class="name">{{ module.displayName }}</span>
+                      <ul class="blocks">
+                          {% for blockName, blockType in module.blocks %}
+                              <li data-value="{{ blockName }}">
+                                <img src="{{ blockType.logo ?: '/modules/kjblocks/views/img/no-logo-block.PNG' }}" class="logo" alt="{{ blockName }}"/>
+                                <span class="name">{{ blockType.displayName }}</span>
+                                <span class="description d-none">{{ blockType.description }}</span>
+                              </li>
+                          {% endfor %}
+                      </ul>
+                  </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="blocks-step">
+            <ul class="blocks">
+            </ul>
+            <p class="current-description"></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary back">Back</button>
+          <button type="button" class="btn btn-primary save" data-dismiss="modal">Choose</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" value="{{ form.vars.value }}" 
+    required={{ form.vars.required }} readonly="readonly" aria-label="{{ form.vars.full_name }} saisie" class="form-control">
+  <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#block-type-modal">
+    {{ 'Choose '|trans({}, 'Modules.Kjblocks.Admin') }}
+  </button>
+{% endblock %}

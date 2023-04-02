@@ -17,6 +17,7 @@
  */
 
 import BlockType from './components/block-type';
+import BlockTypeModal from './components/block-type-modal';
 
 const {$} = window;
 
@@ -30,6 +31,9 @@ function initForm() {
 
   const blockType = new BlockType('block_type');
   blockType.init();
+
+  const blockTypeModal = new BlockTypeModal('block_type');
+  blockTypeModal.init();
 }
 
 function initGrid() {

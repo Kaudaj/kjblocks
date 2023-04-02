@@ -54,26 +54,38 @@ abstract class Block implements BlockInterface
         $this->translator = $legacyContext->getContext()->getTranslator();
     }
 
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    public function getLogo(): string
+    {
+        return '';
+    }
+
     protected function getTemplate(): string
     {
         return '';
     }
 
     /**
-     * @param array<string, mixed> $options
-     *
      * @return array<string, mixed>
      */
-    protected function getTemplateVariables(array $options): array
+    protected function getTemplateVariables(): array
     {
         return [];
     }
 
-    public function render(array $options = []): string
+    public function render(): string
     {
-        $this->smarty->assign($this->getTemplateVariables($options));
+        $this->smarty->assign($this->getTemplateVariables());
 
         return $this->smarty->fetch($this->getTemplate());
+    }
+
+    public function setOptions(array $options = []): void
+    {
     }
 
     public function configureOptions(OptionsResolver $resolver): void

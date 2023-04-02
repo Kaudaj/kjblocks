@@ -23,9 +23,19 @@ namespace Kaudaj\Module\Blocks;
 
 class BlockTypeProviderFactory
 {
-    // @phpstan-ignore-next-line
-    public static function create(string $hookName): BlockTypeProvider
+    /**
+     * @var int
+     */
+    protected $contextLangId;
+
+    public function __construct(int $contextLangId)
     {
-        return new BlockTypeProvider($hookName);
+        $this->contextLangId = $contextLangId;
+    }
+
+    // @phpstan-ignore-next-line
+    public function create(string $hookName): BlockTypeProvider
+    {
+        return new BlockTypeProvider($this->contextLangId, $hookName);
     }
 }

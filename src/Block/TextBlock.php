@@ -27,11 +27,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TextBlock extends ContainerBlock
 {
+    /**
+     * @var string
+     */
+    protected $text;
+
     public const OPTION_TEXT = 'text';
 
     public function getName(): string
     {
         return 'text';
+    }
+
+    public function getDescription(): string
+    {
+        return $this->translator->trans('Displays a text.', [], 'Modules.Kjblocks.Admin');
     }
 
     public function getLocalizedName(): string
@@ -44,13 +54,20 @@ class TextBlock extends ContainerBlock
         return 'module:kjblocks/views/templates/front/blocks/text.tpl';
     }
 
-    protected function getTemplateVariables(array $options): array
+    protected function getTemplateVariables(): array
     {
-        $variables = parent::getTemplateVariables($options);
+        $variables = parent::getTemplateVariables();
 
-        $variables[self::OPTION_TEXT] = $options[self::OPTION_TEXT];
+        $variables[self::OPTION_TEXT] = $this->text;
 
         return $variables;
+    }
+
+    public function setOptions(array $options = []): void
+    {
+        parent::setOptions($options);
+
+        $this->text = strval($options[self::OPTION_TEXT]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

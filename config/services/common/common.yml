@@ -4,15 +4,11 @@ services:
 
   kaudaj.module.blocks.block_type_provider.factory:
     class: Kaudaj\Module\Blocks\BlockTypeProviderFactory
+    arguments:
+      - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
 
   kaudaj.module.blocks.block_type_provider:
     class: Kaudaj\Module\Blocks\BlockTypeProvider
     factory: ["@kaudaj.module.blocks.block_type_provider.factory", "create"]
     arguments:
       - 'actionGetBlockTypes'
-
-  kaudaj.module.blocks.block_renderer:
-    class: Kaudaj\Module\Blocks\BlockRenderer
-    arguments:
-      - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
-      - '@kaudaj.module.blocks.block_type_provider'

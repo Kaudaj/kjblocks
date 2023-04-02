@@ -4,3 +4,5 @@ services:
 
   kaudaj.module.blocks.form.mapper.container:
     class: Kaudaj\Module\Blocks\Form\Mapper\ContainerBlockFormMapper
+    arguments:
+      - '@kaudaj.module.blocks.file.block_file_manager'

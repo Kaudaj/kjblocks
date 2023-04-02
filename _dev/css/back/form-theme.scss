@@ -1,0 +1,113 @@
+/**
+ * Copyright since 2019 Kaudaj
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@kaudaj.com so we can send you a copy immediately.
+ *
+ * @author    Kaudaj <info@kaudaj.com>
+ * @copyright Since 2019 Kaudaj
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ */
+
+.block-type-picker {
+    .input-container {
+        display: flex;
+
+        > *:not(:last-child) {
+            margin-right: 1rem;
+        }
+
+        input[type="text"] {
+            max-width: 300px;
+        }
+    }
+}
+
+#block-type-modal {
+    .modal-dialog {
+        height: 80vh;
+    }
+
+    .modal-body {
+        padding: 0;
+        margin: 1.25rem;
+    }
+
+    .blocks-step {
+        display: none;
+    }
+
+    .modules .blocks {
+        display: none;
+    }
+
+    .modules-step .modules, .blocks-step .blocks {
+        $blockWidth: 100px;
+
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-columns: auto;
+        grid-gap: 2rem;
+
+        list-style: none;
+        padding: 0;
+
+        max-height: 60vh;
+        overflow-y: auto;
+
+        li {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            cursor: pointer;
+
+            .logo {
+                width: $blockWidth;
+                height: $blockWidth;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: .5rem;
+
+                border: 5px solid #f05e23;
+                border-radius: 10px;
+            }
+
+            &:hover {
+                .logo {
+                    border-color: #fda50f;
+                }
+            }
+
+            &.selected {
+                .logo {
+                    border-color: #fda50f;
+                }
+            }
+
+            .name {
+                font-weight: bold;
+            }
+        }
+    }
+
+    .current-description {
+        text-align: center;
+        font-style: italic;
+    }
+
+    .btn.back {
+        display: none;
+        margin-right: auto;
+    }
+}

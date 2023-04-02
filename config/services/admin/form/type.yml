@@ -21,6 +21,13 @@ services:
     tags:
       - { name: form.type }
 
+  kaudaj.module.blocks.form.type.block_picker:
+    public: true
+    parent: "form.type.translatable.aware"
+    class: Kaudaj\Module\Blocks\Form\Type\BlockTypePicker
+    tags:
+      - { name: form.type }
+
   kaudaj.module.blocks.form.type.block_group:
     public: true
     parent: "form.type.translatable.aware"

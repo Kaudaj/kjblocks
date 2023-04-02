@@ -22,7 +22,6 @@ namespace Kaudaj\Module\Blocks\Form\Type;
 use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -58,29 +57,26 @@ class BlockTypeType extends TranslatorAwareType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $blockTypeChoices = [];
-        foreach ($this->blockTypeProvider->getBlockTypes() as $moduleBlocks) {
-            foreach ($moduleBlocks as $block) {
-                $blockTypeChoices[$block->getLocalizedName()] = $block->getName();
-            }
-        }
+        $this->addFields($builder);
 
+        $this->addListenersForTypeField($builder);
+    }
+
+    /**
+     * @param FormBuilderInterface<string, mixed> $builder
+     */
+    private function addFields(FormBuilderInterface &$builder): void
+    {
         $builder
-            ->add(self::FIELD_TYPE, ChoiceType::class, [
-                'choices' => $blockTypeChoices,
-                'attr' => [
-                    'data-toggle' => 'select2',
-                    'data-minimumResultsForSearch' => '7',
-                ],
+            ->add(self::FIELD_TYPE, BlockTypePicker::class, [
                 'required' => true,
                 'label' => $this->trans('Block type', 'Modules.Kjblocks.Admin'),
+                'block_types' => $this->blockTypeProvider->getBlockTypes(),
             ])
             ->add(self::FIELD_OPTIONS, FormType::class, [
                 'label' => false,
             ])
         ;
-
-        $this->addListenersForTypeField($builder);
     }
 
     /**
@@ -90,11 +86,7 @@ class BlockTypeType extends TranslatorAwareType
     {
         $formModifier = function (FormInterface $form, string $blockName): void {
             $fieldOptions = $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions();
-
             $block = $this->blockTypeProvider->getBlockType($blockName);
-            if (!$block) {
-                return;
-            }
 
             $form->add(self::FIELD_OPTIONS, $block->getFormType(), $fieldOptions);
         };

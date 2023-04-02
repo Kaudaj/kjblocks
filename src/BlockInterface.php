@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks;
 
 use Kaudaj\Module\Blocks\Constraint as BlockAssert;
+use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints as PSAssert;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,14 +34,28 @@ interface BlockInterface
      */
     public function getName(): string;
 
+    /**
+     * @PSAssert\CleanHtml
+     */
+    public function getDescription(): string;
+
+    public function getLogo(): string;
+
     public function getLocalizedName(): string;
 
     public function configureOptions(OptionsResolver $resolver): void;
 
     /**
+     * @return string[]
+     */
+    public function getMultiLangOptions(): array;
+
+    /**
      * @param array<string, mixed> $options
      */
-    public function render(array $options = []): string;
+    public function setOptions(array $options = []): void;
+
+    public function render(): string;
 
     /**
      * @Assert\Type(FormTypeInterface::class)
@@ -48,9 +63,4 @@ interface BlockInterface
     public function getFormType(): string;
 
     public function getFormMapper(): string;
-
-    /**
-     * @return string[]
-     */
-    public function getMultiLangOptions(): array;
 }

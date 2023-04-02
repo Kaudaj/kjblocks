@@ -23,8 +23,8 @@ namespace Kaudaj\Module\Blocks\Form\Mapper;
 
 use Kaudaj\Module\Blocks\Block\ContainerBlock;
 use Kaudaj\Module\Blocks\BlockFormMapper;
+use Kaudaj\Module\Blocks\File\BlockFileManager;
 use Kaudaj\Module\Blocks\Form\Type\Block\ContainerBlockType;
-use Kaudaj\Module\Blocks\Image\BlockImageManager;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -32,15 +32,23 @@ class ContainerBlockFormMapper extends BlockFormMapper
 {
     public const BACKGROUND_FILENAME = 'background';
 
+    /**
+     * @var BlockFileManager
+     */
+    private $blockFileManager;
+
+    public function __construct(BlockFileManager $blockFileManager)
+    {
+        $this->blockFileManager = $blockFileManager;
+    }
+
     public function mapToBlockOptions(int $blockId, array $formData): array
     {
         $blockOptions = parent::mapToBlockOptions($blockId, $formData);
 
-        $imageManager = new BlockImageManager();
-
         if (!key_exists(ContainerBlock::OPTION_BACKGROUND_IMAGE, $blockOptions)
             || !($blockOptions[ContainerBlock::OPTION_BACKGROUND_IMAGE] instanceof UploadedFile)) {
-            $existingBackgroundUrl = $imageManager->getUrl($blockId, self::BACKGROUND_FILENAME);
+            $existingBackgroundUrl = $this->blockFileManager->getUrl($blockId, self::BACKGROUND_FILENAME);
 
             if ($existingBackgroundUrl === null) {
                 return $blockOptions;
@@ -52,9 +60,10 @@ class ContainerBlockFormMapper extends BlockFormMapper
         /** @var UploadedFile */
         $backgroundImage = $blockOptions[ContainerBlock::OPTION_BACKGROUND_IMAGE];
 
-        $imageManager->upload($backgroundImage, $blockId, self::BACKGROUND_FILENAME);
+        $destinationFilename = self::BACKGROUND_FILENAME . '.' . ($backgroundImage->guessExtension() ?: 'jpg');
+        $this->blockFileManager->upload($blockId, $backgroundImage, $destinationFilename);
 
-        $blockOptions[ContainerBlock::OPTION_BACKGROUND_IMAGE] = $imageManager->getUrl($blockId, self::BACKGROUND_FILENAME);
+        $blockOptions[ContainerBlock::OPTION_BACKGROUND_IMAGE] = $this->blockFileManager->getUrl($blockId, self::BACKGROUND_FILENAME);
 
         return $blockOptions;
     }
@@ -67,8 +76,7 @@ class ContainerBlockFormMapper extends BlockFormMapper
             return $formData;
         }
 
-        $imageManager = new BlockImageManager();
-        $filePathname = $imageManager->find($blockId, self::BACKGROUND_FILENAME);
+        $filePathname = $this->blockFileManager->find($blockId, self::BACKGROUND_FILENAME);
 
         if ($filePathname === null) {
             return $formData;

@@ -17,8 +17,6 @@
  *#}
 {% extends '@Modules/kjblocks/views/templates/back/layouts/block/base.html.twig' %}
 
-{% form_theme blockForm with expansionsFormThemes %}
-
 {% block content %}
   <div class="row justify-content-center">
     <div class="col">
@@ -26,6 +24,9 @@
         'card_header': 'Edit block' | trans({}, 'Modules.Kjblocks.Admin'),
         'form': blockForm,
         'form_id': 'block_edit',
+        'additional_themes': [
+          '@Modules/kjblocks/views/templates/back/form_theme.html.twig'
+        ]|merge(expansionsFormThemes),
         'cancel_action': path('kj_blocks_blocks_index')
       } %}
     </div>

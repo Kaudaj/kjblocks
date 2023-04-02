@@ -1,6 +1,14 @@
+parameters:
+  modules_dir: !php/const _PS_MODULE_DIR_
+
 services:
   _defaults:
     public: true
 
   kaudaj.module.blocks.block.form_mapper:
     class: Kaudaj\Module\Blocks\BlockFormMapper
+
+  kaudaj.module.blocks.file.block_file_manager:
+    class: Kaudaj\Module\Blocks\File\BlockFileManager
+    arguments:
+      - "%modules_dir%/kjblocks/uploads/blocks/"

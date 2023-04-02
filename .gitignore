@@ -13,8 +13,10 @@ node_modules/
 !/views/css/README.md
 /views/js/*
 !/views/js/README.md
-views/img/blocks/*
-!views/img/blocks/README.md
+
+### Uploads ###
+/uploads/blocks/*
+!/uploads/blocks/README.md
 
 ### Tests ###
 .php-cs-fixer.cache

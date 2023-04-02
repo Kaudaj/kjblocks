@@ -37,9 +37,39 @@ class ContainerBlock extends Block
     public const OPTION_IDENTIFIER = 'identifier';
     public const OPTION_BACKGROUND_IMAGE = 'background_image';
 
+    /**
+     * @var int
+     */
+    protected $width;
+
+    /**
+     * @var int
+     */
+    protected $height;
+
+    /**
+     * @var string[]
+     */
+    protected $classes = [];
+
+    /**
+     * @var string
+     */
+    protected $identifier;
+
+    /**
+     * @var string
+     */
+    protected $backgroundImage;
+
     public function getName(): string
     {
         return 'container';
+    }
+
+    public function getDescription(): string
+    {
+        return $this->translator->trans('Simple container, designed to be a base to create boxed blocks.', [], 'Modules.Kjblocks.Admin');
     }
 
     public function getLocalizedName(): string
@@ -52,44 +82,60 @@ class ContainerBlock extends Block
         return 'module:kjblocks/views/templates/front/blocks/container.tpl';
     }
 
-    protected function getTemplateVariables(array $options): array
+    protected function getTemplateVariables(): array
     {
-        $variables = parent::getTemplateVariables($options);
+        $variables = parent::getTemplateVariables();
 
-        $inlineStyle = '';
-
-        if (key_exists(self::OPTION_WIDTH, $options)) {
-            $width = intval($options[self::OPTION_WIDTH]);
-            $inlineStyle .= "width: {$width}px;";
+        if ($this->width) {
+            $variables[self::OPTION_WIDTH] = $this->width;
         }
 
-        if (key_exists(self::OPTION_HEIGHT, $options)) {
-            $height = intval($options[self::OPTION_HEIGHT]);
-            $inlineStyle .= "height: {$height}px;";
+        if ($this->height) {
+            $variables[self::OPTION_HEIGHT] = $this->height;
         }
 
-        if (key_exists(self::OPTION_BACKGROUND_IMAGE, $options)) {
-            $url = strval($options[self::OPTION_BACKGROUND_IMAGE]);
-            $inlineStyle .= "background-image: url(\"{$url}\");";
+        if ($this->backgroundImage) {
+            $variables[self::OPTION_BACKGROUND_IMAGE] = $this->backgroundImage;
         }
 
-        if (!empty($inlineStyle)) {
-            $variables['inline_style'] = $inlineStyle;
+        if ($this->identifier) {
+            $variables[self::OPTION_IDENTIFIER] = $this->identifier;
         }
 
-        if (key_exists(self::OPTION_IDENTIFIER, $options)) {
-            $variables[self::OPTION_IDENTIFIER] = strval($options[self::OPTION_IDENTIFIER]);
-        }
+        $blockClassId = substr(uniqid(), -4);
+        $variables['block_class_id'] = $blockClassId;
 
-        $classes = [str_replace('_', '-', $this->getName())];
-
-        if (key_exists(self::OPTION_CLASSES, $options)) {
-            $classes = array_merge($classes, explode(',', strval($options[self::OPTION_CLASSES])));
-        }
+        $classes = ["block-$blockClassId", str_replace('_', '-', $this->getName())];
+        $classes = array_merge($classes, $this->classes);
 
         $variables[self::OPTION_CLASSES] = $classes;
 
         return $variables;
+    }
+
+    public function setOptions(array $options = []): void
+    {
+        parent::setOptions($options);
+
+        if (key_exists(self::OPTION_WIDTH, $options)) {
+            $this->width = intval($options[self::OPTION_WIDTH]);
+        }
+
+        if (key_exists(self::OPTION_HEIGHT, $options)) {
+            $this->height = intval($options[self::OPTION_HEIGHT]);
+        }
+
+        if (key_exists(self::OPTION_BACKGROUND_IMAGE, $options)) {
+            $this->backgroundImage = strval($options[self::OPTION_BACKGROUND_IMAGE]);
+        }
+
+        if (key_exists(self::OPTION_IDENTIFIER, $options)) {
+            $this->identifier = strval($options[self::OPTION_IDENTIFIER]);
+        }
+
+        if (key_exists(self::OPTION_CLASSES, $options)) {
+            $this->classes = explode(',', strval($options[self::OPTION_CLASSES]));
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

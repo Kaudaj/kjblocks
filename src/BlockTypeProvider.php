@@ -21,11 +21,14 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks;
 
+use Kaudaj\Module\Blocks\Entity\Block;
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\Debug\DebugMode;
 use PrestaShop\PrestaShop\Core\Exception\ContainerNotFoundException;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Validation;
 
@@ -40,12 +43,23 @@ class BlockTypeProvider
     protected $blockTypes = null;
 
     /**
+     * @var array<int, T> [block entity id => block instance]
+     */
+    protected $blocks = [];
+
+    /**
      * @var string
      */
     protected $hookName;
 
-    public function __construct(string $hookName)
+    /**
+     * @var int
+     */
+    protected $contextLangId;
+
+    public function __construct(int $contextLangId, string $hookName)
     {
+        $this->contextLangId = $contextLangId;
         $this->hookName = $hookName;
     }
 
@@ -133,18 +147,104 @@ class BlockTypeProvider
     }
 
     /**
-     * @return T|null
+     * @param array<string, mixed>|null $options
+     *
+     * @return T
      */
-    public function getBlockType(string $type): ?BlockInterface
+    public function getBlockType(string $type, ?array $options = null)
     {
         $blockTypes = $this->getBlockTypes();
 
+        $blockType = null;
+
         foreach ($blockTypes as $moduleBlocks) {
             if (key_exists($type, $moduleBlocks)) {
-                return $moduleBlocks[$type];
+                $blockType = $moduleBlocks[$type];
             }
         }
 
-        return null;
+        if ($blockType === null) {
+            throw new RuntimeException("Block type '$type' not found");
+        }
+
+        if ($options === null) {
+            return $blockType;
+        }
+
+        $blockType = clone $blockType;
+        $blockType->setOptions($this->configureOptions($blockType, $options));
+
+        return $blockType;
+    }
+
+    /**
+     * @param T $blockType
+     * @param array<string, mixed> $options
+     *
+     * @return array<string, mixed>
+     */
+    public function configureOptions($blockType, array $options = []): array
+    {
+        $this->setContextLangValue(
+            $options,
+            (new Configuration())->getInt('PS_LANG_DEFAULT'),
+            $blockType->getMultiLangOptions()
+        );
+
+        $resolver = new OptionsResolver();
+        $blockType->configureOptions($resolver);
+        $options = $resolver->resolve($options);
+
+        return $options;
+    }
+
+    /**
+     * @return T
+     */
+    public function getBlockTypeFromEntity(Block $block)
+    {
+        $id = $block->getId();
+
+        if (!key_exists($id, $this->blocks)) {
+            $options = json_decode($block->getOptions() ?: '', true) ?: [];
+            $options = is_array($options) ? $options : [];
+
+            $this->blocks[$id] = $this->getBlockType($block->getType(), $options);
+        }
+
+        return $this->blocks[$id];
+    }
+
+    /**
+     * @param mixed[] $optionValue
+     * @param string[] $multiLangOptions
+     */
+    private function setContextLangValue(array &$optionValue, int $defaultLangId, array $multiLangOptions, ?string $option = null): void
+    {
+        if (empty($optionValue)) {
+            return;
+        }
+
+        $isAssoc = count(array_filter(array_keys($optionValue), 'is_string')) > 0;
+
+        if (($option === null || in_array($option, $multiLangOptions)) && !$isAssoc && !key_exists(0, $optionValue)) {
+            if (key_exists($this->contextLangId, $optionValue)) {
+                $optionValue = $optionValue[$this->contextLangId];
+            } elseif (key_exists($defaultLangId, $optionValue)) {
+                $optionValue = $optionValue[$defaultLangId];
+            } else {
+                $optionValue = null;
+            }
+
+            return;
+        }
+
+        foreach ($optionValue as $option => &$value) {
+            if (!is_array($value)) {
+                continue;
+            }
+
+            $this->setContextLangValue($value, $defaultLangId, $multiLangOptions, $option);
+        }
     }
 }

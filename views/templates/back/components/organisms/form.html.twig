@@ -17,7 +17,9 @@
  *#}
 
 {# PrestaShop made some modifications to the way forms are displayed to work well with PrestaShop in order to benefit from those you need to use ui kit as theme#}
-{% form_theme form 'PrestaShopBundle:Admin/TwigTemplateForm:prestashop_ui_kit.html.twig' %}
+{% form_theme form with [
+  'PrestaShopBundle:Admin/TwigTemplateForm:prestashop_ui_kit.html.twig'
+]|merge(additional_themes is defined ? additional_themes : []) %}
 
 {% block form_id %}
   {% set formVars = { attr : {class: 'form', id: form_id} } %}

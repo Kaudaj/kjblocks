@@ -25,6 +25,7 @@ module.exports = (env, argv) => ({
     back: './css/back/back.scss',
     blocks: './js/back/blocks.js',
     'block-groups': './js/back/block-groups.js',
+    'form-theme': './css/back/form-theme.scss',
   },
   output: {
     filename: '[name].js',
