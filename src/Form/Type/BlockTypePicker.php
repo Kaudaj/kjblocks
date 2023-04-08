@@ -20,7 +20,6 @@
 namespace Kaudaj\Module\Blocks\Form\Type;
 
 use Kaudaj\Module\Blocks\BlockInterface;
-use Module;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -69,7 +68,7 @@ class BlockTypePicker extends TranslatorAwareType
         $presentedBlockTypes = [];
 
         foreach ($blockTypes as $moduleName => $moduleBlocks) {
-            $module = Module::getInstanceByName($moduleName);
+            $module = \Module::getInstanceByName($moduleName);
             if (!$module) {
                 continue;
             }

@@ -12,3 +12,8 @@ services:
     factory: ["@kaudaj.module.blocks.block_type_provider.factory", "create"]
     arguments:
       - 'actionGetBlockTypes'
+
+  kaudaj.module.blocks.renderer.block_group:
+    class: Kaudaj\Module\Blocks\Renderer\BlockGroupRenderer
+    arguments:
+      - '@kaudaj.module.blocks.block_type_provider'

@@ -81,7 +81,11 @@ abstract class Block implements BlockInterface
     {
         $this->smarty->assign($this->getTemplateVariables());
 
-        return $this->smarty->fetch($this->getTemplate());
+        $render = $this->smarty->fetch($this->getTemplate());
+
+        return strval(\Hook::exec('filterBlockContent', [
+            'content' => $render,
+        ])) ?: $render;
     }
 
     public function setOptions(array $options = []): void

@@ -21,7 +21,11 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Builder;
 
+use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock;
+use Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlockHandler;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroup;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupsByHook;
+use Kaudaj\Module\Blocks\Domain\BlockGroup\QueryHandler\GetBlockGroupHandler;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\QueryHandler\GetBlockGroupsByHookHandler;
 use League\Tactician\CommandBus;
 use League\Tactician\Setup\QuickStart;
@@ -40,10 +44,14 @@ class CommandBusBuilder
     private $commandHandlers = [];
 
     public function __construct(
-        GetBlockGroupsByHookHandler $getBlockGroupsByHookHandler
+        GetBlockGroupsByHookHandler $getBlockGroupsByHookHandler,
+        GetBlockHandler $getBlockHandler,
+        GetBlockGroupHandler $getBlockGroupHandler
     ) {
         $this->commandHandlers = [
             GetBlockGroupsByHook::class => $getBlockGroupsByHookHandler,
+            GetBlock::class => $getBlockHandler,
+            GetBlockGroup::class => $getBlockGroupHandler,
         ];
     }
 

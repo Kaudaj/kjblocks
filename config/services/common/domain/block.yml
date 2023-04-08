@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    public: true
+
+  kaudaj.module.blocks.block.query_handler.abstract:
+    abstract: true
+    class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\AbstractBlockQueryHandler
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      
+  kaudaj.module.blocks.block.query_handler.get:
+    public: true
+    parent: kaudaj.module.blocks.block.query_handler.abstract
+    class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlockHandler
+    tags:
+      - name: tactician.handler
+        command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock

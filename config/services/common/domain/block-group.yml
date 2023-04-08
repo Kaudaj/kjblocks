@@ -15,3 +15,11 @@ services:
     tags:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupsByHook
+
+  kaudaj.module.blocks.block_group.query_handler.get:
+    public: true
+    parent: kaudaj.module.blocks.block_group.query_handler.abstract
+    class: Kaudaj\Module\Blocks\Domain\BlockGroup\QueryHandler\GetBlockGroupHandler
+    tags:
+      - name: tactician.handler
+        command: Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroup

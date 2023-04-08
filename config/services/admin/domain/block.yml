@@ -2,20 +2,6 @@ services:
   _defaults:
     public: true
 
-  kaudaj.module.blocks.block.query_handler.abstract:
-    abstract: true
-    class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\AbstractBlockQueryHandler
-    arguments:
-      - "@doctrine.orm.entity_manager"
-      
-  kaudaj.module.blocks.block.query_handler.get:
-    public: true
-    parent: kaudaj.module.blocks.block.query_handler.abstract
-    class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlockHandler
-    tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock
-
   kaudaj.module.blocks.block.query_handler.get_all:
     public: true
     parent: kaudaj.module.blocks.block.query_handler.abstract
@@ -58,6 +44,8 @@ services:
     public: true
     parent: kaudaj.module.blocks.block.command_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\CommandHandler\DeleteBlockHandler
+    arguments:
+      - '@kaudaj.module.blocks.file.block_file_manager'
     tags:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand

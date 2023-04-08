@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataProvider;
 
-use Hook;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing;
 use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroup;
@@ -71,7 +70,7 @@ final class BlockFormDataProvider implements FormDataProviderInterface
 
             $firstName = $blockGroup->getBlockGroupLangs()->getValues()[0];
 
-            $hookId = Hook::getIdByName($firstName->getName());
+            $hookId = \Hook::getIdByName($firstName->getName());
             if ($hookId) {
                 $blockGroupsIds[] = "hook-$hookId";
             } else {

@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
-use Hook;
 use Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
@@ -151,7 +150,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
                 continue;
             }
 
-            $hookName = Hook::getNameById((int) $id);
+            $hookName = \Hook::getNameById((int) $id);
 
             /** @var BlockGroup|null */
             $blockGroup = $this->commandBus->handle(new GetBlockGroupByName($hookName));

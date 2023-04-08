@@ -105,7 +105,7 @@ class ContainerBlock extends Block
         $blockClassId = substr(uniqid(), -4);
         $variables['block_class_id'] = $blockClassId;
 
-        $classes = ["block-$blockClassId", str_replace('_', '-', $this->getName())];
+        $classes = ['block', "block-$blockClassId", str_replace('_', '-', $this->getName())];
         $classes = array_merge($classes, $this->classes);
 
         $variables[self::OPTION_CLASSES] = $classes;

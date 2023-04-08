@@ -123,7 +123,9 @@ class BlockTypeType extends TranslatorAwareType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setDefault('label', false)
+            ->setDefaults([
+                'label' => false,
+            ])
         ;
     }
 }

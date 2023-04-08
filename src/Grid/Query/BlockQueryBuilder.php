@@ -64,6 +64,10 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
             ->addSelect((!key_exists('group', $filters) ? "GROUP_CONCAT(bgl.name SEPARATOR ', ')" : 'bgl.name') . ' AS `groups`')
         ;
 
+        if (!key_exists('group', $filters)) {
+            $qb->groupBy('b.id_block');
+        }
+
         $this->searchCriteriaApplicator
             ->applyPagination($searchCriteria, $qb)
             ->applySorting($searchCriteria, $qb)
@@ -113,7 +117,6 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
                     'bgb',
                     'b.id_block = bgb.id_block'
                 )
-                ->groupBy('b.id_block')
             ;
         }
 

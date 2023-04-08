@@ -26,6 +26,9 @@
         'card_header': 'Create block' | trans({}, 'Modules.Kjblocks.Admin'),
         'form': blockForm,
         'form_id': 'block_create',
+        'additional_themes': [
+          '@Modules/kjblocks/views/templates/back/form_theme.html.twig'
+        ]|merge(expansionsFormThemes),
         'cancel_action': path('kj_blocks_blocks_index')
       } %}
     </div>

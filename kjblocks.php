@@ -23,12 +23,9 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
-use Kaudaj\Module\Blocks\BlockInterface;
-use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\Query\GetBlockGroupsByHook;
-use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockGroup;
-use Kaudaj\Module\Blocks\Entity\BlockGroupBlock;
+use Kaudaj\Module\Blocks\Renderer\BlockGroupRenderer;
 use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
 use Kaudaj\Module\Blocks\Repository\BlockGroupHookRepository;
 use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
@@ -301,31 +298,11 @@ EOF
             /** @var BlockGroup[] */
             $blockGroups = $this->getCommandBus()->handle(new GetBlockGroupsByHook($hookName));
 
+            /** @var BlockGroupRenderer */
+            $blockRenderer = $this->get('kaudaj.module.blocks.renderer.block_group');
+
             foreach ($blockGroups as $blockGroup) {
-                $render .= "<div class=\"block-group-{$blockGroup->getId()}\">";
-
-                $blockGroupBlocks = $blockGroup->getBlockGroupBlocks()->getValues();
-
-                usort($blockGroupBlocks, function (BlockGroupBlock $blockGroupBlock1, BlockGroupBlock $blockGroupBlock2): int {
-                    if ($blockGroupBlock1->getPosition() == $blockGroupBlock2->getPosition()) {
-                        return 0;
-                    }
-
-                    return ($blockGroupBlock1->getPosition() < $blockGroupBlock2->getPosition()) ? -1 : 1;
-                });
-
-                $blocks = array_map(function (BlockGroupBlock $blockGroupBlock): Block {
-                    return $blockGroupBlock->getBlock();
-                }, $blockGroupBlocks);
-
-                /** @var BlockTypeProvider<BlockInterface> */
-                $blockTypeProvider = $this->get('kaudaj.module.blocks.block_type_provider');
-
-                foreach ($blocks as $block) {
-                    $render .= $blockTypeProvider->getBlockTypeFromEntity($block)->render();
-                }
-
-                $render .= '</div>';
+                $render .= $blockRenderer->render($blockGroup);
             }
         } catch (Exception $e) {
             // return '';

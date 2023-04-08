@@ -26,7 +26,6 @@ use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\Debug\DebugMode;
 use PrestaShop\PrestaShop\Core\Exception\ContainerNotFoundException;
-use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Type;
@@ -74,7 +73,7 @@ class BlockTypeProvider
 
         $container = $this->getContainer();
         if ($container === null) {
-            throw new RuntimeException("Can't retrieve container");
+            throw new \RuntimeException("Can't retrieve container");
         }
 
         $blocks = \Hook::exec($this->hookName, [], null, true);
@@ -164,7 +163,7 @@ class BlockTypeProvider
         }
 
         if ($blockType === null) {
-            throw new RuntimeException("Block type '$type' not found");
+            throw new \RuntimeException("Block type '$type' not found");
         }
 
         if ($options === null) {
@@ -218,8 +217,9 @@ class BlockTypeProvider
     /**
      * @param mixed[] $optionValue
      * @param string[] $multiLangOptions
+     * @param string|int|null $option
      */
-    private function setContextLangValue(array &$optionValue, int $defaultLangId, array $multiLangOptions, ?string $option = null): void
+    private function setContextLangValue(array &$optionValue, int $defaultLangId, array $multiLangOptions, $option = null): void
     {
         if (empty($optionValue)) {
             return;
@@ -227,7 +227,7 @@ class BlockTypeProvider
 
         $isAssoc = count(array_filter(array_keys($optionValue), 'is_string')) > 0;
 
-        if (($option === null || in_array($option, $multiLangOptions)) && !$isAssoc && !key_exists(0, $optionValue)) {
+        if (($option === null || in_array($option, $multiLangOptions, true)) && !$isAssoc && !key_exists(0, $optionValue)) {
             if (key_exists($this->contextLangId, $optionValue)) {
                 $optionValue = $optionValue[$this->contextLangId];
             } elseif (key_exists($defaultLangId, $optionValue)) {
@@ -239,12 +239,17 @@ class BlockTypeProvider
             return;
         }
 
-        foreach ($optionValue as $option => &$value) {
+        foreach ($optionValue as $key => &$value) {
             if (!is_array($value)) {
                 continue;
             }
 
-            $this->setContextLangValue($value, $defaultLangId, $multiLangOptions, $option);
+            $this->setContextLangValue(
+                $value,
+                $defaultLangId,
+                $multiLangOptions,
+                in_array($key, $multiLangOptions, true) ? $key : $option
+            );
         }
     }
 }

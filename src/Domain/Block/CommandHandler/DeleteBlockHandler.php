@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 
+use Doctrine\ORM\EntityManager;
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotDeleteBlockException;
@@ -38,8 +39,10 @@ final class DeleteBlockHandler extends AbstractBlockCommandHandler
      */
     private $blockFileManager;
 
-    public function __construct(BlockFileManager $blockFileManager)
+    public function __construct(EntityManager $entityManager, BlockFileManager $blockFileManager)
     {
+        parent::__construct($entityManager);
+
         $this->blockFileManager = $blockFileManager;
     }
 
