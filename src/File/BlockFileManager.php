@@ -23,23 +23,23 @@ namespace Kaudaj\Module\Blocks\File;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-final class BlockFileManager
+class BlockFileManager
 {
     /**
      * @var string
      */
-    private $destinationDir;
+    protected $destinationDir;
 
     public function __construct(string $destinationDir)
     {
         $this->destinationDir = $destinationDir;
     }
 
-    public function upload(int $blockId, UploadedFile $file, ?string $destinationFilename = null): File
+    public function upload(int $blockId, UploadedFile $file, ?string $destinationFilename = null): SplFileInfo
     {
         $maxSize = \Tools::getMaxUploadSize();
 
@@ -52,8 +52,9 @@ final class BlockFileManager
         }
 
         $destinationPathname = $this->getPathname($blockId, $destinationFilename);
+        $file = $file->move(dirname($destinationPathname), basename($destinationPathname));
 
-        return $file->move(dirname($destinationPathname), basename($destinationPathname));
+        return new SplFileInfo($file->getPathname(), dirname($destinationFilename), $destinationFilename);
     }
 
     public function delete(?int $blockId = null, ?string $filename = null): void
