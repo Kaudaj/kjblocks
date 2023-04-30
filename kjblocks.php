@@ -61,7 +61,7 @@ class KJBlocks extends Module implements WidgetInterface
         $this->displayName = $this->trans('Blocks', [], 'Modules.Kjblocks.Admin');
         $this->description = $this->trans(
             <<<EOF
-        Add your blocks where you want them.
+        Add content blocks of any type wherever you want, organized in groups.
 EOF
             ,
             [],

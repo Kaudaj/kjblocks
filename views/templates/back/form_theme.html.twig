@@ -21,7 +21,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ 'Choose your block type'|trans({}, 'Admin.Actions') }}</h5>
+          <h5 class="modal-title">{{ 'Choose the type'|trans({}, 'Modules.Kjblocks.Admin') }}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -53,9 +53,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary back">Back</button>
-          <button type="button" class="btn btn-primary save" data-dismiss="modal">Choose</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary back">{{ 'Back'|trans({}, 'Admin.Global') }}</button>
+          <button type="button" class="btn btn-primary save" data-dismiss="modal">{{ 'Choose'|trans({}, 'Admin.Actions') }}</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans({}, 'Admin.Actions') }}</button>
         </div>
       </div>
     </div>
@@ -63,6 +63,6 @@
   <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" value="{{ form.vars.value }}" 
     required={{ form.vars.required }} readonly="readonly" aria-label="{{ form.vars.full_name }} saisie" class="form-control">
   <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#block-type-modal">
-    {{ 'Choose '|trans({}, 'Modules.Kjblocks.Admin') }}
+    {{ 'Choose'|trans({}, 'Admin.Actions') }}
   </button>
 {% endblock %}

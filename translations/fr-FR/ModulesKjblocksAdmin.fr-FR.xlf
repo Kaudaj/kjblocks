@@ -1,30 +1,170 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="admin" source-language="fr-FR" target-language="fr-FR" datatype="plaintext">
+  <file original="admin-dev" source-language="fr-FR" target-language="fr-FR" datatype="plaintext">
     <body>
-      <trans-unit id="9e854fa28a3ad9f9fad2c1257c131ff0">
-        <source>Example setting</source>
-        <target>Paramètre d'exemple</target>
+      <trans-unit id="d2bdb1e131693b61dbdef5ff87b92d39">
+        <source>Can't update positions if block group id filter is not set.</source>
+        <target>Impossible de mettre à jour les positions si le filtre de l'identifiant du groupe de blocs n'est pas défini.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="eb4330c5f1fd14cb14ab6e1bde2c4749">
-        <source>Help user to fill this field.</source>
-        <target>Aidez l'utilisateur à remplir ce champ.</target>
+      <trans-unit id="4bece8edd5c5396566ad0899649776a6">
+        <source>Add new block group</source>
+        <target>Ajouter un nouveau groupe de blocs</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="1fdc43b01be4e6a90e605babfda25b0c">
+      <trans-unit id="35ad48797a780091740cbcf14ebc094d">
+        <source>Hooks</source>
+        <target>Points d'accroche</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4d2e4ef8174917d3d275c1b844a2387f">
+        <source>Hooks to which this block group belongs</source>
+        <target>Points d'accroche auxquels ce groupe de blocs appartient</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="dd55f1dec75f4af1ce3a5fa9303ce996">
+        <source>Name of the block group, only visible in the admin panel for internal usage</source>
+        <target>Nom du groupe de blocs, visible uniquement dans le panneau d'administration pour un usage interne.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="32954654ac8fe66a1d09be19001de2d4">
+        <source>Width</source>
+        <target>Largeur</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="dc1964d7f7f55b08503ba10d7b8a9eee">
+        <source>Width of the block</source>
+        <target>Largeur du bloc</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="eec6c4bdbd339edf8cbea68becb85244">
+        <source>Height</source>
+        <target>Hauteur</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0d24b729bb491505308d6fbabdfd0ac8">
+        <source>Height of the block</source>
+        <target>Hauteur du bloc</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e9878b4854d29907146149f695cb1cfb">
+        <source>Classes</source>
+        <target>Classes</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bc234432480505c23b36f7938aefd721">
+        <source>Classes of the block, separated by a comma</source>
+        <target>Classes du bloc, séparées par une virgule</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="29ee5d1ebcc033234938a5234f1f2075">
+        <source>Identifier</source>
+        <target>Identifiant</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="44b0ba14f1214c5bb59280151eb938e0">
+        <source>Id of the block</source>
+        <target>Id du bloc</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="69ee1afc9b3d02e53d9f733c1993b568">
+        <source>Background image</source>
+        <target>Image de fond</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="52548d7bea20c06f3131d65dab238959">
+        <source>Background image of the block</source>
+        <target>Image de fond du bloc</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="71416160dc5bcb2284a4b3301e24d396">
+        <source>Content of the block</source>
+        <target>Contenu du bloc</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ff0052d4c72b55060e4ee6db03cb388f">
+        <source>Hooks or block groups to which this block belongs</source>
+        <target>Points d'accroche ou groupes de blocs auxquels ce bloc appartient</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="30e7eef30b761e01a5e307ec47d3c7a0">
+        <source>Available block groups</source>
+        <target>Groupes de blocs disponibles</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c5cc1164fe38560fcd4fb85ca074a789">
+        <source>Available hooks</source>
+        <target>Points d'accroche disponibles</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bebbf5285d3c2a5b4f53ab9e37c9cbb0">
+        <source>Name of the block, only visible in the admin panel for internal usage</source>
+        <target>Nom du bloc, visible uniquement dans le panneau d'administration pour un usage interne</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="977e6cb22afef0ffc007fee21eee7829">
+        <source>Display a formatted text</source>
+        <target>Afficher un texte formaté</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9dffbf69ffba8bc38bc4e01abf4b1675">
+        <source>Text</source>
+        <target>Texte</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="684b8d86244090b2a69717e3636e3172">
+        <source>Simple container, designed to be a base to create boxed blocks</source>
+        <target>Simple conteneur, conçu pour servir de base à la création de blocs en boîte</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0e7278cda02a9c0446dcc75a4df34eb2">
+        <source>Container</source>
+        <target>Conteneur</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="04c4f9f595c4f21d1de65eb07056c15a">
         <source>Blocks</source>
-        <target>Blocks</target>
+        <target>Blocs</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="8b688592443e7ec75f2d835e6740473c">
-        <source>        Add your blocks where you want them.</source>
-        <target>Ajoute vos blocs de contenu où vous le souhaitez.</target>
+      <trans-unit id="52f5e0bc3859bc5f5e25130b6c7e8881">
+        <source>Position</source>
+        <target>Position</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="0db377921f4ce762c62526131097968f">
-        <source>General</source>
-        <target>Général</target>
+      <trans-unit id="2005085da809b282077abc47e48bdbe8">
+        <source>Block groups</source>
+        <target>Groupes de blocs</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6a7e263bb615058797c6ed43f1431dbf">
+        <source>        Add content blocks of any type wherever you want, organized in groups.</source>
+        <target>Ajoutez des blocs de contenu de tout type où vous le souhaitez, organisés en groupes.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="155a505c19c85ccc312732b5333fd5a2">
+        <source>Create block group</source>
+        <target>Créer un groupe de blocs</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d4b43475bb41191fa97d1ec1a391eaa9">
+        <source>Edit block group</source>
+        <target>Modifier le groupe de blocs</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="53d653dc5600cddb9bada63a4f8fa0b0">
+        <source>Create block</source>
+        <target>Créer un bloc</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4f358ab0d7f1d9623bdcad1c346bd0f6">
+        <source>Edit block</source>
+        <target>Modifier le bloc</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="895d6948a4e99df1581773cc8ab3cf2e">
+        <source>Choose the type</source>
+        <target>Choisir le type</target>
         <note>Line: </note>
       </trans-unit>
     </body>

@@ -104,8 +104,8 @@ final class BlockGroupGridDefinitionFactory extends AbstractGridDefinitionFactor
             )
             ->add((new DataColumn('hooks'))
                 ->setName(
-                    $this->hookFilter !== null
-                        ? $this->trans('Hooks', [], 'Admin.Global')
+                    $this->hookFilter === null
+                        ? $this->trans('Hooks', [], 'Modules.Kjblocks.Admin')
                         : $this->trans('Hook', [], 'Admin.Global')
                 )
                 ->setOptions([

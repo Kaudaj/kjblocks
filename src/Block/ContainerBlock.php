@@ -69,7 +69,7 @@ class ContainerBlock extends Block
 
     public function getDescription(): string
     {
-        return $this->translator->trans('Simple container, designed to be a base to create boxed blocks.', [], 'Modules.Kjblocks.Admin');
+        return $this->translator->trans('Simple container, designed to be a base to create boxed blocks', [], 'Modules.Kjblocks.Admin');
     }
 
     public function getLocalizedName(): string

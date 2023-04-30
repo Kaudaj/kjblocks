@@ -44,40 +44,40 @@ class ContainerBlockType extends TranslatorAwareType
     {
         $builder
             ->add(self::FIELD_WIDTH, IntegerType::class, [
-                'label' => $this->trans('Width', 'Admin.Global'),
-                'help' => $this->trans('Width of the block.', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Width', 'Modules.Kjblocks.Admin'),
+                'help' => $this->trans('Width of the block', 'Modules.Kjblocks.Admin'),
                 'required' => false,
                 'constraints' => [
                     new GreaterThanOrEqual(0),
                 ],
             ])
             ->add(self::FIELD_HEIGHT, IntegerType::class, [
-                'label' => $this->trans('Height', 'Admin.Global'),
-                'help' => $this->trans('Height of the block.', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Height', 'Modules.Kjblocks.Admin'),
+                'help' => $this->trans('Height of the block', 'Modules.Kjblocks.Admin'),
                 'required' => false,
                 'constraints' => [
                     new GreaterThanOrEqual(0),
                 ],
             ])
             ->add(self::FIELD_CLASSES, TextType::class, [
-                'label' => $this->trans('Classes', 'Admin.Global'),
-                'help' => $this->trans('Classes of the block, separated by a comma.', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Classes', 'Modules.Kjblocks.Admin'),
+                'help' => $this->trans('Classes of the block, separated by a comma', 'Modules.Kjblocks.Admin'),
                 'required' => false,
                 'constraints' => [
                     new TypedRegex(TypedRegex::TYPE_SELECTORS),
                 ],
             ])
             ->add(self::FIELD_IDENTIFIER, TextType::class, [
-                'label' => $this->trans('Identifier', 'Admin.Global'),
-                'help' => $this->trans('Id of the block.', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Identifier', 'Modules.Kjblocks.Admin'),
+                'help' => $this->trans('Id of the block', 'Modules.Kjblocks.Admin'),
                 'required' => false,
                 'constraints' => [
                     new TypedRegex(TypedRegex::TYPE_SELECTOR),
                 ],
             ])
             ->add(self::FIELD_BACKGROUND_IMAGE, FileType::class, [
-                'label' => $this->trans('Background image', 'Admin.Global'),
-                'help' => $this->trans('Background image of the block.', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Background image', 'Modules.Kjblocks.Admin'),
+                'help' => $this->trans('Background image of the block', 'Modules.Kjblocks.Admin'),
                 'required' => false,
                 'constraints' => [
                     new Image(),

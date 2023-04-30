@@ -37,8 +37,8 @@ class TextBlockType extends ContainerBlockType
     {
         $builder
             ->add(self::FIELD_TEXT, TranslatableType::class, [
-                'label' => $this->trans('Block text', 'Admin.Global'),
-                'help' => $this->trans('Content of the block.', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Text', 'Admin.Global'),
+                'help' => $this->trans('Content of the block', 'Modules.Kjblocks.Admin'),
                 'type' => FormattedTextareaType::class,
                 'constraints' => [
                     new DefaultLanguage(),

@@ -75,9 +75,11 @@ class BlockType extends TranslatorAwareType
 
         $builder
             ->add(self::FIELD_GROUPS, ChoiceType::class, [
+                'label' => $this->trans('Groups', 'Admin.Global'),
+                'help' => $this->trans('Hooks or block groups to which this block belongs', 'Modules.Kjblocks.Admin'),
                 'choices' => [
-                    $this->trans('Available block groups', 'Admin.Global') => array_diff_key($groupsChoices, $hookChoices),
-                    $this->trans('Available hooks', 'Admin.Global') => $hookChoices,
+                    $this->trans('Available block groups', 'Modules.Kjblocks.Admin') => array_diff_key($groupsChoices, $hookChoices),
+                    $this->trans('Available hooks', 'Modules.Kjblocks.Admin') => $hookChoices,
                 ],
                 'attr' => [
                     'data-toggle' => 'select2',
@@ -85,11 +87,10 @@ class BlockType extends TranslatorAwareType
                 ],
                 'multiple' => true,
                 'required' => false,
-                'label' => $this->trans('Block groups', 'Admin.Global'),
             ])
             ->add(self::FIELD_NAME, TranslatableType::class, [
-                'label' => $this->trans('Block name', 'Admin.Global'),
-                'help' => $this->trans('Name of the block.', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Name', 'Admin.Global'),
+                'help' => $this->trans('Name of the block, only visible in the admin panel for internal usage', 'Modules.Kjblocks.Admin'),
                 'constraints' => [
                     new DefaultLanguage(),
                 ],

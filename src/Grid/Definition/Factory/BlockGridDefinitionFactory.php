@@ -110,7 +110,7 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
             )
             ->add((new DataColumn('groups'))
                 ->setName(
-                    $this->blockGroupFilter !== null
+                    $this->blockGroupFilter === null
                         ? $this->trans('Groups', [], 'Admin.Global')
                         : $this->trans('Group', [], 'Admin.Global')
                 )

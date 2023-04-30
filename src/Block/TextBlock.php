@@ -41,7 +41,7 @@ class TextBlock extends ContainerBlock
 
     public function getDescription(): string
     {
-        return $this->translator->trans('Displays a text.', [], 'Modules.Kjblocks.Admin');
+        return $this->translator->trans('Display a formatted text', [], 'Modules.Kjblocks.Admin');
     }
 
     public function getLocalizedName(): string

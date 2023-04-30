@@ -70,7 +70,7 @@ class BlockTypeType extends TranslatorAwareType
         $builder
             ->add(self::FIELD_TYPE, BlockTypePicker::class, [
                 'required' => true,
-                'label' => $this->trans('Block type', 'Modules.Kjblocks.Admin'),
+                'label' => $this->trans('Type', 'Admin.Global'),
                 'block_types' => $this->blockTypeProvider->getBlockTypes(),
             ])
             ->add(self::FIELD_OPTIONS, FormType::class, [
