@@ -31,6 +31,7 @@ use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotDeleteBlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotUpdateBlockException;
 use Kaudaj\Module\Blocks\Grid\Definition\Factory\BlockGridDefinitionFactory;
 use Kaudaj\Module\Blocks\Search\Filters\BlockFilters;
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
 use PrestaShop\PrestaShop\Core\Employee\ContextEmployeeProviderInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Builder\FormBuilderInterface;
@@ -240,7 +241,7 @@ class BlockController extends FrameworkBundleAdminController
 
         $adminFilter = $adminFilterRepository->findByEmployeeAndFilterId(
             $contextEmployeeProvider->getId(),
-            $shopContext->getContextShopID(),
+            $shopContext->getContextShopID() ?: (new Configuration())->getInt('PS_SHOP_DEFAULT'),
             BlockGridDefinitionFactory::GRID_ID
         );
 
