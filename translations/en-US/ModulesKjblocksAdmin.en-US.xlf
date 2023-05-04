@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="f2ec465f33abb0e3703c262d4cf22d48">
         <source>Hover a block to see its description</source>
-        <target>Survolez un block pour voir sa description</target>
+        <target>Hover a block to see its description</target>
         <note>Line: </note>
       </trans-unit>
     </body>
