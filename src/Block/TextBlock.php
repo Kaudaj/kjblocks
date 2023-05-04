@@ -49,6 +49,11 @@ class TextBlock extends ContainerBlock
         return $this->translator->trans('Text', [], 'Modules.Kjblocks.Admin');
     }
 
+    public function getLogo(): string
+    {
+        return '/modules/kjblocks/views/img/blocks/text.png';
+    }
+
     protected function getTemplate(): string
     {
         return 'module:kjblocks/views/templates/front/blocks/text.tpl';

@@ -77,6 +77,11 @@ class ContainerBlock extends Block
         return $this->translator->trans('Container', [], 'Modules.Kjblocks.Admin');
     }
 
+    public function getLogo(): string
+    {
+        return '/modules/kjblocks/views/img/blocks/container.png';
+    }
+
     protected function getTemplate(): string
     {
         return 'module:kjblocks/views/templates/front/blocks/container.tpl';

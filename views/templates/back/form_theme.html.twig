@@ -36,7 +36,7 @@
                       <ul class="blocks">
                           {% for blockName, blockType in module.blocks %}
                               <li data-value="{{ blockName }}">
-                                <img src="{{ blockType.logo ?: '/modules/kjblocks/views/img/no-logo-block.PNG' }}" class="logo" alt="{{ blockName }}"/>
+                                <img src="{{ blockType.logo ?: '/modules/kjblocks/views/img/blocks/no-logo-block.PNG' }}" class="logo" alt="{{ blockName }}"/>
                                 <span class="name">{{ blockType.displayName }}</span>
                                 <span class="description d-none">{{ blockType.description }}</span>
                               </li>
