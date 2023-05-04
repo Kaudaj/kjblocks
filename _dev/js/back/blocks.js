@@ -27,13 +27,30 @@ $(() => {
 });
 
 function initForm() {
-  window.prestashop.component.initComponents(['TranslatableInput']);
+  window.prestashop.component.initComponents(['TranslatableInput', 'TinyMCEEditor']);
 
   const blockType = new BlockType('block_type');
   blockType.init();
 
   const blockTypeModal = new BlockTypeModal('block_type');
   blockTypeModal.init();
+
+  const $form = $('#block_edit, #block_create');
+
+  $form.on('KJBlockTypeChanged', (event, data) => {
+    switch (data.newType) {
+      case 'text':
+        resetTinyMCEEditor();
+        break;
+      default:
+    }
+  });
+}
+
+function resetTinyMCEEditor() {
+  window.tinyMCE.remove();
+  window.prestashop.instance.tinyMCEEditor = undefined;
+  window.prestashop.component.initComponents(['TinyMCEEditor']);
 }
 
 function initGrid() {
