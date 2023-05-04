@@ -15,6 +15,11 @@
  * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+/* eslint-disable camelcase */
+
+/* global kjblocks_defaultDescriptionText */
+
 const {$} = window;
 
 export default class BlockTypeModal {
@@ -54,6 +59,10 @@ export default class BlockTypeModal {
       const $item = BlockTypeModal.getItem(event);
 
       this.$blocksStep.find('.current-description').html($item.find('.description').html());
+    });
+
+    this.$blocksStep.on('mouseleave', '.blocks li', () => {
+      this.$blocksStep.find('.current-description').html(kjblocks_defaultDescriptionText);
     });
 
     this.$modal.on('click', '.btn.save', () => {

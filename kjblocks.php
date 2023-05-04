@@ -44,6 +44,7 @@ class KJBlocks extends Module implements WidgetInterface
      */
     public const HOOKS = [
         'actionGetBlockTypes',
+        'actionAdminControllerSetMedia',
     ];
 
     public function __construct()
@@ -284,6 +285,13 @@ EOF
             'kaudaj.module.blocks.block.container',
             'kaudaj.module.blocks.block.text',
         ];
+    }
+
+    public function hookActionAdminControllerSetMedia(): void
+    {
+        Media::addJsDef([
+            "{$this->name}_defaultDescriptionText" => $this->trans('Hover a block to see its description', [], 'Modules.Kjblocks.Admin'),
+        ]);
     }
 
     /**
