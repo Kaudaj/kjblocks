@@ -65,7 +65,7 @@
         li {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: start;
             align-items: center;
 
             cursor: pointer;
@@ -97,6 +97,7 @@
 
             .name {
                 font-weight: bold;
+                text-align: center;
             }
         }
     }
