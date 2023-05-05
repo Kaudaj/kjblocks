@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks;
 
+use Kaudaj\Module\Blocks\Block as BlockType;
 use Kaudaj\Module\Blocks\Entity\Block;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
@@ -208,7 +209,9 @@ class BlockTypeProvider
             $options = json_decode($block->getOptions() ?: '', true) ?: [];
             $options = is_array($options) ? $options : [];
 
-            $this->blocks[$id] = $this->getBlockType($block->getType(), $options);
+            $this->blocks[$id] = $this->getBlockType($block->getType(), $options + [
+                BlockType::OPTION_ID => $id,
+            ]);
         }
 
         return $this->blocks[$id];

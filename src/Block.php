@@ -22,35 +22,46 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks;
 
 use Kaudaj\Module\Blocks\Constraint\ConstraintValidatorFactory;
+use Module;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class Block implements BlockInterface
 {
+    public const OPTION_ID = 'id';
+
+    public const FILTER_CONTENT_HOOK = 'filterBlockContent';
+
     /**
      * @var ValidatorInterface
      */
     private $validator;
 
     /**
-     * @var \Smarty
+     * @var LegacyContext
      */
-    protected $smarty;
+    protected $legacyContext;
 
     /**
      * @var TranslatorInterface
      */
     protected $translator;
 
+    /**
+     * @var int
+     */
+    protected $id;
+
     public function __construct(LegacyContext $legacyContext)
     {
-        $this->smarty = clone $legacyContext->getSmarty();
+        $this->legacyContext = $legacyContext;
         $this->translator = $legacyContext->getContext()->getTranslator();
     }
 
@@ -74,26 +85,47 @@ abstract class Block implements BlockInterface
      */
     protected function getTemplateVariables(): array
     {
-        return [];
+        return [self::OPTION_ID => $this->id];
     }
 
     public function render(): string
     {
-        $this->smarty->assign($this->getTemplateVariables());
+        /** @var \KJBlocks */
+        $kjblocks = Module::getInstanceByName('kjblocks');
+        $cacheId = $kjblocks->getCacheIdPublic() . "|{$this->id}";
 
-        $render = $this->smarty->fetch($this->getTemplate());
+        $smarty = $this->legacyContext->getSmarty();
 
-        return strval(\Hook::exec('filterBlockContent', [
+        $template = $this->getTemplate();
+
+        if (!$kjblocks->isCached($template, $cacheId)) {
+            // $smarty = clone $smarty;
+            $smarty->assign($this->getTemplateVariables());
+        }
+
+        $render = $kjblocks->fetch($template, $cacheId);
+
+        return strval(\Hook::exec(self::FILTER_CONTENT_HOOK, [
             'content' => $render,
         ])) ?: $render;
     }
 
     public function setOptions(array $options = []): void
     {
+        if (key_exists(self::OPTION_ID, $options)) {
+            $this->id = intval($options[self::OPTION_ID]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver
+            ->setDefined(self::OPTION_ID)
+            ->setAllowedTypes(self::OPTION_ID, 'int')
+            ->setAllowedValues(self::OPTION_ID, $this->createIsValidCallable(
+                new GreaterThan(0)
+            ))
+        ;
     }
 
     private function getValidator(): ValidatorInterface
@@ -134,10 +166,5 @@ abstract class Block implements BlockInterface
     public function getMultiLangOptions(): array
     {
         return [];
-    }
-
-    public function __clone()
-    {
-        $this->smarty = clone $this->smarty;
     }
 }

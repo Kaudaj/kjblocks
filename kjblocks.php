@@ -294,6 +294,11 @@ EOF
         ]);
     }
 
+    public function getCacheIdPublic(): string
+    {
+        return $this->getCacheId();
+    }
+
     /**
      * @param string $hookName
      * @param array<string, mixed> $configuration
@@ -313,8 +318,7 @@ EOF
                 $render .= $blockRenderer->render($blockGroup);
             }
         } catch (Exception $e) {
-            // return '';
-            throw $e;
+            return '';
         }
 
         return $render;
