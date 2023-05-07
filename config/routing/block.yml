@@ -54,3 +54,15 @@ kj_blocks_blocks_update_position:
     _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockController::updatePositionAction'
     _legacy_controller: KJBlocksBlock
     _legacy_link: KJBlocksBlock:updateBlockPosition
+
+kj_blocks_blocks_toggle:
+  path: /{blockId}/toggle
+  methods: POST
+  defaults:
+    _controller: 'Kaudaj\Module\Blocks\Controller\Admin\BlockController::toggleAction'
+    _legacy_controller: KJBlocksBlock
+    _legacy_link: KJBlocksBlock:toggle
+    _legacy_parameters:
+      id_block: blockId
+  requirements:
+    blockId: \d+

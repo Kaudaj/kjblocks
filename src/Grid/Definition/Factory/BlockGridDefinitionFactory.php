@@ -31,6 +31,7 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\LinkRowAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\PositionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\AbstractGridDefinitionFactory;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\DeleteActionTrait;
@@ -39,6 +40,7 @@ use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
 use PrestaShop\PrestaShop\Core\Hook\HookDispatcherInterface;
 use PrestaShopBundle\Entity\Repository\AdminFilterRepository;
 use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
+use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -116,6 +118,15 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                 )
                 ->setOptions([
                     'field' => 'groups',
+                ])
+            )
+            ->add((new ToggleColumn('active'))
+                ->setName($this->trans('Status', [], 'Admin.Global'))
+                ->setOptions([
+                    'route' => 'kj_blocks_blocks_toggle',
+                    'route_param_name' => 'blockId',
+                    'field' => 'active',
+                    'primary_field' => 'id_block',
                 ])
             )
             ->add((new ActionColumn('actions'))
@@ -207,6 +218,9 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
                     ],
                 ])
                 ->setAssociatedColumn('groups')
+            )
+            ->add((new Filter('active', YesAndNoChoiceType::class))
+                ->setAssociatedColumn('active')
             )
             ->add((new Filter('actions', SearchAndResetType::class))
                 ->setTypeOptions([

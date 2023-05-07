@@ -17,3 +17,10 @@ services:
     class: Kaudaj\Module\Blocks\Renderer\BlockGroupRenderer
     arguments:
       - '@kaudaj.module.blocks.block_type_provider'
+      - '@kaudaj.module.blocks.block_context'
+
+  kaudaj.module.blocks.block_context:
+    class: Kaudaj\Module\Blocks\BlockContext
+    arguments:
+      - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+      - '@prestashop.adapter.shop.context'

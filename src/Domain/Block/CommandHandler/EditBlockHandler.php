@@ -84,6 +84,16 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
                 }
             }
 
+            // $shopConstraint = $command->getShopConstraint();
+            // $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
+            // $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
+
+            // $block->removeBlockShop($block->getBlockShop($shopId, $shopGroupId));
+
+            // $blockShop = $this->createBlockShop($shopId, $shopGroupId);
+
+            // $block->addBlockShop($blockShop);
+
             $this->entityManager->persist($block);
             $this->entityManager->flush();
         } catch (\PrestaShopException $exception) {

@@ -32,6 +32,8 @@ use Kaudaj\Module\Blocks\Entity\BlockGroup;
 use Kaudaj\Module\Blocks\Form\Type\BlockType;
 use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
 use PrestaShop\PrestaShop\Adapter\Configuration;
+use PrestaShop\PrestaShop\Adapter\LegacyContext;
+use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
 
@@ -47,10 +49,26 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
      */
     private $blockTypeFormDataHandler;
 
-    public function __construct(CommandBusInterface $commandBus, BlockTypeFormDataHandler $blockTypeFormDataHandler)
-    {
+    /**
+     * @var ShopContext
+     */
+    private $shopContext;
+
+    /**
+     * @var LegacyContext
+     */
+    private $legacyContext;
+
+    public function __construct(
+        CommandBusInterface $commandBus,
+        BlockTypeFormDataHandler $blockTypeFormDataHandler,
+        ShopContext $shopContext,
+        LegacyContext $legacyContext
+    ) {
         $this->commandBus = $commandBus;
         $this->blockTypeFormDataHandler = $blockTypeFormDataHandler;
+        $this->shopContext = $shopContext;
+        $this->legacyContext = $legacyContext;
     }
 
     /**
@@ -71,6 +89,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
             ->setBlockGroupsIds($this->getBlockGroupIds($groups))
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setType($type)
+            ->setShopConstraint($this->shopContext->getShopConstraint())
         ;
 
         /** @var BlockId */
@@ -89,7 +108,9 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
         }
 
         $editBlockCommand = (new EditBlockCommand($blockId))
-            ->setOptions(json_encode($options) ?: null);
+            ->setOptions(json_encode($options) ?: null)
+            ->setShopConstraint($this->shopContext->getShopConstraint())
+        ;
 
         $this->commandBus->handle($editBlockCommand);
 
@@ -126,9 +147,12 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
             ->setBlockGroupsIds($this->getBlockGroupIds($groups))
             ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
             ->setType($type)
-            ->setOptions(json_encode($options) ?: null);
+            ->setOptions(json_encode($options) ?: null)
+            ->setShopConstraint($this->shopContext->getShopConstraint());
 
         $this->commandBus->handle($editBlockCommand);
+
+        $this->legacyContext->getSmarty()->clearCache(null, 'kjblocks'); // @phpstan-ignore-line
     }
 
     /**

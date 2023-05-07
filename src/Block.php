@@ -21,10 +21,12 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks;
 
+use Context;
 use Kaudaj\Module\Blocks\Constraint\ConstraintValidatorFactory;
 use Module;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
+use RuntimeException;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -90,24 +92,51 @@ abstract class Block implements BlockInterface
 
     public function render(): string
     {
-        /** @var \KJBlocks */
-        $kjblocks = Module::getInstanceByName('kjblocks');
-        $cacheId = $kjblocks->getCacheIdPublic() . "|{$this->id}";
+        $module = Module::getInstanceByName($this->getModuleName());
+        if (!$module) {
+            throw new RuntimeException("Module {$this->getModuleName()} not found");
+        }
 
         $smarty = $this->legacyContext->getSmarty();
 
         $template = $this->getTemplate();
+        $cacheId = $this->getCacheId() . $this->getContextCacheId();
 
-        if (!$kjblocks->isCached($template, $cacheId)) {
-            // $smarty = clone $smarty;
+        if (!$module->isCached($template, $cacheId)) {
             $smarty->assign($this->getTemplateVariables());
         }
 
-        $render = $kjblocks->fetch($template, $cacheId);
+        $render = $module->fetch($template, $cacheId);
 
         return strval(\Hook::exec(self::FILTER_CONTENT_HOOK, [
             'content' => $render,
         ])) ?: $render;
+    }
+
+    protected function getModuleName(): string
+    {
+        return 'kjblocks';
+    }
+
+    protected function getCacheId(): string
+    {
+        return "{$this->getModuleName()}|{$this->id}";
+    }
+
+    public static function getContextCacheId(): string
+    {
+        $context = Context::getContext();
+        if (!$context) {
+            return '';
+        }
+
+        $cacheId = "|{$context->language->id}";
+
+        if ($context->currency) {
+            $cacheId .= "|{$context->currency->id}";
+        }
+
+        return $cacheId;
     }
 
     public function setOptions(array $options = []): void

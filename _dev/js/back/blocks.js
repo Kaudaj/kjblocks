@@ -62,6 +62,7 @@ function initGrid() {
     new window.prestashop.component.GridExtensions.LinkRowActionExtension(),
     new window.prestashop.component.GridExtensions.PositionExtension(),
     new window.prestashop.component.GridExtensions.FiltersResetExtension(),
+    new window.prestashop.component.GridExtensions.ColumnTogglingExtension(),
   ];
 
   gridExtensions.forEach((extension) => {

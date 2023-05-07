@@ -26,6 +26,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
 use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
+use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
 use PrestaShop\PrestaShop\Core\Grid\Query\AbstractDoctrineQueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Query\DoctrineSearchCriteriaApplicatorInterface;
 use PrestaShop\PrestaShop\Core\Grid\Search\SearchCriteriaInterface;
@@ -42,16 +43,23 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
      */
     private $contextLangId;
 
+    /**
+     * @var ShopContext
+     */
+    private $shopContext;
+
     public function __construct(
         Connection $connection,
         string $dbPrefix,
         DoctrineSearchCriteriaApplicatorInterface $searchCriteriaApplicator,
-        int $contextLangId
+        int $contextLangId,
+        ShopContext $shopContext
     ) {
         parent::__construct($connection, $dbPrefix);
 
         $this->searchCriteriaApplicator = $searchCriteriaApplicator;
         $this->contextLangId = $contextLangId;
+        $this->shopContext = $shopContext;
     }
 
     public function getSearchQueryBuilder(SearchCriteriaInterface $searchCriteria)
@@ -60,7 +68,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
         $qb = $this->getQueryBuilder($filters);
         $qb
-            ->select('b.id_block, bl.name, b.type, bgb.position')
+            ->select('b.id_block, bl.name, b.type, bgb.position, IFNULL(bs.active, 1) AS active')
             ->addSelect((!key_exists('group', $filters) ? "GROUP_CONCAT(bgl.name SEPARATOR ', ')" : 'bgl.name') . ' AS `groups`')
         ;
 
@@ -94,8 +102,24 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
             'group',
             'name',
             'position',
+            'active',
             'type',
         ];
+
+        $shopConstraint = $this->shopContext->getShopConstraint();
+        $contextShopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
+        $contextShopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
+
+        $shopQb = $this->connection
+            ->createQueryBuilder()
+            ->select('*')
+            ->from($this->dbPrefix . BlockRepository::SHOP_TABLE_NAME)
+            ->where(($contextShopId !== null ? 'id_shop = :shopId OR ' : '') . 'id_shop IS NULL')
+            ->andWhere(($contextShopGroupId !== null ? 'id_shop_group = :shopGroupId OR ' : '') . 'id_shop_group IS NULL')
+            ->orderBy('id_shop', 'DESC')
+            ->addOrderBy('id_shop_group', 'DESC')
+            ->setMaxResults(1)
+        ;
 
         $qb = $this->connection
             ->createQueryBuilder()
@@ -107,6 +131,17 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
                 'b.id_block = bl.id_block AND bl.id_lang = :langId'
             )
             ->setParameter('langId', $this->contextLangId)
+            ->leftJoin(
+                'b',
+                '(' .
+                    $shopQb
+                        ->getSQL()
+                . ')',
+                'bs',
+                'b.id_block = bs.id_block'
+            )
+            ->setParameter('shopId', $contextShopId)
+            ->setParameter('shopGroupId', $contextShopGroupId)
         ;
 
         if (!key_exists('group', $filters)) {
@@ -153,6 +188,11 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
                     ;
 
                     $qb->setParameter('blockGroupId', $value);
+
+                    break;
+                case 'active':
+                    $qb->andWhere('bs.`' . $filterName . '` = :' . $filterName);
+                    $qb->setParameter($filterName, $value);
 
                     break;
                 default:

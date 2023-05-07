@@ -24,6 +24,7 @@ namespace Kaudaj\Module\Blocks\Controller\Admin;
 use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand;
+use Kaudaj\Module\Blocks\Domain\Block\Command\ToggleBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockNotFoundException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotAddBlockException;
@@ -130,6 +131,33 @@ class BlockController extends FrameworkBundleAdminController
             'blockForm' => $blockForm->createView(),
             'expansionsFormThemes' => $this->getExpansionsFormThemes(),
         ]);
+    }
+
+    /**
+     * Toggle block status
+     *
+     * @AdminSecurity("is_granted(['update'], request.get('_legacy_controller'))")
+     */
+    public function toggleAction(Request $request, int $blockId): Response
+    {
+        /** @var ShopContext */
+        $shopContext = $this->get('prestashop.adapter.shop.context');
+
+        try {
+            $this->getCommandBus()->handle(
+                (new ToggleBlockCommand($blockId))
+                    ->setShopConstraint($shopContext->getShopConstraint())
+            );
+
+            $this->addFlash(
+                'success',
+                $this->trans('The status has been successfully updated.', 'Admin.Notifications.Success')
+            );
+        } catch (BlockException $e) {
+            $this->addFlash('error', $this->getErrorMessageForException($e, $this->getErrorMessages()));
+        }
+
+        return $this->redirectToIndexRoute();
     }
 
     /**

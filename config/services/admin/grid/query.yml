@@ -9,7 +9,7 @@ services:
     arguments:
       - "@prestashop.core.query.doctrine_search_criteria_applicator"
       - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
-      - '@=service("prestashop.adapter.legacy.context").getContext().shop.id'
+      - '@prestashop.adapter.shop.context'
 
   kaudaj.module.blocks.grid.query.block_group:
     public: true

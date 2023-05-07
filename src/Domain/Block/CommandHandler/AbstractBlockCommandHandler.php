@@ -27,11 +27,16 @@ use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockGroupBlock;
 use Kaudaj\Module\Blocks\Entity\BlockLang;
+use Kaudaj\Module\Blocks\Entity\BlockShop;
 use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShopBundle\Entity\Lang;
 use PrestaShopBundle\Entity\Repository\LangRepository;
+use PrestaShopBundle\Entity\Repository\ShopGroupRepository;
+use PrestaShopBundle\Entity\Repository\ShopRepository;
+use PrestaShopBundle\Entity\Shop;
+use PrestaShopBundle\Entity\ShopGroup;
 
 /**
  * Class AbstractBlockCommandHandler.
@@ -54,6 +59,16 @@ abstract class AbstractBlockCommandHandler
     protected $langRepository;
 
     /**
+     * @var ShopRepository
+     */
+    protected $shopRepository;
+
+    /**
+     * @var ShopGroupRepository
+     */
+    protected $shopGroupRepository;
+
+    /**
      * @var BlockGroupBlockRepository
      */
     protected $blockGroupBlockRepository;
@@ -68,6 +83,12 @@ abstract class AbstractBlockCommandHandler
 
         $langRepository = $this->entityManager->getRepository(Lang::class);
         $this->langRepository = $langRepository;
+
+        $shopRepository = $this->entityManager->getRepository(Shop::class);
+        $this->shopRepository = $shopRepository;
+
+        $shopGroupRepository = $this->entityManager->getRepository(ShopGroup::class);
+        $this->shopGroupRepository = $shopGroupRepository;
 
         /** @var BlockGroupBlockRepository */
         $blockGroupBlockRepository = $this->entityManager->getRepository(BlockGroupBlock::class);
@@ -120,5 +141,27 @@ abstract class AbstractBlockCommandHandler
         }
 
         return $blockLangs;
+    }
+
+    protected function createBlockShop(?int $shopId, ?int $shopGroupId): BlockShop
+    {
+        $blockShop = new BlockShop();
+
+        $shop = $shopGroup = null;
+
+        if ($shopId !== null) {
+            /** @var Shop|null */
+            $shop = $this->shopRepository->find($shopId);
+        }
+
+        if ($shopGroupId !== null) {
+            /** @var ShopGroup|null */
+            $shopGroup = $this->shopGroupRepository->find($shopGroupId);
+        }
+
+        $blockShop->setShop($shop);
+        $blockShop->setShopGroup($shopGroup);
+
+        return $blockShop;
     }
 }

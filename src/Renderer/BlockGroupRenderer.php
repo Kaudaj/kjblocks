@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Renderer;
 
+use Kaudaj\Module\Blocks\BlockContext;
 use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Entity\Block;
@@ -37,11 +38,17 @@ class BlockGroupRenderer
     private $blockTypeProvider;
 
     /**
+     * @var BlockContext
+     */
+    private $blockContext;
+
+    /**
      * @param BlockTypeProvider<BlockInterface> $blockTypeProvider
      */
-    public function __construct(BlockTypeProvider $blockTypeProvider)
+    public function __construct(BlockTypeProvider $blockTypeProvider, BlockContext $blockContext)
     {
         $this->blockTypeProvider = $blockTypeProvider;
+        $this->blockContext = $blockContext;
     }
 
     public function render(BlockGroup $blockGroup): string
@@ -63,6 +70,11 @@ class BlockGroupRenderer
         }, $blockGroupBlocks);
 
         foreach ($blocks as $block) {
+            $blockShop = $this->blockContext->getBlockShop($block);
+            if ($blockShop && !$blockShop->isActive()) {
+                continue;
+            }
+
             $render .= $this->blockTypeProvider->getBlockTypeFromEntity($block)->render();
         }
 

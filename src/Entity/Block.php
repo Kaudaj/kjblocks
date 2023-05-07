@@ -47,6 +47,13 @@ class Block
     private $blockLangs;
 
     /**
+     * @var Collection<int, BlockShop>
+     *
+     * @ORM\OneToMany(targetEntity=BlockShop::class, mappedBy="block", cascade={"persist", "remove"})
+     */
+    protected $blockShops;
+
+    /**
      * @var Collection<int, BlockGroupBlock>
      *
      * @ORM\OneToMany(targetEntity=BlockGroupBlock::class, cascade={"persist", "remove"}, mappedBy="block")
@@ -147,6 +154,45 @@ class Block
     public function removeBlockLang(BlockLang $blockLang): self
     {
         $this->blockLangs->removeElement($blockLang);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BlockShop>
+     */
+    public function getBlockShops(): Collection
+    {
+        return $this->blockShops;
+    }
+
+    public function getBlockShop(?int $shopId, ?int $shopGroupId): ?BlockShop
+    {
+        foreach ($this->blockShops as $blockShop) {
+            $currentShopId = $blockShop->getShop() ? $blockShop->getShop()->getId() : null;
+            $currentShopGroupId = $blockShop->getShopGroup() ? $blockShop->getShopGroup()->getId() : null;
+
+            if ($shopId === $currentShopId && $shopGroupId === $currentShopGroupId) {
+                return $blockShop;
+            }
+        }
+
+        return null;
+    }
+
+    public function addBlockShop(BlockShop $blockShop): self
+    {
+        if (!$this->blockShops->contains($blockShop)) {
+            $this->blockShops[] = $blockShop;
+            $blockShop->setBlock($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBlockShop(BlockShop $blockShop): self
+    {
+        $this->blockShops->removeElement($blockShop);
 
         return $this;
     }

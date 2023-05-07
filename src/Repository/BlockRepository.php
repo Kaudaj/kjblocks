@@ -37,4 +37,7 @@ class BlockRepository extends EntityRepository
 
     public const LANG_TABLE_NAME = self::TABLE_NAME . '_lang';
     public const LANG_TABLE_NAME_WITH_PREFIX = _DB_PREFIX_ . self::LANG_TABLE_NAME;
+
+    public const SHOP_TABLE_NAME = self::TABLE_NAME . '_shop';
+    public const SHOP_TABLE_NAME_WITH_PREFIX = _DB_PREFIX_ . self::SHOP_TABLE_NAME;
 }

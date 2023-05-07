@@ -151,6 +151,25 @@ EOF
         ";
 
         $sql[] = "
+            CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockRepository::SHOP_TABLE_NAME . "` (
+                `id_block_shop` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `id_block` INT UNSIGNED NOT NULL,
+                `id_shop` INT,
+                `id_shop_group` INT,
+                `active` BOOLEAN NOT NULL,
+                FOREIGN KEY (`id_block`)
+                REFERENCES `$dbPrefix" . BlockRepository::TABLE_NAME . "` (`id_block`)
+                ON DELETE CASCADE,
+                FOREIGN KEY (`id_shop`)
+                REFERENCES `{$dbPrefix}shop` (`id_shop`)
+                ON DELETE CASCADE,
+                FOREIGN KEY (`id_shop_group`)
+                REFERENCES `{$dbPrefix}shop_group` (`id_shop_group`)
+                ON DELETE CASCADE
+            ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
+        ";
+
+        $sql[] = "
             CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockGroupRepository::TABLE_NAME . "` (
                 `id_block_group` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY
             ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
@@ -246,6 +265,10 @@ EOF
         ';
 
         $sql[] = "
+            DROP TABLE IF EXISTS `$dbPrefix" . BlockRepository::SHOP_TABLE_NAME . '`
+        ';
+
+        $sql[] = "
             DROP TABLE IF EXISTS `$dbPrefix" . BlockRepository::LANG_TABLE_NAME . '`
         ';
 
@@ -292,11 +315,6 @@ EOF
         Media::addJsDef([
             "{$this->name}_defaultDescriptionText" => $this->trans('Hover a block to see its description', [], 'Modules.Kjblocks.Admin'),
         ]);
-    }
-
-    public function getCacheIdPublic(): string
-    {
-        return $this->getCacheId();
     }
 
     /**

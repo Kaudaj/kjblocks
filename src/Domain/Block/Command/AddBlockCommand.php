@@ -24,6 +24,7 @@ namespace Kaudaj\Module\Blocks\Domain\Block\Command;
 use Kaudaj\Module\Blocks\Domain\Block\ValueObject\Name;
 use Kaudaj\Module\Blocks\Domain\BlockGroup\ValueObject\BlockGroupId;
 use Kaudaj\Module\Blocks\Domain\ValueObject\Json;
+use PrestaShop\PrestaShop\Core\Domain\Shop\ValueObject\ShopConstraint;
 
 /**
  * Class AddBlockCommand is responsible for adding block data.
@@ -49,6 +50,11 @@ class AddBlockCommand extends AbstractBlockCommand
      * @var Json|null
      */
     private $options;
+
+    /**
+     * @var ShopConstraint
+     */
+    private $shopConstraint;
 
     /**
      * @return BlockGroupId[]
@@ -112,6 +118,18 @@ class AddBlockCommand extends AbstractBlockCommand
         }
 
         $this->options = $options;
+
+        return $this;
+    }
+
+    public function getShopConstraint(): ShopConstraint
+    {
+        return $this->shopConstraint;
+    }
+
+    public function setShopConstraint(ShopConstraint $shopConstraint): self
+    {
+        $this->shopConstraint = $shopConstraint;
 
         return $this;
     }

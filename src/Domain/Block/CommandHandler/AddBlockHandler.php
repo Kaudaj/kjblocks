@@ -73,6 +73,14 @@ final class AddBlockHandler extends AbstractBlockCommandHandler
                 $block->addBlockLang($configuratorBlockLang);
             }
 
+            // $shopConstraint = $command->getShopConstraint();
+            // $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
+            // $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
+
+            // $blockShop = $this->createBlockShop($shopId, $shopGroupId);
+
+            // $block->addBlockShop($blockShop);
+
             $this->entityManager->persist($block);
             $this->entityManager->flush();
         } catch (\PrestaShopException $exception) {

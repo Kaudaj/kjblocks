@@ -7,6 +7,8 @@ services:
     arguments:
       - '@prestashop.core.command_bus'
       - '@kaudaj.module.blocks.form.data_handler.block_type'
+      - '@prestashop.adapter.shop.context'
+      - '@prestashop.adapter.legacy.context'
 
   kaudaj.module.blocks.form.data_handler.block_type:
     class: Kaudaj\Module\Blocks\Form\DataHandler\BlockTypeFormDataHandler

@@ -36,12 +36,7 @@ class BlockGroupHooksUpdater
      */
     private $module;
 
-    /**
-     * @var int|null
-     */
-    private $contextShopId;
-
-    public function __construct(EntityManager $entityManager, ?int $contextShopId)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityRepository = $entityManager->getRepository(BlockGroup::class);
 
@@ -51,7 +46,6 @@ class BlockGroupHooksUpdater
         }
 
         $this->module = $module;
-        $this->contextShopId = $contextShopId;
     }
 
     public function postUpdate(BlockGroup $blockGroup, LifecycleEventArgs $event): void
@@ -92,8 +86,8 @@ class BlockGroupHooksUpdater
 
         $sql = 'SELECT DISTINCT(`id_hook`) 
             FROM `' . _DB_PREFIX_ . 'hook_module` 
-            WHERE `id_module` = ' . (int) $this->module->id
-            . ($this->contextShopId !== null ? ' AND `id_shop` = ' . $this->contextShopId : '');
+            WHERE `id_module` = ' . (int) $this->module->id;
+
         $result = \Db::getInstance()->executeS($sql);
 
         if (!is_array($result)) {
