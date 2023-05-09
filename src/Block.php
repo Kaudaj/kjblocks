@@ -101,12 +101,20 @@ abstract class Block implements BlockInterface
 
         $template = $this->getTemplate();
         $cacheId = $this->getCacheId() . $this->getContextCacheId();
+        $isCached = $module->isCached($template, $cacheId);
 
-        if (!$module->isCached($template, $cacheId)) {
+        if (!$isCached) {
+            /** @var array<string, mixed> */
+            $currentVars = $smarty->getTemplateVars();
             $smarty->assign($this->getTemplateVariables());
         }
 
         $render = $module->fetch($template, $cacheId);
+
+        if (!$isCached) {
+            $smarty->clearAllAssign();
+            $smarty->assign($currentVars);
+        }
 
         return strval(\Hook::exec(self::FILTER_CONTENT_HOOK, [
             'content' => $render,
