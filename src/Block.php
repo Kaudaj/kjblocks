@@ -21,12 +21,9 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks;
 
-use Context;
 use Kaudaj\Module\Blocks\Constraint\ConstraintValidatorFactory;
-use Module;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
-use RuntimeException;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -74,6 +71,12 @@ abstract class Block implements BlockInterface
 
     public function getLogo(): string
     {
+        $filename = "views/img/blocks/{$this->getName()}.png";
+
+        if (file_exists(_PS_MODULE_DIR_ . "kjblocks/$filename")) {
+            return __PS_BASE_URI__ . "modules/kjblocks/$filename";
+        }
+
         return '';
     }
 
@@ -92,9 +95,9 @@ abstract class Block implements BlockInterface
 
     public function render(): string
     {
-        $module = Module::getInstanceByName($this->getModuleName());
+        $module = \Module::getInstanceByName($this->getModuleName());
         if (!$module) {
-            throw new RuntimeException("Module {$this->getModuleName()} not found");
+            throw new \RuntimeException("Module {$this->getModuleName()} not found");
         }
 
         $smarty = $this->legacyContext->getSmarty();
@@ -133,7 +136,7 @@ abstract class Block implements BlockInterface
 
     public static function getContextCacheId(): string
     {
-        $context = Context::getContext();
+        $context = \Context::getContext();
         if (!$context) {
             return '';
         }
