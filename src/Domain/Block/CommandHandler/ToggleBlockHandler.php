@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 
 use Doctrine\ORM\EntityManager;
-use Exception;
 use Kaudaj\Module\Blocks\BlockContext;
 use Kaudaj\Module\Blocks\Domain\Block\Command\ToggleBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
@@ -76,7 +75,7 @@ final class ToggleBlockHandler extends AbstractBlockCommandHandler
         try {
             $this->entityManager->persist($block);
             $this->entityManager->flush();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new CannotToggleBlockException('An unexpected error occurred when toggling block status', 0, $exception);
         }
     }
