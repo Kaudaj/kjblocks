@@ -45,7 +45,7 @@ final class GetBlockGroupsByHookHandler extends AbstractBlockGroupQueryHandler
                 return [];
             }
 
-            $blockGroups = $this->entityRepository->findByHook(intval($hookId));
+            $blockGroups = $this->entityRepository->findByHook((int) $hookId);
         } catch (\PrestaShopException $e) {
             $message = 'An unexpected error occurred when retrieving block groups';
 

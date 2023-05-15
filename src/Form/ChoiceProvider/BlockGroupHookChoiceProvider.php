@@ -55,7 +55,7 @@ final class BlockGroupHookChoiceProvider implements FormChoiceProviderInterface
         foreach ($blockGroups as $blockGroup) {
             foreach ($blockGroup->getBlockGroupHooks() as $blockGroupHook) {
                 $hookId = $blockGroupHook->getHookId();
-                $hookName = strval(\Hook::getNameById($hookId));
+                $hookName = (string) \Hook::getNameById($hookId);
 
                 $choices[$hookName] = $hookId;
             }

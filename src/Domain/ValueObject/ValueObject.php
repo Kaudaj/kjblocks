@@ -23,7 +23,6 @@ namespace Kaudaj\Module\Blocks\Domain\ValueObject;
 
 use Kaudaj\Module\Blocks\Constraint\ConstraintValidatorFactory;
 use PrestaShop\PrestaShop\Core\Domain\Exception\DomainConstraintException;
-use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

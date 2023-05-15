@@ -49,7 +49,7 @@ final class BlockGroupFormDataHandler implements FormDataHandlerInterface
     {
         $addBlockGroupCommand = (new AddBlockGroupCommand())
             ->setHooksIds(is_array($data[BlockGroupType::FIELD_HOOKS]) ? $data[BlockGroupType::FIELD_HOOKS] : [])
-            ->setLocalizedNames(array_filter($data[BlockGroupType::FIELD_NAME])) /* @phpstan-ignore-line */
+            ->setLocalizedNames(array_filter($data[BlockGroupType::FIELD_NAME]))
         ;
 
         /** @var BlockGroupId */
@@ -68,7 +68,7 @@ final class BlockGroupFormDataHandler implements FormDataHandlerInterface
     {
         $editBlockGroupCommand = (new EditBlockGroupCommand((int) $id))
             ->setHooksIds(is_array($data[BlockGroupType::FIELD_HOOKS]) ? $data[BlockGroupType::FIELD_HOOKS] : [])
-            ->setLocalizedNames(array_filter($data[BlockGroupType::FIELD_NAME])) /* @phpstan-ignore-line */
+            ->setLocalizedNames(array_filter($data[BlockGroupType::FIELD_NAME]))
         ;
 
         $this->commandBus->handle($editBlockGroupCommand);

@@ -67,7 +67,7 @@ class TextBlock extends ContainerBlock
     {
         parent::setOptions($options);
 
-        $this->text = strval($options[self::OPTION_TEXT]);
+        $this->text = (string) $options[self::OPTION_TEXT];
     }
 
     public function configureOptions(OptionsResolver $resolver): void

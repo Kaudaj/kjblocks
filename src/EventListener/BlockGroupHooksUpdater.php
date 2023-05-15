@@ -95,7 +95,7 @@ class BlockGroupHooksUpdater
         }
 
         $moduleHooks = array_map(function (array $row) use ($getHookName): string {
-            return $getHookName(intval($row['id_hook']));
+            return $getHookName((int) $row['id_hook']);
         }, $result);
 
         foreach (array_diff($moduleHooks, $blocksHooks, \KJBlocks::HOOKS) as $hook) {

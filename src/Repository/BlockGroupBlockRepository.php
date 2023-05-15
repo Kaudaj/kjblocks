@@ -49,7 +49,7 @@ class BlockGroupBlockRepository extends EntityRepository
 
         $result = $qb->getQuery()->getSingleScalarResult();
 
-        return $result !== null ? intval($result) : -1;
+        return $result !== null ? (int) $result : -1;
     }
 
     /**

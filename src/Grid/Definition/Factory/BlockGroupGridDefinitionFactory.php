@@ -274,6 +274,6 @@ final class BlockGroupGridDefinitionFactory extends AbstractGridDefinitionFactor
             return null;
         }
 
-        return strval($filters['hook']);
+        return (string) $filters['hook'];
     }
 }

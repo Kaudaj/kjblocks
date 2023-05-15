@@ -46,7 +46,7 @@ final class HookChoiceProvider extends AbstractDatabaseChoiceProvider
                 continue;
             }
 
-            $choices[strval($hook['name'])] = intval($hook['id_hook']);
+            $choices[(string) $hook['name']] = (int) $hook['id_hook'];
         }
 
         return $choices;

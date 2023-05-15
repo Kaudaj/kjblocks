@@ -99,7 +99,7 @@ class BlockTypeType extends TranslatorAwareType
                 $formModifier(
                     $event->getForm(),
                     is_array($data) && key_exists(self::FIELD_TYPE, $data)
-                        ? strval($data[self::FIELD_TYPE])
+                        ? (string) $data[self::FIELD_TYPE]
                         : 'text'
                 );
             }
@@ -115,7 +115,7 @@ class BlockTypeType extends TranslatorAwareType
                     return;
                 }
 
-                $formModifier($form, strval($type));
+                $formModifier($form, (string) $type);
             }
         );
     }

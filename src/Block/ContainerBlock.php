@@ -115,23 +115,23 @@ class ContainerBlock extends Block
         parent::setOptions($options);
 
         if (key_exists(self::OPTION_WIDTH, $options)) {
-            $this->width = intval($options[self::OPTION_WIDTH]);
+            $this->width = (int) $options[self::OPTION_WIDTH];
         }
 
         if (key_exists(self::OPTION_HEIGHT, $options)) {
-            $this->height = intval($options[self::OPTION_HEIGHT]);
+            $this->height = (int) $options[self::OPTION_HEIGHT];
         }
 
         if (key_exists(self::OPTION_BACKGROUND_IMAGE, $options)) {
-            $this->backgroundImage = strval($options[self::OPTION_BACKGROUND_IMAGE]);
+            $this->backgroundImage = (string) $options[self::OPTION_BACKGROUND_IMAGE];
         }
 
         if (key_exists(self::OPTION_IDENTIFIER, $options)) {
-            $this->identifier = strval($options[self::OPTION_IDENTIFIER]);
+            $this->identifier = (string) $options[self::OPTION_IDENTIFIER];
         }
 
         if (key_exists(self::OPTION_CLASSES, $options)) {
-            $this->classes = explode(',', strval($options[self::OPTION_CLASSES]));
+            $this->classes = explode(',', (string) $options[self::OPTION_CLASSES]);
         }
     }
 

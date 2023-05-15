@@ -227,7 +227,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
             return null;
         }
 
-        $reducedByOneFilterValue = intval($positionFilterValue) - 1;
+        $reducedByOneFilterValue = (int) $positionFilterValue - 1;
         if (0 > $reducedByOneFilterValue) {
             return null;
         }

@@ -82,12 +82,12 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
             throw new BlockException('Block type has not been found.');
         }
 
-        $type = strval($data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_TYPE]);
+        $type = (string) $data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_TYPE];
         $groups = is_array($data[BlockType::FIELD_GROUPS]) ? $data[BlockType::FIELD_GROUPS] : [];
 
         $addBlockCommand = (new AddBlockCommand())
             ->setBlockGroupsIds($this->getBlockGroupIds($groups))
-            ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
+            ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME]))
             ->setType($type)
             ->setShopConstraint($this->shopContext->getShopConstraint())
         ;
@@ -128,7 +128,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
             throw new BlockException('Block type has not been found.');
         }
 
-        $type = strval($data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_TYPE]);
+        $type = (string) $data[BlockType::FIELD_TYPE][BlockTypeType::FIELD_TYPE];
 
         $options = null;
         if (is_array($data[BlockType::FIELD_TYPE][BlockType::FIELD_OPTIONS])) {
@@ -145,7 +145,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
 
         $editBlockCommand = (new EditBlockCommand((int) $id))
             ->setBlockGroupsIds($this->getBlockGroupIds($groups))
-            ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME])) /* @phpstan-ignore-line */
+            ->setLocalizedNames(array_filter($data[BlockType::FIELD_NAME]))
             ->setType($type)
             ->setOptions(json_encode($options) ?: null)
             ->setShopConstraint($this->shopContext->getShopConstraint());

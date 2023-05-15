@@ -23,7 +23,6 @@ namespace Kaudaj\Module\Blocks;
 
 use Kaudaj\Module\Blocks\Constraint\ConstraintValidatorFactory;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
-use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -119,9 +118,9 @@ abstract class Block implements BlockInterface
             $smarty->assign($currentVars);
         }
 
-        return strval(\Hook::exec(self::FILTER_CONTENT_HOOK, [
+        return (string) \Hook::exec(self::FILTER_CONTENT_HOOK, [
             'content' => $render,
-        ])) ?: $render;
+        ]) ?: $render;
     }
 
     protected function getModuleName(): string
@@ -153,7 +152,7 @@ abstract class Block implements BlockInterface
     public function setOptions(array $options = []): void
     {
         if (key_exists(self::OPTION_ID, $options)) {
-            $this->id = intval($options[self::OPTION_ID]);
+            $this->id = (int) $options[self::OPTION_ID];
         }
     }
 

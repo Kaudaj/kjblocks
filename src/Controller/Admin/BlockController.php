@@ -287,7 +287,7 @@ class BlockController extends FrameworkBundleAdminController
             return null;
         }
 
-        return intval($filters['group']);
+        return (int) $filters['group'];
     }
 
     private function redirectToIndexRoute(): Response

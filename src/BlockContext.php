@@ -69,7 +69,7 @@ class BlockContext
         }
 
         if ($shopId !== null && $shopGroupId === null) {
-            $shopGroupId = intval(\Shop::getGroupFromShop($shopId)) ?: $shopGroupId;
+            $shopGroupId = (int) \Shop::getGroupFromShop($shopId) ?: $shopGroupId;
         }
 
         $blockShop = $block->getBlockShop(null, $shopGroupId);

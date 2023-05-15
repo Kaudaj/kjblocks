@@ -298,6 +298,6 @@ final class BlockGridDefinitionFactory extends AbstractGridDefinitionFactory
             return null;
         }
 
-        return strval($filters['group']);
+        return (string) $filters['group'];
     }
 }
