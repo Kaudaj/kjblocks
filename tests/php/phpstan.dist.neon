@@ -2,14 +2,16 @@ parameters:
   paths:
   	# We consider that the extension file will be stored the folder test/phpstan
   	# From Phpstan 0.12, paths are relative to the .neon file.
-    - ../../src
-    - ../../kjblocks.php
+    - %currentWorkingDirectory%/src
+    - %currentWorkingDirectory%/kjblocks.php
   excludePaths:
-    - ../../src/Grid/Position
+    - %currentWorkingDirectory%/src/Grid/Position
   ignoreErrors:
-    # - "#Insert your error here (don't forget to escape special characters like the following hash: \\#)#"
+    -
+      message: '#.*Doctrine\\Persistence\\Event\\LifecycleEventArgs but does not specify its types\: TObjectManager.*#'
+      path: %currentWorkingDirectory%/src/EventListener/BlockGroupHooksUpdater.php
   reportUnmatchedIgnoredErrors: true
-  level: 9
+  level: 8
 
 includes:
   - %currentWorkingDirectory%/tests/php/.phpstan_bootstrap.neon

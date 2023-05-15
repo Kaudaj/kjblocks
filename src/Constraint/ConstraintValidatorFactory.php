@@ -35,18 +35,6 @@ use Symfony\Component\Validator\ConstraintValidatorInterface;
 class ConstraintValidatorFactory extends BaseConstraintValidatorFactory implements ConstraintValidatorFactoryInterface
 {
     /**
-     * @var CharacterCleaner
-     */
-    private $characterCleaner;
-
-    public function __construct(CharacterCleaner $characterCleaner)
-    {
-        parent::__construct();
-
-        $this->characterCleaner = $characterCleaner;
-    }
-
-    /**
      * @param Constraint $constraint
      *
      * @return ConstraintValidatorInterface
@@ -54,7 +42,7 @@ class ConstraintValidatorFactory extends BaseConstraintValidatorFactory implemen
     public function getInstance(Constraint $constraint)
     {
         if ($constraint instanceof TypedRegex) {
-            return new TypedRegexValidator($this->characterCleaner);
+            return new TypedRegexValidator(new Configuration());
         }
 
         if ($constraint instanceof CleanHtml) {

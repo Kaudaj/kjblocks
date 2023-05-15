@@ -137,7 +137,7 @@ abstract class Block implements BlockInterface
     public static function getContextCacheId(): string
     {
         $context = \Context::getContext();
-        if (!$context) {
+        if (!$context || !$context->language) {
             return '';
         }
 
@@ -172,9 +172,7 @@ abstract class Block implements BlockInterface
     {
         if ($this->validator === null) {
             $validatorBuilder = Validation::createValidatorBuilder();
-            $validatorBuilder->setConstraintValidatorFactory(
-                new ConstraintValidatorFactory(new CharacterCleaner())
-            );
+            $validatorBuilder->setConstraintValidatorFactory(new ConstraintValidatorFactory());
 
             $this->validator = $validatorBuilder->getValidator();
         }

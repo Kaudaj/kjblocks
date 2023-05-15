@@ -41,9 +41,7 @@ abstract class ValueObject
     public function __construct()
     {
         $validatorBuilder = Validation::createValidatorBuilder();
-        $validatorBuilder->setConstraintValidatorFactory(
-            new ConstraintValidatorFactory(new CharacterCleaner())
-        );
+        $validatorBuilder->setConstraintValidatorFactory(new ConstraintValidatorFactory());
 
         $this->validator = $validatorBuilder->getValidator();
     }
