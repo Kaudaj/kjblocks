@@ -25,7 +25,7 @@
 
 <div 
     {if isset($identifier)}id="{$identifier}"{/if}
-    {if isset($classes)}class="{' '|implode:$classes}"{/if}
+    {if isset($classes)}class="{$classes}"{/if}
 >
     {block name="content"}
     {/block}

@@ -18,7 +18,7 @@
 
 {# PrestaShop made some modifications to the way forms are displayed to work well with PrestaShop in order to benefit from those you need to use ui kit as theme#}
 {% form_theme form with [
-  'PrestaShopBundle:Admin/TwigTemplateForm:prestashop_ui_kit.html.twig'
+  '@PrestaShop/Admin/TwigTemplateForm/prestashop_ui_kit.html.twig'
 ]|merge(additional_themes is defined ? additional_themes : []) %}
 
 {% block form_id %}
@@ -32,8 +32,8 @@
     <div class="card">
       {% include '@Modules/kjblocks/views/templates/back/components/atoms/card-header.html.twig'
         with {'header': card_header} %}
-      <div class="card-block row">
-        <div class="card-text">
+      <div class="card-body">
+        <div class="form-wrapper">
           {{ form_widget(form) }}
         </div>
       </div>

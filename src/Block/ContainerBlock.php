@@ -105,7 +105,7 @@ class ContainerBlock extends Block
         $classes = ['block', "block-{$this->id}", str_replace('_', '-', $this->getName())];
         $classes = array_merge($classes, $this->classes);
 
-        $variables[self::OPTION_CLASSES] = $classes;
+        $variables[self::OPTION_CLASSES] = implode(' ', $classes);
 
         return $variables;
     }
