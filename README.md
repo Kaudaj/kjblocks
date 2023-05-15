@@ -71,8 +71,8 @@ It's a documented example extension which add an example type. Check this reposi
 
 |     |     |
 | --- | --- |
-| PrestaShop | **>=1.7.8.0** |
-| PHP        | **>=7.1** for production and **>=7.3** for development |
+| PrestaShop | **>=8.0.0** |
+| PHP        | **>=7.2** for production and **>=8.0** for development |
 | Multishop | :heavy_check_mark: |
 
 ## License
