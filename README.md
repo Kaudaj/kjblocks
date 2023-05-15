@@ -8,7 +8,7 @@
 
 ## About
 
-*Blocks* module allows you to add fully configurable blocks to render custom content in your shop, wherever you want.
+_Blocks_ module allows you to add fully configurable blocks to render custom content in your shop, wherever you want.
 
 ## Essential features
 
@@ -40,21 +40,21 @@ bin/console pr:mo install kjblocks
 ### Configuration
 
 - `tests/php/.phpstan_bootstrap_config.php`<br>
-For GrumPHP: Set PrestaShop installation path for PHPStan task.<br>
-Replace default path with the root path of a stable PrestaShop environment.
+  For GrumPHP: Set PrestaShop installation path for PHPStan task.<br>
+  Replace default path with the root path of a stable PrestaShop environment.
 
 ### Commands
 
 Here are some useful commands you could need during your development workflow:
 
 - `composer grum`<br>
-Run GrumPHP tasks suite.
+  Run GrumPHP tasks suite.
 - `composer header-stamp`<br>
-Add license headers to files.
+  Add license headers to files.
 - `composer autoindex`<br>
-Add index files in directories.
+  Add index files in directories.
 - `composer dumpautoload -a`<br>
-Update the autoloader when you add new classes in a classmap package (`src` and `tests` folder here).
+  Update the autoloader when you add new classes in a classmap package (`src` and `tests` folder here).
 - `npm run watch`<br>
   (in `_dev` folder) Watch for changes in `_dev` folder and build automatically the assets in `views` folder. It's recommended to run it in background, in a dedicated terminal.
 - `npm run lint-fix`<br>
@@ -69,11 +69,11 @@ It's a documented example extension which add an example type. Check this reposi
 
 ## Compatibility
 
-|     |     |
-| --- | --- |
-| PrestaShop | **>=8.0.0** |
+|            |                                                        |
+| ---------- | ------------------------------------------------------ |
+| PrestaShop | **>=8.0.0**                                            |
 | PHP        | **>=7.2** for production and **>=8.0** for development |
-| Multishop | :heavy_check_mark: |
+| Multishop  | :heavy_check_mark:                                     |
 
 ## License
 

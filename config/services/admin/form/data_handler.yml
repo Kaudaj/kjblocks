@@ -5,18 +5,18 @@ services:
   kaudaj.module.blocks.form.data_handler.block:
     class: Kaudaj\Module\Blocks\Form\DataHandler\BlockFormDataHandler
     arguments:
-      - '@prestashop.core.command_bus'
-      - '@kaudaj.module.blocks.form.data_handler.block_type'
-      - '@prestashop.adapter.shop.context'
-      - '@prestashop.adapter.legacy.context'
+      - "@prestashop.core.command_bus"
+      - "@kaudaj.module.blocks.form.data_handler.block_type"
+      - "@prestashop.adapter.shop.context"
+      - "@prestashop.adapter.legacy.context"
 
   kaudaj.module.blocks.form.data_handler.block_type:
     class: Kaudaj\Module\Blocks\Form\DataHandler\BlockTypeFormDataHandler
     arguments:
-      - '@prestashop.adapter.legacy.context'
-      - '@kaudaj.module.blocks.block_type_provider'
+      - "@prestashop.adapter.legacy.context"
+      - "@kaudaj.module.blocks.block_type_provider"
 
   kaudaj.module.blocks.form.data_handler.block_group:
     class: Kaudaj\Module\Blocks\Form\DataHandler\BlockGroupFormDataHandler
     arguments:
-      - '@prestashop.core.command_bus'
+      - "@prestashop.core.command_bus"

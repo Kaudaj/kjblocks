@@ -40,7 +40,9 @@ export default class BlockTypeModal {
       const $item = BlockTypeModal.getItem(event);
 
       this.$blocksStep.find('.blocks').html($item.find('.blocks').html());
-      this.$blocksStep.find(`li[data-value="${this.currentValue}"]`).addClass('selected');
+      this.$blocksStep
+        .find(`li[data-value="${this.currentValue}"]`)
+        .addClass('selected');
 
       this.switchStep();
     });
@@ -50,7 +52,9 @@ export default class BlockTypeModal {
 
       const value = $item.data('value');
 
-      this.$blocksStep.find(`li[data-value="${this.currentValue}"]`).removeClass('selected');
+      this.$blocksStep
+        .find(`li[data-value="${this.currentValue}"]`)
+        .removeClass('selected');
       this.currentValue = value;
       $item.addClass('selected');
     });
@@ -58,11 +62,15 @@ export default class BlockTypeModal {
     this.$blocksStep.on('mouseover', '.blocks li', (event) => {
       const $item = BlockTypeModal.getItem(event);
 
-      this.$blocksStep.find('.current-description').html($item.find('.description').html());
+      this.$blocksStep
+        .find('.current-description')
+        .html($item.find('.description').html());
     });
 
     this.$blocksStep.on('mouseleave', '.blocks li', () => {
-      this.$blocksStep.find('.current-description').html(kjblocks_defaultDescriptionText);
+      this.$blocksStep
+        .find('.current-description')
+        .html(kjblocks_defaultDescriptionText);
     });
 
     this.$modal.on('click', '.btn.save', () => {

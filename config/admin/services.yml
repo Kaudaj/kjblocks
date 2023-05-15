@@ -9,18 +9,15 @@ services:
   kaudaj.module.blocks.event_listener.block_group_hooks_updater:
     class: 'Kaudaj\Module\Blocks\EventListener\BlockGroupHooksUpdater'
     arguments:
-      - '@doctrine.orm.entity_manager'
+      - "@doctrine.orm.entity_manager"
       - '@=service("prestashop.adapter.shop.context").getContextShopID()'
     tags:
-      -
-        name: 'doctrine.orm.entity_listener'
-        event: 'postUpdate'
+      - name: "doctrine.orm.entity_listener"
+        event: "postUpdate"
         entity: 'Kaudaj\Module\Blocks\Entity\BlockGroup'
-      -
-        name: 'doctrine.orm.entity_listener'
-        event: 'postPersist'
+      - name: "doctrine.orm.entity_listener"
+        event: "postPersist"
         entity: 'Kaudaj\Module\Blocks\Entity\BlockGroup'
-      -
-        name: 'doctrine.orm.entity_listener'
-        event: 'postRemove'
+      - name: "doctrine.orm.entity_listener"
+        event: "postRemove"
         entity: 'Kaudaj\Module\Blocks\Entity\BlockGroup'

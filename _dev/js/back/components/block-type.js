@@ -43,7 +43,9 @@ export default class BlockType {
 
           $oldField.replaceWith($newField);
 
-          $form.trigger('KJBlockTypeChanged', {newType: $target.val()});
+          $form.trigger('KJBlockTypeChanged', {
+            newType: $target.val(),
+          });
         },
       });
     });

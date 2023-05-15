@@ -15,24 +15,27 @@
  * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-.form-group .select2-container--bootstrap .select2-selection--multiple .select2-selection__rendered {
-    display: flex;
-    flex-wrap: wrap;
+.form-group
+  .select2-container--bootstrap
+  .select2-selection--multiple
+  .select2-selection__rendered {
+  display: flex;
+  flex-wrap: wrap;
 
-    > * {
-        margin: 0.25rem;
+  > * {
+    margin: 0.25rem;
+  }
+
+  .select2-selection__choice {
+    float: none;
+  }
+
+  .select2-search--inline {
+    float: none;
+    margin: 0.25rem 0;
+
+    .select2-search__field {
+      height: auto;
     }
-
-    .select2-selection__choice {
-        float: none;
-    }
-
-    .select2-search--inline {
-        float: none;
-        margin: 0.25rem 0;
-
-        .select2-search__field {
-            height: auto;
-        }
-    }
+  }
 }

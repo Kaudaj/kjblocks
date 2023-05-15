@@ -4,4 +4,3 @@ imports:
 services:
   _defaults:
     public: true
-

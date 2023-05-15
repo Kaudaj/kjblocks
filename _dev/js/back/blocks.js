@@ -27,7 +27,10 @@ $(() => {
 });
 
 function initForm() {
-  window.prestashop.component.initComponents(['TranslatableInput', 'TinyMCEEditor']);
+  window.prestashop.component.initComponents([
+    'TranslatableInput',
+    'TinyMCEEditor',
+  ]);
 
   const blockType = new BlockType('block_type');
   blockType.init();

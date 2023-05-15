@@ -45,7 +45,7 @@ services:
     parent: kaudaj.module.blocks.block.command_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\CommandHandler\DeleteBlockHandler
     arguments:
-      - '@kaudaj.module.blocks.file.block_file_manager'
+      - "@kaudaj.module.blocks.file.block_file_manager"
     tags:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand
@@ -55,7 +55,7 @@ services:
     parent: kaudaj.module.blocks.block.command_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\CommandHandler\ToggleBlockHandler
     arguments:
-      - '@kaudaj.module.blocks.block_context'
+      - "@kaudaj.module.blocks.block_context"
     tags:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\Block\Command\ToggleBlockCommand

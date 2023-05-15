@@ -60,10 +60,7 @@ module.exports = (env, argv) => ({
   devtool: argv.mode === 'production' ? false : 'source-map',
   plugins: [
     new CleanWebpackPlugin({
-      cleanOnceBeforeBuildPatterns: [
-        '**/*',
-        '!README.md',
-      ],
+      cleanOnceBeforeBuildPatterns: ['**/*', '!README.md'],
     }),
     new MiniCssExtractPlugin({
       filename: path.join('..', 'css', '[name].css'),

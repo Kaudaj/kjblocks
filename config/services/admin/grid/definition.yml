@@ -15,13 +15,13 @@ services:
   kaudaj.module.blocks.grid.position.block_grid_position_updater:
     class: 'Kaudaj\Module\Blocks\Grid\Position\BlockGridPositionUpdater'
     arguments:
-      - '@kaudaj.module.blocks.grid.position.update_handler.block_position_update_handler'
+      - "@kaudaj.module.blocks.grid.position.update_handler.block_position_update_handler"
 
   kaudaj.module.blocks.grid.position.update_handler.block_position_update_handler:
     class: 'Kaudaj\Module\Blocks\Grid\Position\UpdateHandler\BlockPositionUpdateHandler'
     arguments:
-      - '@doctrine.dbal.default_connection'
-      - '%database_prefix%'
+      - "@doctrine.dbal.default_connection"
+      - "%database_prefix%"
 
   kaudaj.module.blocks.grid.position_definition.block:
     class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
@@ -30,7 +30,6 @@ services:
       $idField: "id_block"
       $positionField: "position"
       $parentIdField: "id_block_group"
-
 
   kaudaj.module.blocks.grid.definition.factory.block_group:
     public: true

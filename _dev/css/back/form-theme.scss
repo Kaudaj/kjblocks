@@ -17,99 +17,100 @@
  */
 
 .block-type-picker {
-    .input-container {
-        display: flex;
+  .input-container {
+    display: flex;
 
-        > *:not(:last-child) {
-            margin-right: 1rem;
-        }
-
-        input[type="text"] {
-            max-width: 300px;
-        }
+    > *:not(:last-child) {
+      margin-right: 1rem;
     }
+
+    input[type='text'] {
+      max-width: 300px;
+    }
+  }
 }
 
 #block-type-modal {
-    .modal-dialog {
-        height: 80vh;
-    }
+  .modal-dialog {
+    height: 80vh;
+  }
 
-    .modal-body {
-        padding: 0;
-        margin: 1.25rem;
-    }
+  .modal-body {
+    padding: 0;
+    margin: 1.25rem;
+  }
 
-    .blocks-step {
-        display: none;
-    }
+  .blocks-step {
+    display: none;
+  }
 
-    .modules .blocks {
-        display: none;
-    }
+  .modules .blocks {
+    display: none;
+  }
 
-    .modules-step .modules, .blocks-step .blocks {
-        $blockWidth: 100px;
+  .modules-step .modules,
+  .blocks-step .blocks {
+    $blockWidth: 100px;
 
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        grid-auto-columns: auto;
-        grid-gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-columns: auto;
+    grid-gap: 2rem;
 
-        list-style: none;
-        padding: 0;
+    list-style: none;
+    padding: 0;
 
-        max-height: 60vh;
-        overflow-y: auto;
+    max-height: 60vh;
+    overflow-y: auto;
 
-        li {
-            display: flex;
-            flex-direction: column;
-            justify-content: start;
-            align-items: center;
+    li {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
 
-            cursor: pointer;
+      cursor: pointer;
 
-            .logo {
-                width: $blockWidth;
-                height: $blockWidth;
+      .logo {
+        width: $blockWidth;
+        height: $blockWidth;
 
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: .5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
 
-                border: 5px solid #f05e23;
-                border-radius: 10px;
-            }
+        border: 5px solid #f05e23;
+        border-radius: 10px;
+      }
 
-            &:hover {
-                .logo {
-                    border-color: #fda50f;
-                }
-            }
-
-            &.selected {
-                .logo {
-                    border-color: #fda50f;
-                }
-            }
-
-            .name {
-                font-weight: bold;
-                text-align: center;
-            }
+      &:hover {
+        .logo {
+          border-color: #fda50f;
         }
-    }
+      }
 
-    .current-description {
+      &.selected {
+        .logo {
+          border-color: #fda50f;
+        }
+      }
+
+      .name {
+        font-weight: bold;
         text-align: center;
-        font-style: italic;
-        min-height: 2rem;
+      }
     }
+  }
 
-    .btn.back {
-        display: none;
-        margin-right: auto;
-    }
+  .current-description {
+    text-align: center;
+    font-style: italic;
+    min-height: 2rem;
+  }
+
+  .btn.back {
+    display: none;
+    margin-right: auto;
+  }
 }

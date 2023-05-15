@@ -7,7 +7,7 @@ services:
     class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\AbstractBlockQueryHandler
     arguments:
       - "@doctrine.orm.entity_manager"
-      
+
   kaudaj.module.blocks.block.query_handler.get:
     public: true
     parent: kaudaj.module.blocks.block.query_handler.abstract

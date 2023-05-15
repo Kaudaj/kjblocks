@@ -11,8 +11,8 @@ services:
   kaudaj.module.blocks.form.data_provider.block_type:
     class: Kaudaj\Module\Blocks\Form\DataProvider\BlockTypeFormDataProvider
     arguments:
-      $legacyContext: '@prestashop.adapter.legacy.context'
-      $blockTypeProvider: '@kaudaj.module.blocks.block_type_provider'
+      $legacyContext: "@prestashop.adapter.legacy.context"
+      $blockTypeProvider: "@kaudaj.module.blocks.block_type_provider"
 
   kaudaj.module.blocks.form.data_provider.block_group:
     class: Kaudaj\Module\Blocks\Form\DataProvider\BlockGroupFormDataProvider
