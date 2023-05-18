@@ -160,6 +160,8 @@ class BlockTypeProvider
         foreach ($blockTypes as $moduleBlocks) {
             if (key_exists($type, $moduleBlocks)) {
                 $blockType = $moduleBlocks[$type];
+
+                break;
             }
         }
 
