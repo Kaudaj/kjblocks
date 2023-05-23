@@ -124,8 +124,8 @@ EOF
     private function installTables()
     {
         $sql = [];
-        $dbPrefix = pSQL(_DB_PREFIX_);
-        $dbEngine = pSQL(_MYSQL_ENGINE_);
+        $dbPrefix = _DB_PREFIX_;
+        $dbEngine = _MYSQL_ENGINE_;
 
         $sql[] = "
             CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockRepository::TABLE_NAME . "` (
