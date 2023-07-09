@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        presta-versions: ["8.0.0", "latest"]
+        presta-versions: ["1.7.8.9", "8.0.0", "latest"]
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -86,4 +86,4 @@ jobs:
           unzip -q ${{ runner.temp }}/prestashop_zip/prestashop.zip -d ${{ runner.temp }}/prestashop
 
       - name: Run PHPStan
-        run: _PS_ROOT_DIR_=${{ runner.temp }}/prestashop/ php ./vendor/bin/phpstan analyse --configuration=tests/php/phpstan.dist.neon
+        run: _PS_ROOT_DIR_=${{ runner.temp }}/prestashop/ php ./vendor/bin/phpstan analyse --configuration=tests/php/phpstan_${{ matrix.presta-versions }}.dist.neon

@@ -22,3 +22,4 @@ node_modules/
 .php-cs-fixer.cache
 .phpstan_bootstrap_config.php
 tests/.env
+tests/php/phpstan.neon
