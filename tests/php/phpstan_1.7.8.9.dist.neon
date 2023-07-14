@@ -1,23 +1,11 @@
 parameters:
-  paths:
-  	# We consider that the extension file will be stored the folder test/phpstan
-  	# From Phpstan 0.12, paths are relative to the .neon file.
-    - %currentWorkingDirectory%/src
-    - %currentWorkingDirectory%/kjblocks.php
-  excludePaths:
-    - %currentWorkingDirectory%/src/Grid/Position
   ignoreErrors:
-    -
-      message: "#^Parameter \#1 \$characterCleaner of class PrestaShop\\PrestaShop\\Core\\ConstraintValidator\\TypedRegexValidator           
-                constructor expects PrestaShop\\PrestaShop\\Core\\String\\CharacterCleaner, PrestaShop\\PrestaShop\\Adapter\\Configuration  
-                given\.$#"
-      path: %currentWorkingDirectory%/src/Constraint/ConstraintValidatorFactory.php
     - 
-      message: '#.*Doctrine\\Persistence\\Event\\LifecycleEventArgs but does not specify its types\: TObjectManager.*#'
-      path: %currentWorkingDirectory%/src/EventListener/BlockGroupHooksUpdater.php
-  reportUnmatchedIgnoredErrors: true
-  level: 8
+      message: '#^Negated boolean expression is always false.$#'
+      path: %currentWorkingDirectory%/src/Block.php
+    -
+      message: '#^Parameter \#1 \$characterCleaner of class PrestaShop\\PrestaShop\\Core\\ConstraintValidator\\TypedRegexValidator constructor expects PrestaShop\\PrestaShop\\Core\\String\\CharacterCleaner, PrestaShop\\PrestaShop\\Adapter\\Configuration given\.$#'
+      path: %currentWorkingDirectory%/src/Constraint/ConstraintValidatorFactory.php
 
 includes:
-  - %currentWorkingDirectory%/tests/php/.phpstan_bootstrap.neon
-  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+  - %currentWorkingDirectory%/tests/php/phpstan.dist.neon
