@@ -52,10 +52,6 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
                 $block->setType($command->getType());
             }
 
-            if ($command->getOptions() !== null) {
-                $block->setOptions($command->getOptions()->getValue());
-            }
-
             $blockGroupsIds = $command->getBlockGroupsIds();
             if ($blockGroupsIds) {
                 $blockGroupsIds = array_map(function (BlockGroupId $blockGroupId): int {
@@ -68,10 +64,10 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
             $localizedNames = $command->getLocalizedNames();
 
             if (null !== $localizedNames) {
-                foreach ($block->getBlockLangs() as $blockLangs) {
-                    $block->removeBlockLang($blockLangs);
+                foreach ($block->getBlockLangs() as $blockLang) {
+                    $block->removeBlockLang($blockLang);
 
-                    $this->entityManager->remove($blockLangs);
+                    $this->entityManager->remove($blockLang);
                 }
 
                 $this->entityManager->flush();
@@ -84,15 +80,22 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
                 }
             }
 
-            // $shopConstraint = $command->getShopConstraint();
-            // $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
-            // $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
+            $shopConstraint = $command->getShopConstraint();
+            $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
+            $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
 
-            // $block->removeBlockShop($block->getBlockShop($shopId, $shopGroupId));
+            $blockShop = $block->getBlockShop($shopId, $shopGroupId);
+            if ($blockShop) {
+                $block->removeBlockShop($blockShop);
+                $this->entityManager->remove($blockShop);
+            }
 
-            // $blockShop = $this->createBlockShop($shopId, $shopGroupId);
+            $this->entityManager->flush();
 
-            // $block->addBlockShop($blockShop);
+            $blockShop = $this->createBlockShop($shopId, $shopGroupId);
+            $blockShop->setOptions($command->getOptions() !== null ? $command->getOptions()->getValue() : null);
+
+            $block->addBlockShop($blockShop);
 
             $this->entityManager->persist($block);
             $this->entityManager->flush();

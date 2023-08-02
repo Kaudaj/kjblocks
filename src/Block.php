@@ -99,10 +99,16 @@ abstract class Block implements BlockInterface
             throw new \RuntimeException("Module {$this->getModuleName()} not found");
         }
 
+        /** @var \KJBlocks|false */
+        $kjblocks = \Module::getInstanceByName('kjblocks');
+        if (!$kjblocks) {
+            throw new \RuntimeException('Module kjblocks not found');
+        }
+
         $smarty = $this->legacyContext->getSmarty();
 
         $template = $this->getTemplate();
-        $cacheId = $this->getCacheId() . $this->getContextCacheId();
+        $cacheId = $this->getCacheId() . $kjblocks->getContextCacheId();
         $isCached = $module->isCached($template, $cacheId);
 
         if (!$isCached) {
@@ -131,22 +137,6 @@ abstract class Block implements BlockInterface
     protected function getCacheId(): string
     {
         return "{$this->getModuleName()}|{$this->id}";
-    }
-
-    public static function getContextCacheId(): string
-    {
-        $context = \Context::getContext();
-        if (!$context || !$context->language) {
-            return '';
-        }
-
-        $cacheId = "|{$context->language->id}";
-
-        if ($context->currency) {
-            $cacheId .= "|{$context->currency->id}";
-        }
-
-        return $cacheId;
     }
 
     public function setOptions(array $options = []): void

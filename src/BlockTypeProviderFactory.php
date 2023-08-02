@@ -28,14 +28,20 @@ class BlockTypeProviderFactory
      */
     protected $contextLangId;
 
-    public function __construct(int $contextLangId)
+    /**
+     * @var BlockContext
+     */
+    protected $blockContext;
+
+    public function __construct(int $contextLangId, BlockContext $blockContext)
     {
         $this->contextLangId = $contextLangId;
+        $this->blockContext = $blockContext;
     }
 
     // @phpstan-ignore-next-line
     public function create(string $hookName): BlockTypeProvider
     {
-        return new BlockTypeProvider($this->contextLangId, $hookName);
+        return new BlockTypeProvider($this->contextLangId, $this->blockContext, $hookName);
     }
 }

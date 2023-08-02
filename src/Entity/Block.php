@@ -67,16 +67,10 @@ class Block
      */
     private $type;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private $options;
-
     public function __construct()
     {
         $this->blockLangs = new ArrayCollection();
+        $this->blockShops = new ArrayCollection();
         $this->blockGroups = new ArrayCollection();
     }
 
@@ -209,15 +203,7 @@ class Block
         return $this;
     }
 
-    public function getOptions(): ?string
+    public function getOptions(): void
     {
-        return $this->options;
-    }
-
-    public function setOptions(?string $options): self
-    {
-        $this->options = $options;
-
-        return $this;
     }
 }

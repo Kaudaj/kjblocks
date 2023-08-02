@@ -70,6 +70,13 @@ class BlockShop
      */
     protected $active = true;
 
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $options;
+
     public function getId(): int
     {
         return $this->id;
@@ -119,6 +126,18 @@ class BlockShop
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getOptions(): ?string
+    {
+        return $this->options;
+    }
+
+    public function setOptions(?string $options): self
+    {
+        $this->options = $options;
 
         return $this;
     }

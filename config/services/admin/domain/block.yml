@@ -10,10 +10,12 @@ services:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocks
 
-  kaudaj.module.blocks.block.query_handler.get_block_for_editing:
+  kaudaj.module.blocks.block.query_handler.get_for_editing:
     public: true
     parent: kaudaj.module.blocks.block.query_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlockForEditingHandler
+    arguments:
+      - '@kaudaj.module.blocks.block_context'
     tags:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing

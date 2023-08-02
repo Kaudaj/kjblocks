@@ -45,7 +45,6 @@ final class AddBlockHandler extends AbstractBlockCommandHandler
             $block = new Block();
 
             $block->setType($command->getType());
-            $block->setOptions($command->getOptions() !== null ? $command->getOptions()->getValue() : null);
 
             $blockGroupRepository = $this->entityManager->getRepository(BlockGroup::class);
 
@@ -73,13 +72,14 @@ final class AddBlockHandler extends AbstractBlockCommandHandler
                 $block->addBlockLang($configuratorBlockLang);
             }
 
-            // $shopConstraint = $command->getShopConstraint();
-            // $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
-            // $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
+            $shopConstraint = $command->getShopConstraint();
+            $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
+            $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
 
-            // $blockShop = $this->createBlockShop($shopId, $shopGroupId);
+            $blockShop = $this->createBlockShop($shopId, $shopGroupId);
+            $blockShop->setOptions($command->getOptions() !== null ? $command->getOptions()->getValue() : null);
 
-            // $block->addBlockShop($blockShop);
+            $block->addBlockShop($blockShop);
 
             $this->entityManager->persist($block);
             $this->entityManager->flush();

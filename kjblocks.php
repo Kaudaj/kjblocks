@@ -130,8 +130,7 @@ EOF
         $sql[] = "
             CREATE TABLE IF NOT EXISTS `$dbPrefix" . BlockRepository::TABLE_NAME . "` (
                 `id_block` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `type` VARCHAR(255) NOT NULL,
-                `options` JSON
+                `type` VARCHAR(255) NOT NULL
             ) ENGINE=$dbEngine COLLATE=utf8mb4_general_ci;
         ";
 
@@ -157,6 +156,7 @@ EOF
                 `id_shop` INT,
                 `id_shop_group` INT,
                 `active` BOOLEAN NOT NULL,
+                `options` JSON,
                 FOREIGN KEY (`id_block`)
                 REFERENCES `$dbPrefix" . BlockRepository::TABLE_NAME . "` (`id_block`)
                 ON DELETE CASCADE,
@@ -388,5 +388,10 @@ EOF
         }
 
         return $object;
+    }
+
+    public function getContextCacheId(): string
+    {
+        return str_replace($this->name . '|', '', $this->getCacheId());
     }
 }

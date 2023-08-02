@@ -57,9 +57,15 @@ class BlockTypeProvider
      */
     protected $contextLangId;
 
-    public function __construct(int $contextLangId, string $hookName)
+    /**
+     * @var BlockContext
+     */
+    protected $blockContext;
+
+    public function __construct(int $contextLangId, BlockContext $blockContext, string $hookName)
     {
         $this->contextLangId = $contextLangId;
+        $this->blockContext = $blockContext;
         $this->hookName = $hookName;
     }
 
@@ -206,9 +212,10 @@ class BlockTypeProvider
     public function getBlockTypeFromEntity(Block $block)
     {
         $id = $block->getId();
+        $blockShop = $this->blockContext->getBlockShop($block);
 
         if (!key_exists($id, $this->blocks)) {
-            $options = json_decode($block->getOptions() ?: '', true) ?: [];
+            $options = $blockShop ? json_decode($blockShop->getOptions() ?: '', true) : [];
             $options = is_array($options) ? $options : [];
 
             $this->blocks[$id] = $this->getBlockType($block->getType(), $options + [

@@ -6,6 +6,7 @@ services:
     class: Kaudaj\Module\Blocks\BlockTypeProviderFactory
     arguments:
       - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+      - '@kaudaj.module.blocks.block_context'
 
   kaudaj.module.blocks.block_type_provider:
     class: Kaudaj\Module\Blocks\BlockTypeProvider

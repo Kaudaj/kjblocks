@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Domain\Block\QueryHandler;
 
+use Doctrine\ORM\EntityManager;
+use Kaudaj\Module\Blocks\BlockContext;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing;
 use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
@@ -32,12 +34,24 @@ use Kaudaj\Module\Blocks\Domain\Block\QueryResult\EditableBlock;
  */
 final class GetBlockForEditingHandler extends AbstractBlockQueryHandler
 {
+    /**
+     * @var BlockContext
+     */
+    protected $blockContext;
+
+    public function __construct(EntityManager $entityManager, BlockContext $blockContext)
+    {
+        parent::__construct($entityManager);
+
+        $this->blockContext = $blockContext;
+    }
+
     public function handle(GetBlockForEditing $query): EditableBlock
     {
         try {
-            $block = $this->getBlockEntity(
-                $query->getBlockId()->getValue()
-            );
+            $blockId = $query->getBlockId()->getValue();
+            $block = $this->getBlockEntity($blockId);
+            $blockShop = $this->blockContext->getBlockShop($block);
 
             $localizedNames = [];
             foreach ($block->getBlockLangs() as $blockLang) {
@@ -50,22 +64,21 @@ final class GetBlockForEditingHandler extends AbstractBlockQueryHandler
             }
 
             $editableBlock = new EditableBlock(
-                $block->getId(),
+                $blockId,
                 $block->getType(),
-                $block->getOptions(),
+                $blockShop ? $blockShop->getOptions() : null,
                 $blockGroupsIds,
                 $localizedNames
             );
         } catch (\Exception $e) {
             $message = sprintf(
                 'An unexpected error occurred when retrieving block with id %s',
-                var_export($query->getBlockId()->getValue(), true)
+                var_export($blockId, true)
             );
 
             throw new BlockException($message, 0, $e);
         }
 
-        return $editableBlock
-        ;
+        return $editableBlock;
     }
 }
