@@ -51,7 +51,7 @@ class KJBlocks extends Module implements WidgetInterface
     {
         $this->name = 'kjblocks';
         $this->tab = 'others';
-        $this->version = '1.1.1';
+        $this->version = '1.2.0';
         $this->author = 'Kaudaj';
         $this->ps_versions_compliancy = ['min' => '1.7.8.0', 'max' => '8.0.99'];
 
@@ -155,7 +155,7 @@ EOF
                 `id_block` INT UNSIGNED NOT NULL,
                 `id_shop` INT,
                 `id_shop_group` INT,
-                `active` BOOLEAN NOT NULL,
+                `active` BOOLEAN NOT NULL DEFAULT 1,
                 `options` JSON,
                 FOREIGN KEY (`id_block`)
                 REFERENCES `$dbPrefix" . BlockRepository::TABLE_NAME . "` (`id_block`)
