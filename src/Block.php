@@ -70,12 +70,6 @@ abstract class Block implements BlockInterface
 
     public function getLogo(): string
     {
-        $filename = "views/img/blocks/{$this->getName()}.png";
-
-        if (file_exists(_PS_MODULE_DIR_ . "kjblocks/$filename")) {
-            return __PS_BASE_URI__ . "modules/kjblocks/$filename";
-        }
-
         return '';
     }
 

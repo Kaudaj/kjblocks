@@ -77,6 +77,11 @@ class ContainerBlock extends Block
         return $this->translator->trans('Container', [], 'Modules.Kjblocks.Admin');
     }
 
+    public function getLogo(): string
+    {
+        return __PS_BASE_URI__ . 'modules/kjblocks/views/img/blocks/container.png';
+    }
+
     protected function getTemplate(): string
     {
         return 'module:kjblocks/views/templates/front/blocks/container.tpl';
@@ -102,8 +107,13 @@ class ContainerBlock extends Block
             $variables[self::OPTION_IDENTIFIER] = $this->identifier;
         }
 
-        $classes = ['block', "block-{$this->id}", str_replace('_', '-', $this->getName())];
-        $classes = array_merge($classes, $this->classes);
+        $blockClasses = ['block', str_replace('_', '-', $this->getName())];
+
+        if ($this->id) {
+            $blockClasses[] = "block-{$this->id}";
+        }
+
+        $classes = array_merge($blockClasses, $this->classes);
 
         $variables[self::OPTION_CLASSES] = implode(' ', $classes);
 
