@@ -53,7 +53,7 @@ abstract class Block implements BlockInterface
     protected $translator;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -108,8 +108,8 @@ abstract class Block implements BlockInterface
         $smarty = $this->legacyContext->getSmarty();
 
         $template = $this->getTemplate();
-        $cacheId = $this->getCacheId() . $kjblocks->getContextCacheId();
-        $isCached = $module->isCached($template, $cacheId);
+        $cacheId = $this->id ? $this->getCacheId() . $kjblocks->getContextCacheId() : null;
+        $isCached = $this->id && $module->isCached($template, $cacheId);
 
         if (!$isCached) {
             /** @var array<string, mixed> */

@@ -15,13 +15,16 @@
  * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-<style>
-    .block-{$id} {
-        {if isset($width)}width: {$width}px;{/if}
-        {if isset($height)}height: {$height}px;{/if}
-        {if isset($background_image)}background-image: url({$background_image});{/if}
-    }
-</style>
+
+{if isset($id)}
+    <style>
+        .block-{$id} {
+            {if isset($width)}width: {$width}px;{/if}
+            {if isset($height)}height: {$height}px;{/if}
+            {if isset($background_image)}background-image: url({$background_image});{/if}
+        }
+    </style>
+{/if}
 
 <div 
     {if isset($identifier)}id="{$identifier}"{/if}
