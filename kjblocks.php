@@ -30,7 +30,6 @@ use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
 use Kaudaj\Module\Blocks\Repository\BlockGroupHookRepository;
 use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
 use Kaudaj\Module\Blocks\Repository\BlockRepository;
-use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
