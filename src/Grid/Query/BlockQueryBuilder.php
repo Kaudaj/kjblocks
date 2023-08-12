@@ -112,13 +112,13 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
         $shopQb = $this->connection
             ->createQueryBuilder()
-            ->select('*')
+            ->select('id_block, MAX(id_shop) as max_shop, MAX(id_shop_group) as max_shop_group')
             ->from($this->dbPrefix . BlockRepository::SHOP_TABLE_NAME)
             ->where(($contextShopId !== null ? 'id_shop = :shopId OR ' : '') . 'id_shop IS NULL')
             ->andWhere(($contextShopGroupId !== null ? 'id_shop_group = :shopGroupId OR ' : '') . 'id_shop_group IS NULL')
             ->orderBy('id_shop', 'DESC')
             ->addOrderBy('id_shop_group', 'DESC')
-            ->setMaxResults(1)
+            ->groupBy('id_block')
         ;
 
         $qb = $this->connection
@@ -133,10 +133,12 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
             ->setParameter('langId', $this->contextLangId)
             ->leftJoin(
                 'b',
-                '(' .
-                    $shopQb
-                        ->getSQL()
-                . ')',
+                '(SELECT bs1.*
+                FROM ' . $this->dbPrefix . BlockRepository::SHOP_TABLE_NAME . ' bs1
+                JOIN (' .
+                    $shopQb->getSQL()
+                . ') bs2
+                ON bs1.id_block = bs2.id_block AND IFNULL(bs1.id_shop, 0) = IFNULL(bs2.max_shop, 0) AND IFNULL(bs1.id_shop_group, 0) = IFNULL(bs2.max_shop_group, 0))',
                 'bs',
                 'b.id_block = bs.id_block'
             )
