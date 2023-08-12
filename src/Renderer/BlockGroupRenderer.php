@@ -71,7 +71,7 @@ class BlockGroupRenderer
 
         foreach ($blocks as $block) {
             $blockShop = $this->blockContext->getBlockShop($block);
-            if ($blockShop && !$blockShop->isActive()) {
+            if (!$blockShop || !$blockShop->isActive()) {
                 continue;
             }
 

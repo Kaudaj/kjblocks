@@ -73,7 +73,7 @@ class BlockShop
     /**
      * @var string|null
      *
-     * @ORM\Column(type="json", nullable=true)
+     * @ORM\Column(type="json", nullable=false)
      */
     private $options;
 
