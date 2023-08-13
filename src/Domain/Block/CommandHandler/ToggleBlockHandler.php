@@ -69,7 +69,7 @@ final class ToggleBlockHandler extends AbstractBlockCommandHandler
             $blockShop = $this->createBlockShop($shopId, $shopGroupId);
             $block->addBlockShop($blockShop);
 
-            $blockShop->setActive($contextBlockShop ? !$contextBlockShop->isActive() : !$blockShop->isActive());
+            $blockShop->setActive($contextBlockShop ? !$contextBlockShop->isActive() : $blockShop->isActive());
             $blockShop->setOptions($contextBlockShop ? $contextBlockShop->getOptions() : null);
         }
 

@@ -68,7 +68,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
 
         $qb = $this->getQueryBuilder($filters);
         $qb
-            ->select('b.id_block, bl.name, b.type, bgb.position, IFNULL(bs.active, 1) AS active')
+            ->select('b.id_block, bl.name, b.type, bgb.position, IFNULL(bs.active, 0) AS active')
             ->addSelect((!key_exists('group', $filters) ? "GROUP_CONCAT(bgl.name SEPARATOR ', ')" : 'bgl.name') . ' AS `groups`')
         ;
 
