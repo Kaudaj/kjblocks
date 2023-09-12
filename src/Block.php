@@ -102,7 +102,7 @@ abstract class Block implements BlockInterface
         $smarty = $this->legacyContext->getSmarty();
 
         $template = $this->getTemplate();
-        $cacheId = $this->id ? $this->getCacheId() . $kjblocks->getContextCacheId() : null;
+        $cacheId = $this->id ? "{$this->getCacheId()}|{$kjblocks->getContextCacheId()}" : null;
         $isCached = $this->id && $module->isCached($template, $cacheId);
 
         if (!$isCached) {
