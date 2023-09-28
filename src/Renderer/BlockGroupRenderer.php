@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Renderer;
 
 use Kaudaj\Module\Blocks\BlockContext;
-use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Entity\Block;
 use Kaudaj\Module\Blocks\Entity\BlockGroup;
@@ -33,7 +32,7 @@ class BlockGroupRenderer
     public const BACKGROUND_FILENAME = 'background';
 
     /**
-     * @var BlockTypeProvider<BlockInterface>
+     * @var BlockTypeProvider
      */
     private $blockTypeProvider;
 
@@ -43,7 +42,7 @@ class BlockGroupRenderer
     private $blockContext;
 
     /**
-     * @param BlockTypeProvider<BlockInterface> $blockTypeProvider
+     * @param BlockTypeProvider $blockTypeProvider
      */
     public function __construct(BlockTypeProvider $blockTypeProvider, BlockContext $blockContext)
     {

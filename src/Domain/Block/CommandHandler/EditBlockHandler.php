@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Domain\Block\CommandHandler;
 
+use Doctrine\ORM\EntityManager;
+use Kaudaj\Module\Blocks\BlockContext;
 use Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\BlockException;
 use Kaudaj\Module\Blocks\Domain\Block\Exception\CannotUpdateBlockException;
@@ -38,6 +40,18 @@ use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
  */
 final class EditBlockHandler extends AbstractBlockCommandHandler
 {
+    /**
+     * @var BlockContext
+     */
+    private $blockContext;
+
+    public function __construct(EntityManager $entityManager, BlockContext $blockContext)
+    {
+        parent::__construct($entityManager);
+
+        $this->blockContext = $blockContext;
+    }
+
     /**
      * @throws BlockException
      */
@@ -84,6 +98,8 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
             $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
             $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
 
+            $contextBlockShop = $this->blockContext->getBlockShop($block);
+
             $blockShop = $block->getBlockShop($shopId, $shopGroupId);
             if ($blockShop) {
                 $block->removeBlockShop($blockShop);
@@ -94,6 +110,10 @@ final class EditBlockHandler extends AbstractBlockCommandHandler
 
             $blockShop = $this->createBlockShop($shopId, $shopGroupId);
             $blockShop->setOptions($command->getOptions() !== null ? $command->getOptions()->getValue() : null);
+
+            if ($contextBlockShop !== null) {
+                $blockShop->setActive($contextBlockShop->isActive());
+            }
 
             $block->addBlockShop($blockShop);
 

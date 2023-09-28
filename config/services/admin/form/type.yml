@@ -18,8 +18,20 @@ services:
     class: Kaudaj\Module\Blocks\Form\Type\BlockTypeType
     arguments:
       - "@kaudaj.module.blocks.block_type_provider"
+      - "@request_stack"
+      - "@prestashop.core.command_bus"
+      - "@kaudaj.module.blocks.form.type.multi_shop_checkbox_enabler"
     tags:
       - { name: form.type }
+
+  kaudaj.module.blocks.form.type.multi_shop_checkbox_enabler:
+    public: true
+    class: Kaudaj\Module\Blocks\Form\Type\MultiShopCheckboxEnabler
+    arguments:
+      - "@prestashop.adapter.feature.multistore"
+      - "@prestashop.adapter.shop.context"
+      - "@doctrine.orm.entity_manager"
+      - "@twig"
 
   kaudaj.module.blocks.form.type.block_picker:
     public: true

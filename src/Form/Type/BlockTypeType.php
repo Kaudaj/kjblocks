@@ -19,14 +19,17 @@
 
 namespace Kaudaj\Module\Blocks\Form\Type;
 
-use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
+use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock;
+use Kaudaj\Module\Blocks\Entity\Block;
+use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -36,19 +39,43 @@ class BlockTypeType extends TranslatorAwareType
     public const FIELD_OPTIONS = 'options';
 
     /**
-     * @var BlockTypeProvider<BlockInterface>
+     * @var BlockTypeProvider
      */
     private $blockTypeProvider;
 
     /**
-     * @param array<string, mixed> $locales
-     * @param BlockTypeProvider<BlockInterface> $blockTypeProvider
+     * @var RequestStack
      */
-    public function __construct(TranslatorInterface $translator, array $locales, BlockTypeProvider $blockTypeProvider)
-    {
+    private $requestStack;
+
+    /**
+     * @var CommandBusInterface
+     */
+    private $commandBus;
+
+    /**
+     * @var MultiShopCheckboxEnabler
+     */
+    private $multiShopCheckboxEnabler;
+
+    /**
+     * @param array<string, mixed> $locales
+     * @param BlockTypeProvider $blockTypeProvider
+     */
+    public function __construct(
+        TranslatorInterface $translator,
+        array $locales,
+        BlockTypeProvider $blockTypeProvider,
+        RequestStack $requestStack,
+        CommandBusInterface $commandBus,
+        MultiShopCheckboxEnabler $multiShopCheckboxEnabler
+    ) {
         parent::__construct($translator, $locales);
 
         $this->blockTypeProvider = $blockTypeProvider;
+        $this->requestStack = $requestStack;
+        $this->commandBus = $commandBus;
+        $this->multiShopCheckboxEnabler = $multiShopCheckboxEnabler;
     }
 
     /**
@@ -84,11 +111,31 @@ class BlockTypeType extends TranslatorAwareType
      */
     private function addListenersForTypeField(FormBuilderInterface &$builder): void
     {
-        $formModifier = function (FormInterface $form, string $blockName): void {
-            $fieldOptions = $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions();
-            $block = $this->blockTypeProvider->getBlockType($blockName);
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request === null) {
+            return;
+        }
 
-            $form->add(self::FIELD_OPTIONS, $block->getFormType(), $fieldOptions);
+        $blockId = $request->attributes->getInt('blockId');
+        if (!$blockId) {
+            return;
+        }
+
+        /** @var Block */
+        $block = $this->commandBus->handle(new GetBlock($blockId));
+
+        $formModifier = function (FormInterface $form, string $blockName) use ($block): void {
+            $fieldOptions = $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions();
+            $blockType = $this->blockTypeProvider->getBlockType($blockName);
+
+            $form->add(self::FIELD_OPTIONS, $blockType->getFormType(), $fieldOptions);
+
+            $this->multiShopCheckboxEnabler->makeFormMultistore(
+                $form->get(self::FIELD_OPTIONS),
+                function ($fieldName, $shopId, $shopGroupId) use ($block) {
+                    return call_user_func([$this, 'isOptionOverridenForShop'], $block, $fieldName, $shopId, $shopGroupId);
+                }
+            );
         };
 
         $builder->addEventListener(
@@ -118,6 +165,16 @@ class BlockTypeType extends TranslatorAwareType
                 $formModifier($form, (string) $type);
             }
         );
+    }
+
+    public function isOptionOverridenForShop(Block $block, string $option, ?int $shopGroupId = null, ?int $shopId = null): bool
+    {
+        $blockShop = $block->getBlockShop($shopId, $shopGroupId);
+
+        $blockOptions = $blockShop ? json_decode($blockShop->getOptions() ?: '', true) : [];
+        $blockOptions = is_array($blockOptions) ? $blockOptions : [];
+
+        return key_exists($option, $blockOptions);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

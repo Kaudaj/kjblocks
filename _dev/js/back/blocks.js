@@ -30,6 +30,7 @@ function initForm() {
   window.prestashop.component.initComponents([
     'TranslatableInput',
     'TinyMCEEditor',
+    'MultistoreConfigField',
   ]);
 
   const blockType = new BlockType('block_type');

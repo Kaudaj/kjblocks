@@ -51,7 +51,6 @@ final class GetBlockForEditingHandler extends AbstractBlockQueryHandler
         try {
             $blockId = $query->getBlockId()->getValue();
             $block = $this->getBlockEntity($blockId);
-            $blockShop = $this->blockContext->getBlockShop($block);
 
             $localizedNames = [];
             foreach ($block->getBlockLangs() as $blockLang) {
@@ -66,7 +65,7 @@ final class GetBlockForEditingHandler extends AbstractBlockQueryHandler
             $editableBlock = new EditableBlock(
                 $blockId,
                 $block->getType(),
-                $blockShop ? $blockShop->getOptions() : null,
+                json_encode($this->blockContext->getBlockOptions($block)) ?: null,
                 $blockGroupsIds,
                 $localizedNames
             );

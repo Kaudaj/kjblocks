@@ -22,11 +22,11 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
 use Kaudaj\Module\Blocks\BlockFormMapperInterface;
-use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
+use PrestaShopBundle\Service\Form\MultistoreCheckboxEnabler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -38,12 +38,12 @@ class BlockTypeFormDataHandler
     private $container;
 
     /**
-     * @var BlockTypeProvider<BlockInterface>
+     * @var BlockTypeProvider
      */
     private $blockTypeProvider;
 
     /**
-     * @param BlockTypeProvider<BlockInterface> $blockTypeProvider
+     * @param BlockTypeProvider $blockTypeProvider
      */
     public function __construct(LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
     {
@@ -60,6 +60,22 @@ class BlockTypeFormDataHandler
      */
     public function buildBlockOptions(int $blockId, string $formName, string $typeFieldName, string $type, array $formOptions): array
     {
+        $multistorePrefix = MultistoreCheckboxEnabler::MULTISTORE_FIELD_PREFIX;
+
+        $formOptions = array_filter($formOptions, function ($key) use ($formOptions, $multistorePrefix) {
+            if (strpos($key, $multistorePrefix) === 0) {
+                return true;
+            }
+
+            $multistoreKey = $multistorePrefix . $key;
+
+            return key_exists($multistoreKey, $formOptions) && $formOptions[$multistoreKey] === true;
+        }, ARRAY_FILTER_USE_KEY);
+
+        $formOptions = array_filter($formOptions, function ($key) use ($multistorePrefix) {
+            return strpos($key, $multistorePrefix) === false;
+        }, ARRAY_FILTER_USE_KEY);
+
         $block = $this->blockTypeProvider->getBlockType($type);
 
         /** @var BlockFormMapperInterface */

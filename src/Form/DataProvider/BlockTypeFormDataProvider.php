@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace Kaudaj\Module\Blocks\Form\DataProvider;
 
 use Kaudaj\Module\Blocks\BlockFormMapperInterface;
-use Kaudaj\Module\Blocks\BlockInterface;
 use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\ValueObject\Json;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
@@ -37,12 +36,12 @@ class BlockTypeFormDataProvider
     private $container;
 
     /**
-     * @var BlockTypeProvider<BlockInterface>
+     * @var BlockTypeProvider
      */
     private $blockTypeProvider;
 
     /**
-     * @param BlockTypeProvider<BlockInterface> $blockTypeProvider
+     * @param BlockTypeProvider $blockTypeProvider
      */
     public function __construct(LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
     {

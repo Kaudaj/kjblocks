@@ -80,4 +80,57 @@ class BlockContext
 
         return $block->getBlockShop(null, null);
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getBlockOptions(Block $block): array
+    {
+        $blockOptions = [];
+
+        foreach ($this->getBlockShops($block) as $blockShop) {
+            $blockShopOptions = json_decode($blockShop->getOptions() ?: '', true);
+            $blockShopOptions = (is_array($blockShopOptions) ? $blockShopOptions : []);
+
+            $blockOptions += $blockShopOptions;
+        }
+
+        return $blockOptions;
+    }
+
+    /**
+     * @return BlockShop[]
+     */
+    private function getBlockShops(Block $block): array
+    {
+        $shopConstraint = $this->shopContext->getShopConstraint();
+        $contextShopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
+        $contextShopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
+
+        $shopContexts = [
+            [$contextShopId, $contextShopGroupId],
+        ];
+
+        if ($contextShopId !== null && $contextShopGroupId === null) {
+            $shopGroupId = (int) \Shop::getGroupFromShop($contextShopId) ?: $contextShopGroupId;
+
+            $shopContexts[] = [$contextShopId, $shopGroupId];
+        }
+
+        $shopContexts[] = [null, null];
+
+        $blockShops = [];
+
+        foreach ($shopContexts as $shopContext) {
+            $blockShop = $block->getBlockShop($shopContext[0], $shopContext[1]);
+
+            if ($blockShop === null) {
+                continue;
+            }
+
+            $blockShops[] = $blockShop;
+        }
+
+        return $blockShops;
+    }
 }

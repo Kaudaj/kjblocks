@@ -38,6 +38,8 @@ services:
     public: true
     parent: kaudaj.module.blocks.block.command_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\CommandHandler\EditBlockHandler
+    arguments:
+      - '@kaudaj.module.blocks.block_context'
     tags:
       - name: tactician.handler
         command: Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand
