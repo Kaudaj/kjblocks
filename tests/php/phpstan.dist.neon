@@ -6,6 +6,8 @@ parameters:
     - %currentWorkingDirectory%/kjblocks.php
   excludePaths:
     - %currentWorkingDirectory%/src/Grid/Position
+  ignoreErrors:
+    - '#.*Kaudaj\\Module\\Blocks\\AbstractBlockTypeProvider.* does not specify its types.*#'
   reportUnmatchedIgnoredErrors: true
   level: 8
 

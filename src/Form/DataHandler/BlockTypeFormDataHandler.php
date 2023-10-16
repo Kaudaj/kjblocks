@@ -21,11 +21,12 @@ declare(strict_types=1);
 
 namespace Kaudaj\Module\Blocks\Form\DataHandler;
 
+use Kaudaj\Module\Blocks\AbstractBlockTypeProvider;
 use Kaudaj\Module\Blocks\BlockFormMapperInterface;
-use Kaudaj\Module\Blocks\BlockTypeProvider;
 use Kaudaj\Module\Blocks\Form\Type\BlockTypeType;
 use PrestaShop\PrestaShop\Adapter\ContainerFinder;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
+use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
 use PrestaShopBundle\Service\Form\MultistoreCheckboxEnabler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -38,19 +39,22 @@ class BlockTypeFormDataHandler
     private $container;
 
     /**
-     * @var BlockTypeProvider
+     * @var AbstractBlockTypeProvider
      */
     private $blockTypeProvider;
 
     /**
-     * @param BlockTypeProvider $blockTypeProvider
+     * @var ShopContext
      */
-    public function __construct(LegacyContext $legacyContext, BlockTypeProvider $blockTypeProvider)
+    private $shopContext;
+
+    public function __construct(LegacyContext $legacyContext, AbstractBlockTypeProvider $blockTypeProvider, ShopContext $shopContext)
     {
         $containerFinder = new ContainerFinder($legacyContext->getContext());
         $this->container = $containerFinder->getContainer();
 
         $this->blockTypeProvider = $blockTypeProvider;
+        $this->shopContext = $shopContext;
     }
 
     /**
@@ -62,15 +66,17 @@ class BlockTypeFormDataHandler
     {
         $multistorePrefix = MultistoreCheckboxEnabler::MULTISTORE_FIELD_PREFIX;
 
-        $formOptions = array_filter($formOptions, function ($key) use ($formOptions, $multistorePrefix) {
-            if (strpos($key, $multistorePrefix) === 0) {
-                return true;
-            }
+        if (!$this->shopContext->isAllShopContext()) {
+            $formOptions = array_filter($formOptions, function ($key) use ($formOptions, $multistorePrefix) {
+                if (strpos($key, $multistorePrefix) === 0) {
+                    return true;
+                }
 
-            $multistoreKey = $multistorePrefix . $key;
+                $multistoreKey = $multistorePrefix . $key;
 
-            return key_exists($multistoreKey, $formOptions) && $formOptions[$multistoreKey] === true;
-        }, ARRAY_FILTER_USE_KEY);
+                return !key_exists($multistoreKey, $formOptions) || $formOptions[$multistoreKey] === true;
+            }, ARRAY_FILTER_USE_KEY);
+        }
 
         $formOptions = array_filter($formOptions, function ($key) use ($multistorePrefix) {
             return strpos($key, $multistorePrefix) === false;

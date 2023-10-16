@@ -26,6 +26,7 @@ use PrestaShopBundle\Entity\Shop;
 use PrestaShopBundle\Entity\ShopGroup;
 use PrestaShopBundle\Service\Form\MultistoreCheckboxEnabler;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
 use Twig;
 
@@ -80,6 +81,11 @@ class MultiShopCheckboxEnabler
         foreach ($form->all() as $child) {
             $childOptions = $child->getConfig()->getOptions();
             $childName = $child->getName();
+            $childType = get_class($child->getConfig()->getType()->getInnerType());
+
+            if ($childType === HiddenType::class) {
+                continue;
+            }
 
             $isOverriddenInCurrentContext = call_user_func($isOverridenForShop, $childName, $contextShopGroupId, $contextShopId);
 
@@ -90,7 +96,6 @@ class MultiShopCheckboxEnabler
                 $childOptions['multistore_dropdown'] = $this->renderDropdown($childName, $isOverridenForShop);
             }
 
-            $childType = get_class($child->getConfig()->getType()->getInnerType());
             $form->add($childName, $childType, $childOptions);
 
             // for each field in the configuration form, we add a multistore checkbox (except in all shop context)

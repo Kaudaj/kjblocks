@@ -15,6 +15,7 @@ services:
     arguments:
       - "@prestashop.adapter.legacy.context"
       - "@kaudaj.module.blocks.block_type_provider"
+      - "@prestashop.adapter.shop.context"
 
   kaudaj.module.blocks.form.data_handler.block_group:
     class: Kaudaj\Module\Blocks\Form\DataHandler\BlockGroupFormDataHandler

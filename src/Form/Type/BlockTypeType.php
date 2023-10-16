@@ -19,7 +19,7 @@
 
 namespace Kaudaj\Module\Blocks\Form\Type;
 
-use Kaudaj\Module\Blocks\BlockTypeProvider;
+use Kaudaj\Module\Blocks\AbstractBlockTypeProvider;
 use Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock;
 use Kaudaj\Module\Blocks\Entity\Block;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
@@ -39,33 +39,33 @@ class BlockTypeType extends TranslatorAwareType
     public const FIELD_OPTIONS = 'options';
 
     /**
-     * @var BlockTypeProvider
+     * @var AbstractBlockTypeProvider
      */
-    private $blockTypeProvider;
+    protected $blockTypeProvider;
 
     /**
      * @var RequestStack
      */
-    private $requestStack;
+    protected $requestStack;
 
     /**
      * @var CommandBusInterface
      */
-    private $commandBus;
+    protected $commandBus;
 
     /**
      * @var MultiShopCheckboxEnabler
      */
-    private $multiShopCheckboxEnabler;
+    protected $multiShopCheckboxEnabler;
 
     /**
      * @param array<string, mixed> $locales
-     * @param BlockTypeProvider $blockTypeProvider
+     * @param AbstractBlockTypeProvider $blockTypeProvider
      */
     public function __construct(
         TranslatorInterface $translator,
         array $locales,
-        BlockTypeProvider $blockTypeProvider,
+        AbstractBlockTypeProvider $blockTypeProvider,
         RequestStack $requestStack,
         CommandBusInterface $commandBus,
         MultiShopCheckboxEnabler $multiShopCheckboxEnabler
@@ -111,6 +111,56 @@ class BlockTypeType extends TranslatorAwareType
      */
     private function addListenersForTypeField(FormBuilderInterface &$builder): void
     {
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $data = $event->getData();
+
+                $this->updateOptionsField(
+                    $event->getForm(),
+                    is_array($data) && key_exists(self::FIELD_TYPE, $data)
+                        ? (string) $data[self::FIELD_TYPE]
+                        : 'text'
+                );
+            }
+        );
+
+        $builder->get(self::FIELD_TYPE)->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $type = $event->getData();
+                $form = $event->getForm()->getParent();
+
+                if (null === $form || !$type) {
+                    return;
+                }
+
+                $this->updateOptionsField($form, (string) $type);
+            }
+        );
+    }
+
+    /**
+     * @param FormInterface<string, mixed> $form
+     */
+    private function updateOptionsField(FormInterface $form, string $blockName): void
+    {
+        $blockType = $this->blockTypeProvider->getBlockType($blockName);
+
+        $form->add(
+            self::FIELD_OPTIONS,
+            $blockType->getFormType(),
+            $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions()
+        );
+
+        $this->makeFormMultistore($form);
+    }
+
+    /**
+     * @param FormInterface<string, mixed> $form
+     */
+    protected function makeFormMultistore(FormInterface $form): void
+    {
         $request = $this->requestStack->getCurrentRequest();
         if ($request === null) {
             return;
@@ -124,45 +174,10 @@ class BlockTypeType extends TranslatorAwareType
         /** @var Block */
         $block = $this->commandBus->handle(new GetBlock($blockId));
 
-        $formModifier = function (FormInterface $form, string $blockName) use ($block): void {
-            $fieldOptions = $form->get(self::FIELD_OPTIONS)->getConfig()->getOptions();
-            $blockType = $this->blockTypeProvider->getBlockType($blockName);
-
-            $form->add(self::FIELD_OPTIONS, $blockType->getFormType(), $fieldOptions);
-
-            $this->multiShopCheckboxEnabler->makeFormMultistore(
-                $form->get(self::FIELD_OPTIONS),
-                function ($fieldName, $shopId, $shopGroupId) use ($block) {
-                    return call_user_func([$this, 'isOptionOverridenForShop'], $block, $fieldName, $shopId, $shopGroupId);
-                }
-            );
-        };
-
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($formModifier) {
-                $data = $event->getData();
-
-                $formModifier(
-                    $event->getForm(),
-                    is_array($data) && key_exists(self::FIELD_TYPE, $data)
-                        ? (string) $data[self::FIELD_TYPE]
-                        : 'text'
-                );
-            }
-        );
-
-        $builder->get(self::FIELD_TYPE)->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
-                $type = $event->getData();
-                $form = $event->getForm()->getParent();
-
-                if (null === $form || !$type) {
-                    return;
-                }
-
-                $formModifier($form, (string) $type);
+        $this->multiShopCheckboxEnabler->makeFormMultistore(
+            $form->get(self::FIELD_OPTIONS),
+            function ($fieldName, $shopId, $shopGroupId) use ($block) {
+                return call_user_func([$this, 'isOptionOverridenForShop'], $block, $fieldName, $shopId, $shopGroupId);
             }
         );
     }
