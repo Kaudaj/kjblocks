@@ -31,7 +31,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+if (version_compare(_PS_VERSION_, '8.0', '<')) {
+    class_alias('Symfony\Component\Translation\TranslatorInterface', 'Symfony\Contracts\Translation\TranslatorInterface');
+}
 
 class BlockTypeType extends TranslatorAwareType
 {

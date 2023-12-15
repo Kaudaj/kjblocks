@@ -25,7 +25,11 @@ use PrestaShopBundle\Form\Admin\Type\TranslatableType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+if (version_compare(_PS_VERSION_, '8.0', '<')) {
+    class_alias('Symfony\Component\Translation\TranslatorInterface', 'Symfony\Contracts\Translation\TranslatorInterface');
+}
 
 class BlockGroupType extends TranslatorAwareType
 {

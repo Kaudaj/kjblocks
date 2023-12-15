@@ -25,11 +25,15 @@ use Kaudaj\Module\Blocks\Constraint\ConstraintValidatorFactory;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+if (version_compare(_PS_VERSION_, '8.0', '<')) {
+    class_alias('Symfony\Component\Translation\TranslatorInterface', 'Symfony\Contracts\Translation\TranslatorInterface');
+}
 
 abstract class Block implements BlockInterface
 {
