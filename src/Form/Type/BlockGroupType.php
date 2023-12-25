@@ -27,7 +27,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-if (version_compare(_PS_VERSION_, '8.0', '<')) {
+if (version_compare(_PS_VERSION_, '8.0', '<') && !interface_exists('Symfony\Contracts\Translation\TranslatorInterface')) {
     class_alias('Symfony\Component\Translation\TranslatorInterface', 'Symfony\Contracts\Translation\TranslatorInterface');
 }
 

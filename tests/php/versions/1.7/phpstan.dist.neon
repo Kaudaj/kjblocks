@@ -1,4 +1,6 @@
 parameters:
+  bootstrapFiles:
+    - versions/1.7/class_aliases.php
   ignoreErrors:
     -
       message: '#^Parameter \#1 \$characterCleaner of class PrestaShop\\PrestaShop\\Core\\ConstraintValidator\\TypedRegexValidator constructor expects PrestaShop\\PrestaShop\\Core\\String\\CharacterCleaner, PrestaShop\\PrestaShop\\Adapter\\Configuration given\.$#'

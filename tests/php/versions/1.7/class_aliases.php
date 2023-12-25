@@ -16,4 +16,4 @@
  * @copyright Since 2019 Kaudaj
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-class_alias('Symfony\Contracts\Translation\TranslatorInterface', 'Symfony\Component\Translation\TranslatorInterface');
+class_alias('Symfony\Component\Translation\TranslatorInterface', 'Symfony\Contracts\Translation\TranslatorInterface');

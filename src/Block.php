@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-if (version_compare(_PS_VERSION_, '8.0', '<')) {
+if (version_compare(_PS_VERSION_, '8.0', '<') && !interface_exists('Symfony\Contracts\Translation\TranslatorInterface')) {
     class_alias('Symfony\Component\Translation\TranslatorInterface', 'Symfony\Contracts\Translation\TranslatorInterface');
 }
 
@@ -64,7 +64,7 @@ abstract class Block implements BlockInterface
     public function __construct(LegacyContext $legacyContext)
     {
         $this->legacyContext = $legacyContext;
-        $this->translator = $legacyContext->getContext()->getTranslator();
+        $this->translator = $legacyContext->getContext()->getTranslator(); // @phpstan-ignore-line
     }
 
     public function getDescription(): string
