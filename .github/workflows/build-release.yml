@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-dev
-      
+
       - name: Save header-stamp asset before cleaning
         run: cp ./_dev/header-stamp/afl.txt $RUNNER_TEMP/afl.txt
 
@@ -42,10 +42,14 @@ jobs:
 
       - name: Fix unnecessary spacing in index files
         run: find . -name "index.php" -type f -exec sed -i 'N;/^\n$/d' {} +
-      
+
+      - name: Workaround actions/upload-artifact#176
+        run: |
+          echo "artifacts_path=$(realpath ..)" >> $GITHUB_ENV
       - name: Create and upload artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}
-          path: ../
+          include-hidden-files: true
+          path: ${{ env.artifacts_path }}
 

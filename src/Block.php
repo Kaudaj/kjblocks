@@ -64,7 +64,7 @@ abstract class Block implements BlockInterface
     public function __construct(LegacyContext $legacyContext)
     {
         $this->legacyContext = $legacyContext;
-        $this->translator = $legacyContext->getContext()->getTranslator(); // @phpstan-ignore-line
+        $this->translator = $legacyContext->getContext()->getTranslator();
     }
 
     public function getDescription(): string

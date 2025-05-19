@@ -3,6 +3,11 @@ description: 'Install composer dependencies'
 runs:
   using: "composite"
   steps:
+    - name: Setup PHP with PECL extension
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
     - name: Get cache directory
       id: composer-cache
       run: |

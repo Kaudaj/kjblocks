@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        presta-versions: ["1.7.8.9", "8.0.0", "latest"]
+        presta-versions: ["1.7.8.9", "8.0.5", "8.1.7", "8.2.1"]
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -85,5 +85,16 @@ jobs:
           unzip -q ${{ runner.temp }}/prestashop.zip -d ${{ runner.temp }}/prestashop_zip
           unzip -q ${{ runner.temp }}/prestashop_zip/prestashop.zip -d ${{ runner.temp }}/prestashop
 
+      - name: Extract major.minor version
+        id: version
+        run: |
+          full="${{ matrix.presta-versions }}"
+          major=$(echo "$full" | cut -d. -f1)
+          minor=$(echo "$full" | cut -d. -f2)
+          echo "short_version=${major}.${minor}" >> "$GITHUB_OUTPUT"
+
+      - name: Copy PHPStan files
+        run: cp tests/php/versions/${{ steps.version.outputs.short_version }}/phpstan.dist.neon tests/php/phpstan.neon
+
       - name: Run PHPStan
-        run: _PS_ROOT_DIR_=${{ runner.temp }}/prestashop/ php ./vendor/bin/phpstan analyse --configuration=tests/php/phpstan_${{ matrix.presta-versions }}.dist.neon
+        run: _PS_ROOT_DIR_=${{ runner.temp }}/prestashop/ php ./vendor/bin/phpstan analyse --configuration=tests/php/phpstan.neon
