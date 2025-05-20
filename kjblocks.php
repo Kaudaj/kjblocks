@@ -50,7 +50,7 @@ class KJBlocks extends Module implements WidgetInterface
     {
         $this->name = 'kjblocks';
         $this->tab = 'others';
-        $this->version = '1.2.1';
+        $this->version = '1.3.0';
         $this->author = 'Kaudaj';
         $this->ps_versions_compliancy = ['min' => '1.7.8.0', 'max' => '8.2.99'];
 
