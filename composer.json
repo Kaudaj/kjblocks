@@ -32,7 +32,8 @@
     "allow-plugins": {
       "phpro/grumphp-shim": true,
       "phpstan/extension-installer": true
-    }
+    },
+    "autoloader-suffix": "Kjblocks"
   },
   "extra": {
     "grumphp": {
