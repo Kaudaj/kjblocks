@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -24,6 +25,7 @@ use Kaudaj\Module\Blocks\Repository\BlockGroupHookRepository;
 
 /**
  * @ORM\Table(name=BlockGroupHookRepository::TABLE_NAME_WITH_PREFIX)
+ *
  * @ORM\Entity(repositoryClass=BlockGroupHookRepository::class)
  */
 class BlockGroupHook
@@ -32,7 +34,9 @@ class BlockGroupHook
      * @var BlockGroup
      *
      * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity=BlockGroup::class, inversedBy="blockGroupHooks")
+     *
      * @ORM\JoinColumn(name="id_block_group", referencedColumnName="id_block_group", nullable=false, onDelete="CASCADE")
      */
     private $blockGroup;
@@ -41,6 +45,7 @@ class BlockGroupHook
      * @var int
      *
      * @ORM\Id
+     *
      * @ORM\Column(name="id_hook", type="integer", options={"unsigned": true})
      */
     private $hookId;

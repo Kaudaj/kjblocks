@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -24,6 +25,7 @@ use Kaudaj\Module\Blocks\Repository\BlockGroupBlockRepository;
 
 /**
  * @ORM\Table(name=BlockGroupBlockRepository::TABLE_NAME_WITH_PREFIX)
+ *
  * @ORM\Entity(repositoryClass=BlockGroupBlockRepository::class)
  */
 class BlockGroupBlock
@@ -32,7 +34,9 @@ class BlockGroupBlock
      * @var Block
      *
      * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity=Block::class, inversedBy="blocks")
+     *
      * @ORM\JoinColumn(name="id_block", referencedColumnName="id_block", nullable=false, onDelete="CASCADE")
      */
     private $block;
@@ -41,7 +45,9 @@ class BlockGroupBlock
      * @var BlockGroup
      *
      * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity=BlockGroup::class, inversedBy="blockGroups")
+     *
      * @ORM\JoinColumn(name="id_block_group", referencedColumnName="id_block_group", nullable=false, onDelete="CASCADE")
      */
     private $blockGroup;

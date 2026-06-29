@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -26,6 +27,7 @@ use PrestaShopBundle\Entity\ShopGroup;
 
 /**
  * @ORM\Entity()
+ *
  * @ORM\Table(name=BlockRepository::SHOP_TABLE_NAME_WITH_PREFIX)
  */
 class BlockShop
@@ -34,7 +36,9 @@ class BlockShop
      * @var int
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer", name="id_block_shop")
      */
     private $id;
@@ -43,6 +47,7 @@ class BlockShop
      * @var Block
      *
      * @ORM\ManyToOne(targetEntity=Block::class, inversedBy="blockShops")
+     *
      * @ORM\JoinColumn(name="id_block", referencedColumnName="id_block", onDelete="CASCADE")
      */
     private $block;
@@ -51,6 +56,7 @@ class BlockShop
      * @var Shop|null
      *
      * @ORM\ManyToOne(targetEntity=Shop::class)
+     *
      * @ORM\JoinColumn(name="id_shop", referencedColumnName="id_shop", onDelete="CASCADE")
      */
     private $shop;
@@ -59,6 +65,7 @@ class BlockShop
      * @var ShopGroup|null
      *
      * @ORM\ManyToOne(targetEntity=ShopGroup::class)
+     *
      * @ORM\JoinColumn(name="id_shop_group", referencedColumnName="id_shop_group", onDelete="CASCADE")
      */
     private $shopGroup;

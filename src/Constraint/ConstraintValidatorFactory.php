@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -35,10 +36,8 @@ class ConstraintValidatorFactory extends BaseConstraintValidatorFactory implemen
 {
     /**
      * @param Constraint $constraint
-     *
-     * @return ConstraintValidatorInterface
      */
-    public function getInstance(Constraint $constraint)
+    public function getInstance(Constraint $constraint): ConstraintValidatorInterface
     {
         if ($constraint instanceof TypedRegex) {
             return new TypedRegexValidator(new Configuration());

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -63,7 +64,7 @@ final class BlockFormDataHandler implements FormDataHandlerInterface
         CommandBusInterface $commandBus,
         BlockTypeFormDataHandler $blockTypeFormDataHandler,
         ShopContext $shopContext,
-        LegacyContext $legacyContext
+        LegacyContext $legacyContext,
     ) {
         $this->commandBus = $commandBus;
         $this->blockTypeFormDataHandler = $blockTypeFormDataHandler;

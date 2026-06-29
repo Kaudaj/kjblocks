@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -45,7 +46,12 @@ class BlockTypeFormDataProvider
      */
     public function __construct(LegacyContext $legacyContext, AbstractBlockTypeProvider $blockTypeProvider)
     {
-        $containerFinder = new ContainerFinder($legacyContext->getContext());
+        $context = $legacyContext->getContext();
+        if ($context === null) {
+            throw new \RuntimeException('Legacy context is not available.');
+        }
+
+        $containerFinder = new ContainerFinder($context);
         $this->container = $containerFinder->getContainer();
 
         $this->blockTypeProvider = $blockTypeProvider;

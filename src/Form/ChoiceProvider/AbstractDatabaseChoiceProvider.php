@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -50,7 +51,7 @@ abstract class AbstractDatabaseChoiceProvider implements FormChoiceProviderInter
     /**
      * @param int[]|null $shopIds
      */
-    public function __construct(Connection $connection, string $dbPrefix, ?int $idLang = null, array $shopIds = null)
+    public function __construct(Connection $connection, string $dbPrefix, ?int $idLang = null, ?array $shopIds = null)
     {
         $this->connection = $connection;
         $this->dbPrefix = $dbPrefix;

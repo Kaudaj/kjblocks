@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -25,6 +26,7 @@ use PrestaShopBundle\Entity\Lang;
 
 /**
  * @ORM\Table(name=BlockRepository::LANG_TABLE_NAME_WITH_PREFIX)
+ *
  * @ORM\Entity()
  */
 class BlockLang
@@ -33,7 +35,9 @@ class BlockLang
      * @var Block
      *
      * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity=Block::class, inversedBy="blockLangs")
+     *
      * @ORM\JoinColumn(name="id_block", referencedColumnName="id_block", nullable=false, onDelete="CASCADE")
      */
     private $block;
@@ -42,7 +46,9 @@ class BlockLang
      * @var Lang
      *
      * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity=Lang::class)
+     *
      * @ORM\JoinColumn(name="id_lang", referencedColumnName="id_lang", nullable=false, onDelete="CASCADE")
      */
     private $lang;

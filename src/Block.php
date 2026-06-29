@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -64,7 +65,13 @@ abstract class Block implements BlockInterface
     public function __construct(LegacyContext $legacyContext)
     {
         $this->legacyContext = $legacyContext;
-        $this->translator = $legacyContext->getContext()->getTranslator();
+
+        $context = $legacyContext->getContext();
+        if ($context === null) {
+            throw new \RuntimeException('Legacy context is not available.');
+        }
+
+        $this->translator = $context->getTranslator();
     }
 
     public function getDescription(): string

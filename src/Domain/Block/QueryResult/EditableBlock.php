@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -68,7 +69,7 @@ class EditableBlock
         string $type,
         ?string $options,
         array $blockGroupsIds,
-        array $localizedNames
+        array $localizedNames,
     ) {
         $this->blockId = new BlockId($blockId);
         $this->type = $type;

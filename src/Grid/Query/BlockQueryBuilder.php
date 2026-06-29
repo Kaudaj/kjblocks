@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -53,7 +54,7 @@ final class BlockQueryBuilder extends AbstractDoctrineQueryBuilder
         string $dbPrefix,
         DoctrineSearchCriteriaApplicatorInterface $searchCriteriaApplicator,
         int $contextLangId,
-        ShopContext $shopContext
+        ShopContext $shopContext,
     ) {
         parent::__construct($connection, $dbPrefix);
 

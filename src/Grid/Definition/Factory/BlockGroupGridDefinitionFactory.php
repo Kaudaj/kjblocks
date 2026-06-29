@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -64,7 +65,7 @@ final class BlockGroupGridDefinitionFactory extends AbstractGridDefinitionFactor
         FormChoiceProviderInterface $hookChoiceProvider,
         AdminFilterRepository $adminFilterRepository,
         ContextEmployeeProvider $contextEmployeeProvider,
-        ShopContext $shopContext
+        ShopContext $shopContext,
     ) {
         parent::__construct($hookDispatcher);
 
@@ -242,7 +243,7 @@ final class BlockGroupGridDefinitionFactory extends AbstractGridDefinitionFactor
     private function getHookFilter(
         AdminFilterRepository $adminFilterRepository,
         int $employeeId,
-        int $shopId
+        int $shopId,
     ): ?string {
         $adminFilter = $adminFilterRepository->findByEmployeeAndFilterId(
             $employeeId,

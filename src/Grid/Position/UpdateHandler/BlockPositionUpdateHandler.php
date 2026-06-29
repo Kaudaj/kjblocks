@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -43,7 +44,7 @@ final class BlockPositionUpdateHandler
      */
     public function __construct(
         Connection $connection,
-        $dbPrefix
+        $dbPrefix,
     ) {
         $this->connection = $connection;
         $this->dbPrefix = $dbPrefix;

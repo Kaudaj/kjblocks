@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -50,9 +51,9 @@ class KJBlocks extends Module implements WidgetInterface
     {
         $this->name = 'kjblocks';
         $this->tab = 'others';
-        $this->version = '1.2.1';
+        $this->version = '2.0.0';
         $this->author = 'Kaudaj';
-        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => '8.99.99'];
+        $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => '9.99.99'];
 
         $this->bootstrap = true;
 
@@ -62,8 +63,7 @@ class KJBlocks extends Module implements WidgetInterface
         $this->description = $this->trans(
             <<<EOF
         Add content blocks of any type wherever you want, organized in groups.
-EOF
-            ,
+EOF,
             [],
             'Modules.Kjblocks.Admin'
         );
@@ -359,7 +359,7 @@ EOF
             'kaudaj.module.blocks.command_bus'
         );
 
-        if (!($commandBus instanceof CommandBusInterface)) {
+        if (!$commandBus instanceof CommandBusInterface) {
             throw new RuntimeException("Can't retrieve command bus");
         }
 

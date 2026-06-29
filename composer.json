@@ -12,15 +12,15 @@
     }
   ],
   "require": {
-    "php": ">=7.2.0"
+    "php": ">=7.2.0",
+    "league/tactician": "^1.1"
   },
   "require-dev": {
     "phpro/grumphp-shim": "^1.5.1",
-    "phpstan/phpstan": "^1.10",
-    "phpstan/phpstan-doctrine": "^1.3",
+    "phpstan/phpstan": "^1.12",
     "phpstan/extension-installer": "^1.3",
     "prestashop/php-dev-tools": "^4.3",
-    "friendsofphp/php-cs-fixer": "~3.13.0"
+    "friendsofphp/php-cs-fixer": "^3.75"
   },
   "autoload": {
     "psr-4": {

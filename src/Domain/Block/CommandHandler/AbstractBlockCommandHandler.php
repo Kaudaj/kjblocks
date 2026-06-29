@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -81,12 +82,15 @@ abstract class AbstractBlockCommandHandler
         $entityRepository = $this->entityManager->getRepository(Block::class);
         $this->entityRepository = $entityRepository;
 
+        /** @var LangRepository */
         $langRepository = $this->entityManager->getRepository(Lang::class);
         $this->langRepository = $langRepository;
 
+        /** @var ShopRepository */
         $shopRepository = $this->entityManager->getRepository(Shop::class);
         $this->shopRepository = $shopRepository;
 
+        /** @var ShopGroupRepository */
         $shopGroupRepository = $this->entityManager->getRepository(ShopGroup::class);
         $this->shopGroupRepository = $shopGroupRepository;
 

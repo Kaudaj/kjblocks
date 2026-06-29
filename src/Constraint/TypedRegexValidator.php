@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -33,6 +34,8 @@ class TypedRegexValidator extends ConstraintValidator
 
     /**
      * {@inheritdoc}
+     *
+     * @param mixed $value
      */
     public function validate($value, Constraint $constraint): void
     {

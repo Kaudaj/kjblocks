@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -26,6 +27,7 @@ use Kaudaj\Module\Blocks\Repository\BlockGroupRepository;
 
 /**
  * @ORM\Table(name=BlockGroupRepository::TABLE_NAME_WITH_PREFIX)
+ *
  * @ORM\Entity(repositoryClass=BlockGroupRepository::class)
  */
 class BlockGroup
@@ -34,7 +36,9 @@ class BlockGroup
      * @var int
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(name="id_block_group", type="integer")
      */
     private $id;

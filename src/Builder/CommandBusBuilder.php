@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -46,7 +47,7 @@ class CommandBusBuilder
     public function __construct(
         GetBlockGroupsByHookHandler $getBlockGroupsByHookHandler,
         GetBlockHandler $getBlockHandler,
-        GetBlockGroupHandler $getBlockGroupHandler
+        GetBlockGroupHandler $getBlockGroupHandler,
     ) {
         $this->commandHandlers = [
             GetBlockGroupsByHook::class => $getBlockGroupsByHookHandler,

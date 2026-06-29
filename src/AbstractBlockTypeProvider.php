@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -39,7 +40,7 @@ abstract class AbstractBlockTypeProvider
     /**
      * @var array<string, array<string, T>> [module name => [block name => block instance]]
      */
-    protected $blockTypes = null;
+    protected $blockTypes;
 
     /**
      * @var array<int, T> [block entity id => block instance]

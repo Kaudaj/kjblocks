@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -55,7 +56,7 @@ class EditableBlockGroup
     public function __construct(
         int $blockGroupId,
         array $hooksIds,
-        array $localizedNames
+        array $localizedNames,
     ) {
         $this->blockGroupId = new BlockGroupId($blockGroupId);
 

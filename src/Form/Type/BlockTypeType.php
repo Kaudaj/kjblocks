@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -72,7 +73,7 @@ class BlockTypeType extends TranslatorAwareType
         AbstractBlockTypeProvider $blockTypeProvider,
         RequestStack $requestStack,
         CommandBusInterface $commandBus,
-        MultiShopCheckboxEnabler $multiShopCheckboxEnabler
+        MultiShopCheckboxEnabler $multiShopCheckboxEnabler,
     ) {
         parent::__construct($translator, $locales);
 

@@ -7,15 +7,25 @@ parameters:
   excludePaths:
     - %currentWorkingDirectory%/src/Grid/Position
   ignoreErrors:
-    # PrestaShop 8.0 core declares TranslatorAwareType::__construct() with the
-    # deprecated Symfony\Component\Translation\TranslatorInterface, whereas 8.1+
-    # core uses Symfony\Contracts\Translation\TranslatorInterface (which our form
-    # types correctly type-hint). The injected translator implements both, so the
-    # call is valid at runtime; this mismatch only exists on PS 8.0.
-    # reportUnmatched: false so the entry is a no-op on 8.1/8.2.
+    # Doctrine entity identifiers are populated by the ORM through reflection, so
+    # PHPStan's "never written, only read" report is a false positive. On PS8 the
+    # phpstan-doctrine extension suppressed it; that extension breaks on the PS9
+    # EntityManager, so it is dropped and this scoped entry replaces it.
     -
-      message: '#expects Symfony\\Component\\Translation\\TranslatorInterface, Symfony\\Contracts\\Translation\\TranslatorInterface given\.#'
-      path: %currentWorkingDirectory%/src/Form/Type/*
+      message: '#Property [a-zA-Z0-9\\_]+::\$id is never written, only read\.#'
+      path: %currentWorkingDirectory%/src/Entity/*
+      reportUnmatched: false
+    # PrestaShop 9.0 declares LegacyContext::getContext() as @return Context, while
+    # 9.1 declares @return Context|null. The null guards below are required for the
+    # 9.1 signature; on 9.0 PHPStan sees them as "always false" dead code. Keeping
+    # the guards is correct at runtime, so this scoped entry suppresses the 9.0-only
+    # report (no-op on 9.1).
+    -
+      message: '#Strict comparison using === between Context and null will always evaluate to false\.#'
+      paths:
+        - %currentWorkingDirectory%/src/Block.php
+        - %currentWorkingDirectory%/src/Form/DataHandler/BlockTypeFormDataHandler.php
+        - %currentWorkingDirectory%/src/Form/DataProvider/BlockTypeFormDataProvider.php
       reportUnmatched: false
   reportUnmatchedIgnoredErrors: true
   level: 8

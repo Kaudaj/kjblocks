@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -38,10 +39,12 @@ class BlockGroupHooksUpdater
 
     public function __construct(EntityManager $entityManager)
     {
-        $this->entityRepository = $entityManager->getRepository(BlockGroup::class);
+        /** @var BlockGroupRepository */
+        $entityRepository = $entityManager->getRepository(BlockGroup::class);
+        $this->entityRepository = $entityRepository;
 
         $module = \Module::getInstanceByName('kjblocks');
-        if (!($module instanceof \KJBlocks)) {
+        if (!$module instanceof \KJBlocks) {
             throw new \RuntimeException("Can't update module hooks");
         }
 

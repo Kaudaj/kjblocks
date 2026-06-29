@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -63,9 +64,11 @@ abstract class AbstractBlockGroupCommandHandler
         $entityRepository = $this->entityManager->getRepository(BlockGroup::class);
         $this->entityRepository = $entityRepository;
 
+        /** @var LangRepository */
         $langRepository = $this->entityManager->getRepository(Lang::class);
         $this->langRepository = $langRepository;
 
+        /** @var BlockGroupHookRepository */
         $blockGroupHookRepository = $this->entityManager->getRepository(BlockGroupHook::class);
         $this->blockGroupHookRepository = $blockGroupHookRepository;
     }

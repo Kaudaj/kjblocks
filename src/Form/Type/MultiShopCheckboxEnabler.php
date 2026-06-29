@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -56,7 +57,7 @@ class MultiShopCheckboxEnabler
         FeatureInterface $multistoreFeature,
         ShopContext $shopContext,
         EntityManager $entityManager,
-        Twig\Environment $twig
+        Twig\Environment $twig,
     ) {
         $this->multistoreFeature = $multistoreFeature;
         $this->shopContext = $shopContext;

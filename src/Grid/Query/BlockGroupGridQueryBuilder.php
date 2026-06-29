@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -45,7 +46,7 @@ final class BlockGroupGridQueryBuilder extends AbstractDoctrineQueryBuilder
         Connection $connection,
         string $dbPrefix,
         DoctrineSearchCriteriaApplicatorInterface $searchCriteriaApplicator,
-        int $contextLangId
+        int $contextLangId,
     ) {
         parent::__construct($connection, $dbPrefix);
 

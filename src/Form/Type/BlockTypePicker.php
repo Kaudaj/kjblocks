@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2019 Kaudaj
  *
@@ -52,7 +53,7 @@ class BlockTypePicker extends TranslatorAwareType
             ->setDefaults([
                 'row_attr' => ['class' => str_replace('_', '-', $this->getBlockPrefix())],
                 'compound' => false,
-             ])
+            ])
             ->setRequired(self::OPTION_BLOCK_TYPES)
             ->setAllowedTypes(self::OPTION_BLOCK_TYPES, 'array')
         ;
