@@ -4,12 +4,12 @@ services:
 
   kaudaj.module.blocks.form.handler.block:
     class: PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Handler\FormHandler
-    factory: "prestashop.core.form.identifiable_object.handler.form_handler_factory:create"
+    factory: ['@prestashop.core.form.identifiable_object.handler.form_handler_factory', 'create']
     arguments:
       - "@kaudaj.module.blocks.form.data_handler.block"
 
   kaudaj.module.blocks.form.handler.block_group:
     class: PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Handler\FormHandler
-    factory: "prestashop.core.form.identifiable_object.handler.form_handler_factory:create"
+    factory: ['@prestashop.core.form.identifiable_object.handler.form_handler_factory', 'create']
     arguments:
       - "@kaudaj.module.blocks.form.data_handler.block_group"
