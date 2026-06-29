@@ -39,9 +39,8 @@ class BlockTypeProviderFactory
         $this->blockContext = $blockContext;
     }
 
-    // @phpstan-ignore-next-line
     public function create(string $hookName): BlockTypeProvider
     {
-        return new BlockTypeProvider($this->contextLangId, $this->blockContext, $hookName);
+        return new BlockTypeProvider($this->contextLangId, $hookName, $this->blockContext);
     }
 }

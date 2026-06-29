@@ -36,10 +36,13 @@ class BlockTypeFormDataProvider
     private $container;
 
     /**
-     * @var AbstractBlockTypeProvider
+     * @var AbstractBlockTypeProvider<\Kaudaj\Module\Blocks\BlockInterface>
      */
     private $blockTypeProvider;
 
+    /**
+     * @param AbstractBlockTypeProvider<\Kaudaj\Module\Blocks\BlockInterface> $blockTypeProvider
+     */
     public function __construct(LegacyContext $legacyContext, AbstractBlockTypeProvider $blockTypeProvider)
     {
         $containerFinder = new ContainerFinder($legacyContext->getContext());

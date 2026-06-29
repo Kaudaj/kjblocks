@@ -26,7 +26,6 @@ use PrestaShop\PrestaShop\Core\ConstraintValidator\CleanHtmlValidator;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CleanHtml;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\TypedRegex;
 use PrestaShop\PrestaShop\Core\ConstraintValidator\TypedRegexValidator;
-use PrestaShop\PrestaShop\Core\String\CharacterCleaner;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactory as BaseConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
@@ -42,11 +41,7 @@ class ConstraintValidatorFactory extends BaseConstraintValidatorFactory implemen
     public function getInstance(Constraint $constraint)
     {
         if ($constraint instanceof TypedRegex) {
-            if (version_compare(_PS_VERSION_, '8.0', '<')) {
-                return new TypedRegexValidator(new CharacterCleaner());
-            } else {
-                return new TypedRegexValidator(new Configuration());
-            }
+            return new TypedRegexValidator(new Configuration());
         }
 
         if ($constraint instanceof CleanHtml) {

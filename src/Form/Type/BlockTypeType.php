@@ -43,7 +43,7 @@ class BlockTypeType extends TranslatorAwareType
     public const FIELD_OPTIONS = 'options';
 
     /**
-     * @var AbstractBlockTypeProvider
+     * @var AbstractBlockTypeProvider<\Kaudaj\Module\Blocks\BlockInterface>
      */
     protected $blockTypeProvider;
 
@@ -64,7 +64,7 @@ class BlockTypeType extends TranslatorAwareType
 
     /**
      * @param array<string, mixed> $locales
-     * @param AbstractBlockTypeProvider $blockTypeProvider
+     * @param AbstractBlockTypeProvider<\Kaudaj\Module\Blocks\BlockInterface> $blockTypeProvider
      */
     public function __construct(
         TranslatorInterface $translator,

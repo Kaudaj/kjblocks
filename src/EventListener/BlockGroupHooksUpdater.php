@@ -48,16 +48,25 @@ class BlockGroupHooksUpdater
         $this->module = $module;
     }
 
+    /**
+     * @param LifecycleEventArgs<\Doctrine\Persistence\ObjectManager> $event
+     */
     public function postUpdate(BlockGroup $blockGroup, LifecycleEventArgs $event): void
     {
         $this->updateRegisteredHooks();
     }
 
+    /**
+     * @param LifecycleEventArgs<\Doctrine\Persistence\ObjectManager> $event
+     */
     public function postPersist(BlockGroup $blockGroup, LifecycleEventArgs $event): void
     {
         $this->updateRegisteredHooks();
     }
 
+    /**
+     * @param LifecycleEventArgs<\Doctrine\Persistence\ObjectManager> $event
+     */
     public function postRemove(BlockGroup $blockGroup, LifecycleEventArgs $event): void
     {
         $this->updateRegisteredHooks();

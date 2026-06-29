@@ -7,7 +7,16 @@ parameters:
   excludePaths:
     - %currentWorkingDirectory%/src/Grid/Position
   ignoreErrors:
-    - '#.*Kaudaj\\Module\\Blocks\\AbstractBlockTypeProvider.* does not specify its types.*#'
+    # PrestaShop 8.0 core declares TranslatorAwareType::__construct() with the
+    # deprecated Symfony\Component\Translation\TranslatorInterface, whereas 8.1+
+    # core uses Symfony\Contracts\Translation\TranslatorInterface (which our form
+    # types correctly type-hint). The injected translator implements both, so the
+    # call is valid at runtime; this mismatch only exists on PS 8.0.
+    # reportUnmatched: false so the entry is a no-op on 8.1/8.2.
+    -
+      message: '#expects Symfony\\Component\\Translation\\TranslatorInterface, Symfony\\Contracts\\Translation\\TranslatorInterface given\.#'
+      path: %currentWorkingDirectory%/src/Form/Type/*
+      reportUnmatched: false
   reportUnmatchedIgnoredErrors: true
   level: 8
 
