@@ -4,6 +4,8 @@ grumphp:
       config: tests/php/.php-cs-fixer.dist.php
     phpstan:
       configuration: tests/php/phpstan.dist.neon
+    phpunit:
+      config_file: tests/php/phpunit.xml.dist
     eslint:
       bin: _dev/node_modules/.bin/eslint
       config: _dev/.eslintrc.js
