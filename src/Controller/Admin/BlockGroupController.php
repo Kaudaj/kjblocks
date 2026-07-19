@@ -50,7 +50,7 @@ use Symfony\Component\HttpFoundation\Response;
 class BlockGroupController extends FrameworkBundleAdminController
 {
     /**
-     * @AdminSecurity("is_granted(['read'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
      */
     public function indexAction(Request $request, BlockGroupFilters $filters): Response
     {
@@ -89,7 +89,7 @@ class BlockGroupController extends FrameworkBundleAdminController
     }
 
     /**
-     * @AdminSecurity("is_granted(['create'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('create', request.get('_legacy_controller'))")
      */
     public function createAction(Request $request): Response
     {
@@ -115,7 +115,7 @@ class BlockGroupController extends FrameworkBundleAdminController
     }
 
     /**
-     * @AdminSecurity("is_granted(['update'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('update', request.get('_legacy_controller'))")
      */
     public function editAction(int $blockGroupId, Request $request): Response
     {
@@ -141,7 +141,7 @@ class BlockGroupController extends FrameworkBundleAdminController
     }
 
     /**
-     * @AdminSecurity("is_granted(['delete'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))")
      */
     public function deleteAction(Request $request, int $blockGroupId): Response
     {
@@ -157,7 +157,7 @@ class BlockGroupController extends FrameworkBundleAdminController
     }
 
     /**
-     * @AdminSecurity("is_granted(['delete'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))")
      */
     public function updatePositionAction(Request $request): Response
     {
@@ -177,7 +177,7 @@ class BlockGroupController extends FrameworkBundleAdminController
         }
 
         $positionsData = [
-            'positions' => $request->request->get('positions'),
+            'positions' => $request->request->all('positions'),
             'parentId' => $hookId,
         ];
 
@@ -185,7 +185,7 @@ class BlockGroupController extends FrameworkBundleAdminController
         $positionDefinition = $this->get('kaudaj.module.blocks.grid.position_definition.block_group');
 
         /** @var PositionUpdateFactoryInterface */
-        $positionUpdateFactory = $this->get('prestashop.core.grid.position.position_update_factory');
+        $positionUpdateFactory = $this->get('kaudaj.module.blocks.grid.position.position_update_factory');
 
         try {
             $positionUpdate = $positionUpdateFactory->buildPositionUpdate($positionsData, $positionDefinition);

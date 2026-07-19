@@ -54,7 +54,7 @@ class BlockController extends FrameworkBundleAdminController
     /**
      * Display block grid
      *
-     * @AdminSecurity("is_granted(['read'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
      */
     public function indexAction(Request $request, BlockFilters $filters): Response
     {
@@ -78,7 +78,7 @@ class BlockController extends FrameworkBundleAdminController
     /**
      * Show block create form & handle processing of it
      *
-     * @AdminSecurity("is_granted(['create'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('create', request.get('_legacy_controller'))")
      */
     public function createAction(Request $request): Response
     {
@@ -107,7 +107,7 @@ class BlockController extends FrameworkBundleAdminController
     /**
      * Show block edit form & handle processing of it
      *
-     * @AdminSecurity("is_granted(['update'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('update', request.get('_legacy_controller'))")
      */
     public function editAction(int $blockId, Request $request): Response
     {
@@ -136,7 +136,7 @@ class BlockController extends FrameworkBundleAdminController
     /**
      * Toggle block status
      *
-     * @AdminSecurity("is_granted(['update'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('update', request.get('_legacy_controller'))")
      */
     public function toggleAction(Request $request, int $blockId): Response
     {
@@ -184,7 +184,7 @@ class BlockController extends FrameworkBundleAdminController
     /**
      * Deletes block
      *
-     * @AdminSecurity("is_granted(['delete'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))")
      */
     public function deleteAction(Request $request, int $blockId): Response
     {
@@ -202,7 +202,7 @@ class BlockController extends FrameworkBundleAdminController
     /**
      * Updates blocks positions
      *
-     * @AdminSecurity("is_granted(['delete'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))")
      */
     public function updatePositionAction(Request $request): Response
     {
@@ -222,7 +222,7 @@ class BlockController extends FrameworkBundleAdminController
         }
 
         $positionsData = [
-            'positions' => $request->request->get('positions'),
+            'positions' => $request->request->all('positions'),
             'parentId' => $hookId,
         ];
 
@@ -230,7 +230,7 @@ class BlockController extends FrameworkBundleAdminController
         $positionDefinition = $this->get('kaudaj.module.blocks.grid.position_definition.block');
 
         /** @var PositionUpdateFactoryInterface */
-        $positionUpdateFactory = $this->get('prestashop.core.grid.position.position_update_factory');
+        $positionUpdateFactory = $this->get('kaudaj.module.blocks.grid.position.position_update_factory');
 
         try {
             $positionUpdate = $positionUpdateFactory->buildPositionUpdate($positionsData, $positionDefinition);

@@ -11,6 +11,19 @@ services:
       - "@prestashop.core.admin.admin_filter.repository"
       - "@prestashop.adapter.data_provider.employee"
       - "@prestashop.adapter.shop.context"
+    tags: [ 'core.grid_definition_factory' ]
+
+  # PS9 dropped the public 'prestashop.core.grid.position.position_update_factory' service id
+  # (it now only exists as the deprecated FQCN service). Declare our own public instance so the
+  # controllers can keep resolving it through FrameworkBundleAdminController::get().
+  kaudaj.module.blocks.grid.position.position_update_factory:
+    class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionUpdateFactory'
+    arguments:
+      - 'positions'
+      - 'rowId'
+      - 'oldPosition'
+      - 'newPosition'
+      - 'parentId'
 
   kaudaj.module.blocks.grid.position.block_grid_position_updater:
     class: 'Kaudaj\Module\Blocks\Grid\Position\BlockGridPositionUpdater'
@@ -40,6 +53,7 @@ services:
       - "@prestashop.core.admin.admin_filter.repository"
       - "@prestashop.adapter.data_provider.employee"
       - "@prestashop.adapter.shop.context"
+    tags: [ 'core.grid_definition_factory' ]
 
   kaudaj.module.blocks.grid.position_definition.block_group:
     class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
