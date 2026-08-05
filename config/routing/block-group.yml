@@ -9,7 +9,7 @@ kj_blocks_block_groups_search:
   path: /
   methods: POST
   defaults:
-    _controller: 'PrestaShopBundle:Admin\Common:searchGrid'
+    _controller: 'PrestaShopBundle\Controller\Admin\CommonController::searchGridAction'
     _legacy_controller: KJBlocksBlockGroup
     _legacy_link: KJBlocksBlockGroup:submitFilters
     gridDefinitionFactoryServiceId: kaudaj.module.blocks.grid.definition.factory.block_group
