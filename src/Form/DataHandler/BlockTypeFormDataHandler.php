@@ -103,8 +103,12 @@ class BlockTypeFormDataHandler
         $currentRequest = $requestStack->getCurrentRequest();
 
         if ($currentRequest !== null) {
-            $requestParam = $currentRequest->request->get($formName) ?: [];
-            $filesParam = $currentRequest->files->get($formName) ?: [];
+            // Use all() rather than get(): on Symfony 6 (PS9) InputBag::get() throws a
+            // BadRequestException when the value is non-scalar, and $formName holds the
+            // whole submitted form array (e.g. "product_extra"). all() returns that array
+            // (or [] when absent) without throwing.
+            $requestParam = $currentRequest->request->all($formName);
+            $filesParam = $currentRequest->files->all($formName);
 
             $optionsInParam = function ($param) use ($typeFieldName): array {
                 if (is_array($param) && key_exists($typeFieldName, $param)
