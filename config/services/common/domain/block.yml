@@ -13,5 +13,6 @@ services:
     parent: kaudaj.module.blocks.block.query_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlockHandler
     tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock
+      - name: messenger.message_handler
+        method: handle
+        handles: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlock

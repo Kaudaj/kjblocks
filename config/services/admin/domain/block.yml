@@ -7,8 +7,9 @@ services:
     parent: kaudaj.module.blocks.block.query_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\QueryHandler\GetBlocksHandler
     tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocks
+      - name: messenger.message_handler
+        method: handle
+        handles: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlocks
 
   kaudaj.module.blocks.block.query_handler.get_for_editing:
     public: true
@@ -17,8 +18,9 @@ services:
     arguments:
       - '@kaudaj.module.blocks.block_context'
     tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing
+      - name: messenger.message_handler
+        method: handle
+        handles: Kaudaj\Module\Blocks\Domain\Block\Query\GetBlockForEditing
 
   kaudaj.module.blocks.block.command_handler.abstract:
     abstract: true
@@ -31,8 +33,9 @@ services:
     parent: kaudaj.module.blocks.block.command_handler.abstract
     class: Kaudaj\Module\Blocks\Domain\Block\CommandHandler\AddBlockHandler
     tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand
+      - name: messenger.message_handler
+        method: handle
+        handles: Kaudaj\Module\Blocks\Domain\Block\Command\AddBlockCommand
 
   kaudaj.module.blocks.block.command_handler.edit:
     public: true
@@ -41,8 +44,9 @@ services:
     arguments:
       - '@kaudaj.module.blocks.block_context'
     tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand
+      - name: messenger.message_handler
+        method: handle
+        handles: Kaudaj\Module\Blocks\Domain\Block\Command\EditBlockCommand
 
   kaudaj.module.blocks.block.command_handler.delete:
     public: true
@@ -51,8 +55,9 @@ services:
     arguments:
       - "@kaudaj.module.blocks.file.block_file_manager"
     tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand
+      - name: messenger.message_handler
+        method: handle
+        handles: Kaudaj\Module\Blocks\Domain\Block\Command\DeleteBlockCommand
 
   kaudaj.module.blocks.block.command_handler.toggle:
     public: true
@@ -61,5 +66,6 @@ services:
     arguments:
       - "@kaudaj.module.blocks.block_context"
     tags:
-      - name: tactician.handler
-        command: Kaudaj\Module\Blocks\Domain\Block\Command\ToggleBlockCommand
+      - name: messenger.message_handler
+        method: handle
+        handles: Kaudaj\Module\Blocks\Domain\Block\Command\ToggleBlockCommand
