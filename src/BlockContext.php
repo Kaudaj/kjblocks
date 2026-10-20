@@ -90,13 +90,65 @@ class BlockContext
         $blockOptions = [];
 
         foreach ($this->getBlockShops($block) as $blockShop) {
-            $blockShopOptions = json_decode($blockShop->getOptions() ?: '', true);
-            $blockShopOptions = (is_array($blockShopOptions) ? $blockShopOptions : []);
-
-            $blockOptions += $blockShopOptions;
+            $blockOptions += $this->decodeOptions($blockShop);
         }
 
         return $blockOptions;
+    }
+
+    /**
+     * The options stored on the row of the context's own scope (the shop being
+     * edited, its group, or all shops): what a save in this context replaces.
+     *
+     * @return array<string, mixed>
+     */
+    public function getOwnBlockOptions(Block $block): array
+    {
+        $ownBlockShop = $this->getOwnBlockShop($block);
+
+        return $ownBlockShop !== null ? $this->decodeOptions($ownBlockShop) : [];
+    }
+
+    /**
+     * The options the context's scope falls back on: the ones of the wider
+     * scopes' rows (the shop's group, then all shops), without its own row.
+     * A shop that does not set an option itself gets the value found here.
+     *
+     * @return array<string, mixed>
+     */
+    public function getInheritedBlockOptions(Block $block): array
+    {
+        $ownBlockShop = $this->getOwnBlockShop($block);
+        $blockOptions = [];
+
+        foreach ($this->getBlockShops($block) as $blockShop) {
+            if ($blockShop === $ownBlockShop) {
+                continue;
+            }
+
+            $blockOptions += $this->decodeOptions($blockShop);
+        }
+
+        return $blockOptions;
+    }
+
+    private function getOwnBlockShop(Block $block): ?BlockShop
+    {
+        $shopConstraint = $this->shopContext->getShopConstraint();
+        $shopId = $shopConstraint->getShopId() !== null ? $shopConstraint->getShopId()->getValue() : null;
+        $shopGroupId = $shopConstraint->getShopGroupId() !== null ? $shopConstraint->getShopGroupId()->getValue() : null;
+
+        return $block->getBlockShop($shopId, $shopGroupId);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function decodeOptions(BlockShop $blockShop): array
+    {
+        $options = json_decode($blockShop->getOptions() ?: '', true);
+
+        return is_array($options) ? $options : [];
     }
 
     /**
