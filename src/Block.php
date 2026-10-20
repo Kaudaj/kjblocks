@@ -122,11 +122,15 @@ abstract class Block implements BlockInterface
             $smarty->assign($this->getTemplateVariables());
         }
 
-        $render = $module->fetch($template, $cacheId);
-
-        if (!$isCached) {
-            $smarty->clearAllAssign();
-            $smarty->assign($currentVars);
+        try {
+            $render = $module->fetch($template, $cacheId);
+        } finally {
+            // Also when the template throws: the variables of a block that
+            // failed must not stay assigned for the blocks and the page after it.
+            if (!$isCached) {
+                $smarty->clearAllAssign();
+                $smarty->assign($currentVars);
+            }
         }
 
         return (string) \Hook::exec(self::FILTER_CONTENT_HOOK, [

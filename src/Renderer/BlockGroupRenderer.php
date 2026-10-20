@@ -43,12 +43,20 @@ class BlockGroupRenderer
     private $blockContext;
 
     /**
-     * @param BlockTypeProvider $blockTypeProvider
+     * @var callable(Block, \Throwable): void|null
      */
-    public function __construct(BlockTypeProvider $blockTypeProvider, BlockContext $blockContext)
+    private $failureReporter;
+
+    /**
+     * @param callable(Block, \Throwable): void|null $failureReporter called with the block and what it threw when a
+     *                                                                block cannot be rendered; defaults to
+     *                                                                PrestaShopLogger
+     */
+    public function __construct(BlockTypeProvider $blockTypeProvider, BlockContext $blockContext, ?callable $failureReporter = null)
     {
         $this->blockTypeProvider = $blockTypeProvider;
         $this->blockContext = $blockContext;
+        $this->failureReporter = $failureReporter;
     }
 
     public function render(BlockGroup $blockGroup): string
@@ -70,16 +78,52 @@ class BlockGroupRenderer
         }, $blockGroupBlocks);
 
         foreach ($blocks as $block) {
-            $blockShop = $this->blockContext->getBlockShop($block);
-            if (!$blockShop || !$blockShop->isActive()) {
-                continue;
-            }
+            // One block that cannot be rendered (options the block type
+            // refuses, a missing template...) is skipped and logged: the
+            // blocks around it, and the rest of the hook, still show.
+            try {
+                $blockShop = $this->blockContext->getBlockShop($block);
+                if (!$blockShop || !$blockShop->isActive()) {
+                    continue;
+                }
 
-            $render .= $this->blockTypeProvider->getBlockTypeFromEntity($block)->render();
+                $render .= $this->blockTypeProvider->getBlockTypeFromEntity($block)->render();
+            } catch (\Throwable $e) {
+                $this->reportFailure($block, $e);
+            }
         }
 
         $render .= '</div>';
 
         return $render;
+    }
+
+    private function reportFailure(Block $block, \Throwable $e): void
+    {
+        try {
+            if ($this->failureReporter !== null) {
+                call_user_func($this->failureReporter, $block, $e);
+
+                return;
+            }
+
+            if (class_exists('PrestaShopLogger')) {
+                \PrestaShopLogger::addLog(
+                    sprintf(
+                        'kjblocks: block %d (%s) skipped, it could not be rendered: %s: %s',
+                        (int) $block->getId(),
+                        $block->getType(),
+                        get_class($e),
+                        $e->getMessage()
+                    ),
+                    3,
+                    null,
+                    'KjBlocksBlock',
+                    (int) $block->getId()
+                );
+            }
+        } catch (\Throwable $loggingFailure) {
+            // Logging must never take the page down either.
+        }
     }
 }
