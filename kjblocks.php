@@ -334,7 +334,18 @@ EOF,
             foreach ($blockGroups as $blockGroup) {
                 $render .= $blockRenderer->render($blockGroup);
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            // The blocks are isolated one by one in the renderer: what ends
+            // up here is the hook itself (its block groups, the container),
+            // which is worth a line in the log.
+            PrestaShopLogger::addLog(
+                sprintf('kjblocks: the "%s" hook could not be rendered: %s: %s', (string) $hookName, get_class($e), $e->getMessage()),
+                3,
+                null,
+                'Module',
+                (int) $this->id
+            );
+
             return '';
         }
 
